@@ -1,0 +1,5 @@
+from sage.rings.polynomial.multi_polynomial_ring_generic cimport MPolynomialRing_generic as MPR
+from sage.groups.group cimport AbelianGroup as AGRP
+
+cdef class MultigradedRing(MPR):
+        cdef public AGRP grading 
