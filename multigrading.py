@@ -9,9 +9,32 @@ from sage.misc.latex import latex_variable_name
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing as PR
 
+def multidegree(f):
+	R=f.parent()
+	if not isinstance(f.parent(), MultigradedRing):
+		raise TypeError, "Containing ring has to be multigraded."
+	A = R.grading
+	w = R.variable_weights
+	M = f.monomials()
+	result = []
+	for i in range(0,len(M)): 
+		deg=A.one()
+		dlist = M[i].degrees()
+		for j in range(0,R.ngens()): 
+			deg = deg * w[j]**(dlist[j])
+		result.append(deg)
+	return result
+
+
 class MultigradedRing(MPR):
 	def __init__(self, base_ring, n, names, order, grp, weights):
-		if weights.pop() != n:
+		if len(weights) != n:
 			 raise IndexError, "Number of weights has to agree with number of variables."
+		for i in range(0,len(weights)): 
+			if not isinstance(weights[i],AbelianGroupElement):
+				raise TypeError, "Variable weights have to be group elements."
+			if not weights[i].parent() == grp:
+				raise TypeError, "Variable weights have to be contained in the grading group."
 		MPR.__init__(self, base_ring, n, names, order)
-		self.grp = grp	
+		self.grading = grp
+		self.variable_weights = weights	
