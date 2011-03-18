@@ -1,8 +1,8 @@
 def all(L, f):
 	for i in range(0, len(L)):
 		if not f(L[i]):
-			return false
-	return true
+			return False
+	return True
 
 def apply(L, f):
 	result = []
@@ -13,10 +13,10 @@ def apply(L, f):
 def unique(L):
 	result=[]
 	for i in range(0,len(L)):
-		test = true
+		test = True
 		for j in range(0, len(result)):
 			if L[i] == result[j]:
-				test = false
+				test = False
 				break
 		if test:
 			result.append(L[i])

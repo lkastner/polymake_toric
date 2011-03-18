@@ -9,7 +9,7 @@ from sage.misc.latex import latex_variable_name
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing as PR
 
-import listManagement
+from listManagement import unique
 
 def multidegree(f):
 	R=f.parent()
@@ -23,15 +23,26 @@ def multidegree(f):
 		deg=A.one()
 		dlist = M[i].degrees()
 		for j in range(0,R.ngens()): 
-			deg = deg * w[j]**(dlist[j])
+			deg = deg *  w[j]**dlist[j]
 		result.append(deg)
 	return result
 
 def is_homogeneous(f):
-	deg = multidegree(f)
-	if len(unique(multidegree(f)))!= 1:
-		return false
-	return true
+	degree = multidegree(f)
+	if len(unique(degree))!= 1:
+		return False
+	return True
+
+def testrun():
+	A = AbelianGroup(3)
+	R = MultigradedRing(QQ, 3, 'z', "dp", A, A.gens())
+	x, y, z = R.gens()
+	f = x**2 + 4*x*y + z
+	mf = multidegree(f)
+	print mf
+	print unique(mf)
+	is_homogeneous(f)
+
 
 class MultigradedRing(MPR):
 	def __init__(self, base_ring, n, names, order, grp, weights):
