@@ -9,6 +9,8 @@ from sage.misc.latex import latex_variable_name
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing as PR
 
+import listManagement
+
 def multidegree(f):
 	R=f.parent()
 	if not isinstance(f.parent(), MultigradedRing):
@@ -25,6 +27,11 @@ def multidegree(f):
 		result.append(deg)
 	return result
 
+def is_homogeneous(f):
+	deg = multidegree(f)
+	if len(unique(multidegree(f)))!= 1:
+		return false
+	return true
 
 class MultigradedRing(MPR):
 	def __init__(self, base_ring, n, names, order, grp, weights):
