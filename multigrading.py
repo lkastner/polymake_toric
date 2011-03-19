@@ -13,7 +13,7 @@ from listManagement import unique
 
 def multidegree(f):
 	R=f.parent()
-	if not isinstance(f.parent(), MultigradedRing):
+	if not isinstance(R, MultigradedRing):
 		raise TypeError, "Containing ring has to be multigraded."
 	A = R.grading
 	w = R.variable_weights
@@ -40,8 +40,7 @@ def testrun():
 	f = x**2 + 4*x*y + z
 	mf = multidegree(f)
 	print mf
-	print unique(mf)
-	is_homogeneous(f)
+	print is_homogeneous(f)
 
 
 class MultigradedRing(MPR):
