@@ -1,26 +1,64 @@
 IMPORT common
+IMPORT polytope
 
 # Might need some other name.
 declare object Variety {
+	
+	property BASERING : Ring;
 
-	property IS_PROJECTIVE : bool;
+	property COEFFICIENTS : Array<Polynomial>; # This might be done different...
+
+	property IS_PROJECTIVE : Bool;
 
 }
 
 declare object PrimeDivisor {
-
+	
 }
 
-declare object PolyhedralPrimeDivisor {
+declare object Divisor {
+	
+	property IS_SEMI_AMPLE : Bool;
+
+	property IS_BIG : Bool;
+
+	property IS_AMPLE : Bool;
+
+	property SUMMANDS : Array<PrimeDivisor>;
+
+	property COEFFICIENTS : Vector<Rational>;	
+}
+
+declare object PolyhedralPrimeDivisor : PrimeDivisor {
+
+	property COEFFICIENT : Polytope;
 
 }
 
 declare object PolyhedralDivisor {
 
-	property IS_P_DIVISOR : bool;
+	property SUMMANDS : Array<PolyhedralPrimeDivisor>;
 
+	property IS_P_DIVISOR : Bool;
+	
+	auto_cast : PDivisor;
+	precondition : IS_P_DIVISOR;
 }
 
-declare object TVariety {
+declare object PDivisor : PolyhedralDivisor {
+	
+	
+	
+}
+
+declare object AffineTVariety {
+	
+	property P_DIVISOR : PDivisor;
+
+	property GENERATORS : Array<Polynomial>;
+
+	rule GENERATORS : PDIVISOR {
+		#TODO
+	}
 
 }
