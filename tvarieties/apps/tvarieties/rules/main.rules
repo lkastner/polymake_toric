@@ -1,0 +1,26 @@
+IMPORT common
+
+# Might need some other name.
+declare object Variety {
+
+	property IS_PROJECTIVE : bool;
+
+}
+
+declare object PrimeDivisor {
+
+}
+
+declare object PolyhedralPrimeDivisor {
+
+}
+
+declare object PolyhedralDivisor {
+
+	property IS_P_DIVISOR : bool;
+
+}
+
+declare object TVariety {
+
+}
