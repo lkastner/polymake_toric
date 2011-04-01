@@ -3,6 +3,9 @@ IMPORT common
 
 IMPORT polytope
 
+file_suffix tv
+
+
 # Might need some other name.
 declare object Variety {
 	
@@ -16,7 +19,7 @@ declare object Variety {
 
 declare object PrimeDivisor {
 	
-	property name : String;
+	property NAME : String;
 
 }
 
@@ -28,9 +31,15 @@ declare object Divisor {
 
 	property IS_AMPLE : Bool;
 
-	# property SUMMANDS : Array<PrimeDivisor>; #This should be fixed.
+	property SUMMANDS : PrimeDivisor : multiple;
+
+	property N_SUMMANDS : Integer;
 
 	property COEFFICIENTS : Vector<Rational>;	
+	
+	rule N_SUMMANDS : SUMMANDS {
+		$this->N_SUMMANDS = scalar(@{$this->SUMMANDS});
+	}
 }
 
 declare object PolyhedralPrimeDivisor : PrimeDivisor {
@@ -49,24 +58,35 @@ declare object PDivisor : PolyhedralDivisor {
 
 object PolyhedralDivisor {
 
-	#property SUMMANDS : Array<PolyhedralPrimeDivisor>;
+	property SUMMANDS : PolyhedralPrimeDivisor : multiple;
 
+	property N_SUMMANDS : Integer;
+	
 	property IS_P_DIVISOR : Bool;
 	
+	property TAIL_CONE : Polytope;
+
 	auto_cast : PDivisor;
 	precondition : IS_P_DIVISOR;
+	
+	rule N_SUMMANDS : SUMMANDS {
+		$this->N_SUMMANDS = scalar(@{$this->SUMMANDS});
+	}
 
-	#user_method EVALUATE {
-		#my($PD, $c) = @_;
-		#my (@summands, @coeffs);
-		#foreach $s (@{$PD->SUMMANDS}){
-			#$s->COEFFICIENT->LP = new LinearProgram<Rational>(LINEAR_OBJECTIVE=>$c);
-			#$mv = $s->COEFFICIENT->LP->MINIMAL_VALUE;
-			#push @coeffs, $mv;
-			#push @summands, new PrimeDivisor($s);
-		#}
-		#return new Divisor(SUMMANDS=>new Array<PrimeDivisor>(@summands),COEFFICIENTS=>new Vector<Rational>(@mv));
-	#}
+	user_method EVALUATE {
+		my($PD, $c) = @_;
+		my (@summands, @coeffs);
+		my $result = new Divisor();
+		foreach my $s (@{$PD->SUMMANDS}){
+			$s->COEFFICIENT->LP = new LinearProgram<Rational>(LINEAR_OBJECTIVE=>$c);
+			my $mv = $s->COEFFICIENT->LP->MINIMAL_VALUE;
+			print $mv;
+			push @coeffs, $mv;
+			$result->add("SUMMANDS", new PrimeDivisor($s));
+		}
+		$result->COEFFICIENTS = new Vector<Rational>($coeffs);
+		return $result;
+	}
 }
 
 
