@@ -1,4 +1,6 @@
+
 IMPORT common
+
 IMPORT polytope
 
 # Might need some other name.
@@ -6,7 +8,7 @@ declare object Variety {
 	
 	property BASERING : Ring;
 
-	property COEFFICIENTS : Array<Polynomial>; # This might be done different...
+	#property COEFFICIENTS : Array<Polynomial>; # This might be done different...
 
 	property IS_PROJECTIVE : Bool;
 
@@ -14,6 +16,8 @@ declare object Variety {
 
 declare object PrimeDivisor {
 	
+	property name : String;
+
 }
 
 declare object Divisor {
@@ -24,26 +28,18 @@ declare object Divisor {
 
 	property IS_AMPLE : Bool;
 
-	property SUMMANDS : Array<PrimeDivisor>;
+	# property SUMMANDS : Array<PrimeDivisor>; #This should be fixed.
 
 	property COEFFICIENTS : Vector<Rational>;	
 }
 
 declare object PolyhedralPrimeDivisor : PrimeDivisor {
 
-	property COEFFICIENT : Polytope;
+	property COEFFICIENT : polytope::Polytope;
 
 }
 
-declare object PolyhedralDivisor {
-
-	property SUMMANDS : Array<PolyhedralPrimeDivisor>;
-
-	property IS_P_DIVISOR : Bool;
-	
-	auto_cast : PDivisor;
-	precondition : IS_P_DIVISOR;
-}
+declare object PolyhedralDivisor ;
 
 declare object PDivisor : PolyhedralDivisor {
 	
@@ -51,14 +47,37 @@ declare object PDivisor : PolyhedralDivisor {
 	
 }
 
+object PolyhedralDivisor {
+
+	#property SUMMANDS : Array<PolyhedralPrimeDivisor>;
+
+	property IS_P_DIVISOR : Bool;
+	
+	auto_cast : PDivisor;
+	precondition : IS_P_DIVISOR;
+
+	#user_method EVALUATE {
+		#my($PD, $c) = @_;
+		#my (@summands, @coeffs);
+		#foreach $s (@{$PD->SUMMANDS}){
+			#$s->COEFFICIENT->LP = new LinearProgram<Rational>(LINEAR_OBJECTIVE=>$c);
+			#$mv = $s->COEFFICIENT->LP->MINIMAL_VALUE;
+			#push @coeffs, $mv;
+			#push @summands, new PrimeDivisor($s);
+		#}
+		#return new Divisor(SUMMANDS=>new Array<PrimeDivisor>(@summands),COEFFICIENTS=>new Vector<Rational>(@mv));
+	#}
+}
+
+
 declare object AffineTVariety {
 	
 	property P_DIVISOR : PDivisor;
 
-	property GENERATORS : Array<Polynomial>;
+	#property GENERATORS : Array<Polynomial>;
 
-	rule GENERATORS : PDIVISOR {
+	#rule GENERATORS : P_DIVISOR {
 		#TODO
-	}
+	#}
 
 }
