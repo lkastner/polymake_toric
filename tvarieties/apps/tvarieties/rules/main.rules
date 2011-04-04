@@ -84,7 +84,7 @@ object PolyhedralDivisor {
 			push @coeffs, $mv;
 			$result->add("SUMMANDS", new PrimeDivisor($s));
 		}
-		$result->COEFFICIENTS = new Vector<Rational>($coeffs);
+		$result->COEFFICIENTS = new Vector<Rational>(@coeffs);
 		return $result;
 	}
 }
