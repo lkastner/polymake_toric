@@ -11,7 +11,7 @@ declare object Variety {
 	
 	property BASERING : Ring;
 
-	#property COEFFICIENTS : Array<Polynomial>; # This might be done different...
+	#property COEFFICIENTS : Polynomial : multiple; # This one doesn't even work with multiple.
 
 	property IS_PROJECTIVE : Bool;
 
@@ -52,7 +52,7 @@ declare object PolyhedralDivisor ;
 
 declare object PDivisor : PolyhedralDivisor {
 	
-	
+	# Do we need this one at all?	
 	
 }
 
@@ -63,6 +63,10 @@ object PolyhedralDivisor {
 	property N_SUMMANDS : Integer;
 	
 	property IS_P_DIVISOR : Bool;
+
+	property IS_SEMI_AMPLE : Bool;
+
+	property IS_BIG_RELINT : Bool;
 	
 	property TAIL_CONE : Polytope;
 
@@ -71,6 +75,10 @@ object PolyhedralDivisor {
 	
 	rule N_SUMMANDS : SUMMANDS {
 		$this->N_SUMMANDS = scalar(@{$this->SUMMANDS});
+	}
+
+	rule IS_P_DIVISOR : IS_SEMI_AMPLE, IS_BIG_RELINT {
+		$this->IS_P_DIVISOR = $this->IS_SEMI_AMPLE && $this->IS_BIG_RELINT;
 	}
 
 	user_method EVALUATE {
