@@ -1,2 +1,2 @@
-ProjectTop := /home/fenn/lkastner/local/share/polymake
+ProjectTop := /home/fenn/lkastner/local/root/share/polymake
 include ${ProjectTop}/support/extension.make
