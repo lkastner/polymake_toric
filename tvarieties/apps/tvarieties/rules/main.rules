@@ -1,3 +1,4 @@
+INCLUDE ideal.rules
 
 IMPORT common
 

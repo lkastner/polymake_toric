@@ -1,0 +1,3 @@
+declare property_type ideal : c++ (include => ["algebra.h"]) {
+
+}
