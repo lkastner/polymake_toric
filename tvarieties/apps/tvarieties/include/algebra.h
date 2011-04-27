@@ -11,6 +11,19 @@ public:
    Ideal() {}
 
    ~Ideal() {}
+
+Ideal(const Array<Polynomial<> >& g)
+{
+gens = g;
+}
+
+template <typename Output> friend
+Output& operator<< (GenericOutput<Output>& out, const Ideal& me)
+   {
+      out.top() << "bla\n";
+      return out.top();
+   }
+
 };
 
 // possibly do the following here:
