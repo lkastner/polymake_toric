@@ -21,8 +21,10 @@ Ideal(const Polynomial<>& p) : gens()
 template <typename Output> friend
 Output& operator<< (GenericOutput<Output>& out, const Ideal& me)
 	{
-		out.top() << me.gens[0];
-		out.top() << "\nnumber of gens: ";
+		for(Array<Polynomial<> >::const_iterator it = me.gens.begin(); it != me.gens.end(); ++it) {
+			out.top() << *it << "\n";
+		}
+		out.top() << "number of gens: ";
 		out.top() << me.gens.size();
 		return out.top();
 	}
