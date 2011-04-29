@@ -22,6 +22,8 @@ template <typename Output> friend
 Output& operator<< (GenericOutput<Output>& out, const Ideal& me)
 	{
 		out.top() << me.gens[0];
+		out.top() << "\nnumber of gens: ";
+		out.top() << me.gens.size();
 		return out.top();
 	}
 
