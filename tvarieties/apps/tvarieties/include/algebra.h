@@ -8,21 +8,22 @@ namespace polymake { namespace tvarieties {
 class Ideal {
 	Array<Polynomial<> > gens;
 public:
-   Ideal() {}
+	Ideal() {}
 
-   ~Ideal() {}
+	~Ideal() {}
 
-Ideal(const Array<Polynomial<> >& g)
-{
-gens = g;
-}
+Ideal(const Polynomial<>& p) : gens()
+	{
+		gens.resize(1);
+		gens[0] = p;
+	}
 
 template <typename Output> friend
 Output& operator<< (GenericOutput<Output>& out, const Ideal& me)
-   {
-      out.top() << "bla\n";
-      return out.top();
-   }
+	{
+		out.top() << me.gens[0];
+		return out.top();
+	}
 
 };
 

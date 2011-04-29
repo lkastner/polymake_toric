@@ -1,0 +1,7 @@
+application "tvarieties";
+$r=new Ring(qw(x y));
+($x,$y)=$r->variables;
+$p=1+$x+$y;
+print $p;
+$i = new Ideal($p);
+print $i;
