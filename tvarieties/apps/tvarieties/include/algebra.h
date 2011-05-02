@@ -2,6 +2,7 @@
 #include "polymake/Array.h"
 #include "polymake/Ring.h"
 #include "polymake/Polynomial.h"
+#include "polymake/internal/shared_object.h"
 
 namespace polymake { namespace tvarieties {
 
@@ -16,6 +17,15 @@ Ideal(const Polynomial<>& p) : gens()
 	{
 		gens.resize(1);
 		gens[0] = p;
+	}
+
+	operator() (int i) 
+	{
+		return gens[i];
+	}
+	operator() (int i) const
+	{
+		return gens[i];
 	}
 
 template <typename Output> friend
