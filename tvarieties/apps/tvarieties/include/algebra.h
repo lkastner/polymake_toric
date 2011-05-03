@@ -19,11 +19,11 @@ Ideal(const Polynomial<>& p) : gens()
 		gens[0] = p;
 	}
 
-	operator() (int i) 
+	Polynomial<> operator() (int i) 
 	{
 		return gens[i];
 	}
-	operator() (int i) const
+	Polynomial<> operator() (int i) const
 	{
 		return gens[i];
 	}
