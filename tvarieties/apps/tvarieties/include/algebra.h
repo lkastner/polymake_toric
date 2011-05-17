@@ -6,11 +6,12 @@
 
 namespace polymake { namespace tvarieties {
 
-class Ideal : Array<Polynomial<> > {
+class Ideal : public Array<Polynomial<> > {
 public:
-	Ideal() {}
+	Ideal()  {}
 
 	~Ideal() {}
+
 };
 
 // possibly do the following here:
@@ -20,4 +21,13 @@ class Divisor{};
 
 
 } }
+
+namespace pm {
+
+template <>
+struct spec_object_traits< polymake::tvarieties::Ideal >
+   : spec_object_traits<is_container> {};
+
+} // end namespace pm
+
 
