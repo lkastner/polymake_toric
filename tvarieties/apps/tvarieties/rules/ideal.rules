@@ -1,5 +1,4 @@
 declare property_type Ideal : c++ (include => ["polymake/tvarieties/algebra.h"]) {
 
-	method operator($) : lvalue_opt : c++;
 
 }
