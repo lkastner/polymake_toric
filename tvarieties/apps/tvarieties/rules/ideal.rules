@@ -1,4 +1,5 @@
 declare property_type Ideal : c++ (include => ["polymake/tvarieties/algebra.h"]) {
-
+   
+   user_method set(Int,*) : void : c++;
 
 }

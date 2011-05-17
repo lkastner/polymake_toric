@@ -12,6 +12,9 @@ public:
 
 	~Ideal() {}
 
+   void set(int i, const Polynomial<> & p) {
+      Array<Polynomial<> >::operator[](i)=p;
+   }
 };
 
 // possibly do the following here:

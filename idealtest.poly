@@ -3,8 +3,12 @@ $r=new Ring(qw(x y));
 ($x,$y)=$r->variables;
 $p=1+$x+$y;
 print $p;
-$i = new Ideal($p);
+$i = new Ideal($p,$x,$y,$x+$y);
 print $i;
 print $i->[0];
-$i->[0]=$p;
-$i->[0]=2+$x;
+$i->set(1,$p);
+foreach my $x (@$i) {
+   print "generator: ",$x,"\n";
+}
+$i->set(0,2+$x);
+$i->set(2,$x);
