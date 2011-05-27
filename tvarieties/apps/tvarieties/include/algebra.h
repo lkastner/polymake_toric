@@ -1,3 +1,4 @@
+#include "libsingular.h"
 #include "polymake/client.h"
 #include "polymake/Array.h"
 #include "polymake/Ring.h"
