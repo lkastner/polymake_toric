@@ -106,6 +106,7 @@ I_0
 loadPackage("IntegralClosure", Reload=>true)
 icFractions (P/I)
 
+loadPackage "Polyhedra"
 
 eqmat = matrix {{1,1,0,0},{1,0,1,0},{1,0,0,1},{0,1,1,0},{0,1,0,1},{0,0,1,1},{1,1,1,0},{1,1,0,1},{1,0,1,1},{0,1,1,1},{1,1,1,1}}
 v2 = transpose matrix {{1,1,1,1,1,1,0,0,0,0,0}}
@@ -116,7 +117,25 @@ vertices P2
 P3 = intersection(-eqmat,-v3)
 vertices P3
 P4 = intersection(-eqmat,-v4)
-rays P4
+
+C = posHull rays P4
+rays C
+halfspaces C
+
+P=P2+P3
+
+vertices minFace(transpose matrix {{1,1,2,2}},P4)
+halfspaces P3
+halfspaces P2
+P2
+eqmat^{1}
+for i from 0 to 10 do (
+     a = ((transpose vertices minFace(transpose eqmat^{i},P4))*(transpose eqmat^{i}))_(0,0);
+     <<" "<<a;
+     )
+
+eqmat
+
 vertices P4
 A = QQ[t]
 f2 = -t^2+t
