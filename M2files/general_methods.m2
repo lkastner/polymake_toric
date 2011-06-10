@@ -1,5 +1,14 @@
 loadPackage "Polyhedra"
 
+latbasint := method();
+latbasint(ZZ):=n-> (
+    L:=apply(0..(n-1), i -> (map(ZZ^n,ZZ^n,1))_i);
+    for j from 0 to (n-1) do
+    	L= apply(L, l-> if not l == L_j then l+L_j else l);
+	matrix toList L
+)
+
+
 findInteriorLatticeBasis = method();
 findInteriorLatticeBasis(Cone) := C ->(
      M := rays C;
