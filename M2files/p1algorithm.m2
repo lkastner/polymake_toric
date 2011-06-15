@@ -1,9 +1,12 @@
+restart
+load "/home/fenn/lkastner/working_copies/Goettingen-2011/Polyhedra/Polyhedra.m2"
 loadPackage "Polyhedra"
 
 getPDivisor := method()
 getPDivisor(Matrix, List) := (A,L)->(
      factors := apply(L, j->factor j);
      points := unique apply(flatten apply(factors, f-> toList f), l->l#0);
+     <<factors<<endl;
      definingVectors := select(apply(points, p->{apply(factors, l->powerCont(l,p)),p}), v-> v#1!=-1);
      v := apply(L, l->sum degree l);
      definingVectors = flatten {definingVectors, {{-v,1/t}}};
@@ -33,6 +36,22 @@ f3 = 2*t^3-3*t^2+t
 f4 = -6*t^4+12*t^3-7*t^2+t
 L = {f2,f2,f2,f2,f2,f2,f3,f3,f3,f3,f4}
 PD = getPDivisor(eqmat,L)
+
+
+powerCont(factor f2,t)
+P = sum apply(PD, l->l#0)
+PD
+P = PD#0#0+PD#1#0
+P = P + PD#2#0
+P = P + PD#3#0
+P = P + PD#4#0
+tailCone P
+vertices P
+rays P
+F = normalFan P
+PD#2#0
+rays F
+
 apply(PD, p->rays p#0)
 evaluate(PD,transpose matrix {{1,1,1,0}})
 sum degree f2
