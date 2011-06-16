@@ -2,24 +2,25 @@ restart
 load "/home/fenn/lkastner/working_copies/Goettingen-2011/Polyhedra/Polyhedra.m2"
 loadPackage "Polyhedra"
 
+powerCount := method()
+powerCount(Divide, RingElement) := (f,g) -> (
+     powerCount(f#0,g) - powerCount(f#1,g)
+     )
+powerCount(Product, RingElement):= (f,g) -> (
+     sum apply(select(toList f, l->l#0==g), l->l#1)
+     )
+
 getPDivisor := method()
 getPDivisor(Matrix, List) := (A,L)->(
      factors := apply(L, j->factor j);
-     points := unique apply(flatten apply(factors, f-> toList f), l->l#0);
+     points := unique apply(flatten flatten apply(factors, l->{toList l#0,toList l#1}),p->p#0);
      <<factors<<endl;
-     definingVectors := select(apply(points, p->{apply(factors, l->powerCont(l,p)),p}), v-> v#1!=-1);
-     v := apply(L, l->sum degree l);
-     definingVectors = flatten {definingVectors, {{-v,1/t}}};
-     << v << endl;
+     <<points<<endl;
+     definingVectors := select(apply(points, p->{apply(factors, l->powerCount(l,p)),p}), v-> v#1!=-1);
+     --v := apply(L, l->sum degree l);
+     --definingVectors = flatten {definingVectors, {{-v,1/t}}};
+     --<< v << endl;
      apply(definingVectors, v -> {intersection(-A,transpose matrix{v#0}),v#1})
-     )
-
-powerCont := method()
-powerCont(Divide, RingElement) := (f,g) -> (
-     powerCont(f#0,g) - powerCont(f#1,g)
-     )
-powerCont(Product, RingElement):= (f,g) -> (
-     sum apply(select(toList f, l->l#0==g), l->l#1)
      )
 
 evaluate := method();
@@ -29,34 +30,17 @@ evaluate(List, Matrix) := (L, m) -> (
 
 
 
-A = QQ[t]
+A = QQ[x,y]
 eqmat = matrix {{1,1,0,0},{1,0,1,0},{1,0,0,1},{0,1,1,0},{0,1,0,1},{0,0,1,1},{1,1,1,0},{1,1,0,1},{1,0,1,1},{0,1,1,1},{1,1,1,1}}
-f2 = -t^2+t
-f3 = 2*t^3-3*t^2+t
-f4 = -6*t^4+12*t^3-7*t^2+t
+f2 = -(x/y)^2+(x/y)
+f3 = 2*(x/y)^3-3*(x/y)^2+(x/y)
+f4 = -6*(x/y)^4+12*(x/y)^3-7*(x/y)^2+(x/y)
 L = {f2,f2,f2,f2,f2,f2,f3,f3,f3,f3,f4}
+
 PD = getPDivisor(eqmat,L)
 
 
-powerCont(factor f2,t)
-P = sum apply(PD, l->l#0)
-PD
-P = PD#0#0+PD#1#0
-P = P + PD#2#0
-P = P + PD#3#0
-P = P + PD#4#0
-tailCone P
-vertices P
-rays P
-F = normalFan P
-PD#2#0
-rays F
+evaluate(PD,transpose matrix{{1,1,0,0}})
 
-apply(PD, p->rays p#0)
-evaluate(PD,transpose matrix {{1,1,1,0}})
-sum degree f2
-denominator (1/t)
-denominator t
-class(1/t)
-1/(t-t^2)
-powerCont(f2,(1/t))
+rayList = unique flatten apply(PD, p-> rays normalFan p#0)
+verticesList = apply(PD, p->vertices p#0)
