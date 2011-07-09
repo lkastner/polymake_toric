@@ -49,3 +49,29 @@ evaluate(PD,transpose matrix{{1,1,0,0}})
 
 rayList = unique flatten apply(PD, p-> rays normalFan p#0)
 verticesList = apply(PD, p->vertices p#0)
+
+
+A = QQ[t]
+f2 = t^6*(-t+t^2)
+f3 = (t-1)^2*(2*t^3-3*t^2+t)
+f4 = -6*t^4+12*t^3-7*t^2+t
+L={f2,f3,f4}
+
+decomp = method()
+decomp(List):=L -> (
+     g := lcm L;
+     << g << endl;
+     g = g/(gcd(g, (jacobian ideal g)_(0,0)));
+     << g << endl;
+     n := #L;
+     subs := select(subsets n, l->#l>0);
+     gcdList := apply(subs, s-> {s,gcd(L_s)});
+     FIList := apply(select(gcdList, g-> #g#0<n), s-> {s#0, s#1/(lcm apply(select(gcdList, g -> (#g#0 == (#s#0)+1) and (#((set g#0)*(set s#0)) == #s#0)), g->g#1))});
+     <<FIList<<endl;
+     apply(0..(n-1), apply( FIList, f -> i
+     )
+decomp L
+subs = select(subsets(3), l-> #l>0)
+gcdlist = apply(subs, s->{set s,gcd(L_s)})
+select(gcdlist, g-> #(g#0)==2 and #(g#0*(set {1}))==1)
+L_{1,2}
