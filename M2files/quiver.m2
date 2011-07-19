@@ -10,6 +10,11 @@ getFan(ZZ, List) := (n,L) -> (
      rays := entries Cir;
      )
 
+isCycleFree = method();
+isCycleFree(ZZ,List) := (n,L) -> (
+     
+     )
+
 {1,0,0}-{0,0,2}
 l = (3,2)
 flatten {toList (l#0:0),1,toList ((10-l#0):0)}
