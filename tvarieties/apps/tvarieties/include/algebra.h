@@ -17,7 +17,15 @@ class Ideal : public Array<Polynomial<> > {
 
    void create_singRing() 
    {
-      
+      const Ring<>& basering = get_ring();
+      int nvars = basering.n_vars();
+      if(nvars == 0) throw std::runtime_error("Given ring is not a polynomial ring.");
+      char **n=(char**)singular::omalloc(nvars*sizeof(char*));
+      for(int i=0; i<nvars; i++)
+      {
+         n[i] = singular::omStrDup(basering.names()[i].c_str());
+      }
+      singRing = singular::rDefault(0,nvars,n);
    }
 
    void create_singIdeal() 
