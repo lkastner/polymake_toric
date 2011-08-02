@@ -20,6 +20,23 @@ class Ideal : public Array<Polynomial<> > {
       
    }
 
+   void create_singIdeal() 
+   {
+      int npoly = this->size();
+      if(!npoly)
+         throw std::runtime_error("Ideal has no generators.");
+      if(singRing == NULL)
+         create_singRing();
+
+      singular::rChangeCurrRing(singRing);
+
+      Array<singular::poly> polynomials(npoly);
+
+      Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*this);
+      for(Entire<Array<singular::poly> >::iterator poly=entire(polynomials); !poly.at_end(); ++mypoly, ++poly) {
+         
+
+      }
 public:
 	Ideal()  {}
 
@@ -44,6 +61,9 @@ public:
       Ideal result = i1;
       result+=i2;
       return result;
+   }
+
+
    }
 };
 
