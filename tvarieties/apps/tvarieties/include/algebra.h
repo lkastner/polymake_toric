@@ -14,6 +14,7 @@ namespace polymake { namespace tvarieties {
 
 class Ideal : public Array<Polynomial<> > {
    singular::ring singRing;
+   
 
    void create_singRing() 
    {
@@ -42,9 +43,13 @@ class Ideal : public Array<Polynomial<> > {
 
       Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*this);
       for(Entire<Array<singular::poly> >::iterator poly=entire(polynomials); !poly.at_end(); ++mypoly, ++poly) {
-         
-
+         *poly=singular::p_Init(singRing);
+         // foreach term add term in to singular polynomial
       }
+
+      // create singular ideal from polynomials
+      // set ideal to not yet existing private variable
+   }
 public:
 	Ideal()  {}
 
@@ -71,7 +76,12 @@ public:
       return result;
    }
 
-
+   Ideal groebner() 
+   {
+      // check if singIdeal exists
+      // set singulardefaultring
+      // call groebner
+      // create polymake ideal maybe with singRing and singIdeal
    }
 };
 
