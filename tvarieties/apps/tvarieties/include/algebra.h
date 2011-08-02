@@ -44,7 +44,7 @@ class Ideal : public Array<Polynomial<> > {
       Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*this);
       for(Entire<Array<singular::poly> >::iterator poly=entire(polynomials); !poly.at_end(); ++mypoly, ++poly) {
          *poly=singular::p_Init(singRing);
-         // foreach term add term in to singular polynomial
+         // foreach term in *mypoly add term to singular polynomial *poly
       }
 
       // create singular ideal from polynomials
