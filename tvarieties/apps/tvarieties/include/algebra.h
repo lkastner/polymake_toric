@@ -1,9 +1,14 @@
-//#include "libsingular.h"
 #include "polymake/client.h"
 #include "polymake/Array.h"
 #include "polymake/Ring.h"
 #include "polymake/Polynomial.h"
 #include "polymake/internal/shared_object.h"
+
+namespace sigular {
+
+#include <libsingular.h>
+
+}
 
 namespace polymake { namespace tvarieties {
 
