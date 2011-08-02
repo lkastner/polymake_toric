@@ -4,7 +4,7 @@
 #include "polymake/Polynomial.h"
 #include "polymake/internal/shared_object.h"
 
-namespace sigular {
+namespace singular {
 
 #include <libsingular.h>
 
@@ -13,7 +13,7 @@ namespace sigular {
 namespace polymake { namespace tvarieties {
 
 class Ideal : public Array<Polynomial<> > {
-   ring singRing;
+   singular::ring singRing;
 
    void create_singRing() 
    {
