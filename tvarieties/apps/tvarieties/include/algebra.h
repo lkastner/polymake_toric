@@ -1,4 +1,4 @@
-#include "libsingular.h"
+//#include "libsingular.h"
 #include "polymake/client.h"
 #include "polymake/Array.h"
 #include "polymake/Ring.h"
@@ -18,17 +18,17 @@ public:
       Array<Polynomial<> >::operator[](i)=p;
    }
 
-   const Ring<> & get_ring(){
+   const Ring<> & get_ring() const {
       return basering;
    }
 
    void operator+=(const Ideal I) {
-      if(basering != get_ring(I)) throw std::runtime_error("Ideals of different rings.");
+      if(basering != I.get_ring()) throw std::runtime_error("Ideals of different rings.");
       append(I.size(),I.begin());
    }
 
    friend Ideal operator+(const Ideal i1, const Ideal i2) {
-      if(get_ring(i1) != get_ring(i2)) throw std::runtime_error("Ideals of different rings.");
+      if(i1.get_ring() != i2.get_ring()) throw std::runtime_error("Ideals of different rings.");
       Ideal result(i1);
       result+=i2;
       return result;
