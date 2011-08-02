@@ -8,7 +8,7 @@
 namespace polymake { namespace tvarieties {
 
 class Ideal : public Array<Polynomial<> > {
-   Ring<> basering;
+   //Ring<> basering;
 public:
 	Ideal()  {}
 
@@ -18,18 +18,19 @@ public:
       Array<Polynomial<> >::operator[](i)=p;
    }
 
-   const Ring<> & get_ring() const {
-      return basering;
+   const Ring<>& get_ring() const {
+      return (this->empty() ? Ring<>() : this->front().get_ring());
    }
 
-   void operator+=(const Ideal I) {
-      if(basering != I.get_ring()) throw std::runtime_error("Ideals of different rings.");
+   Ideal& operator+=(const Ideal& I) {
+      if(this->get_ring() != I.get_ring()) throw std::runtime_error("Ideals of different rings.");
       append(I.size(),I.begin());
+      return static_cast<Ideal&>(*this);
    }
 
-   friend Ideal operator+(const Ideal i1, const Ideal i2) {
-      if(i1.get_ring() != i2.get_ring()) throw std::runtime_error("Ideals of different rings.");
-      Ideal result(i1);
+   friend Ideal operator+(const Ideal& i1, const Ideal& i2) {
+      if(i1.get_ring() != i2.get_ring()) throw std::runtime_error("Ideals of different rings.x");
+      Ideal result = i1;
       result+=i2;
       return result;
    }

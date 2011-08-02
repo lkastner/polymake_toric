@@ -19,13 +19,14 @@
 #include "polymake/tvarieties/algebra.h"
 namespace polymake { namespace tvarieties {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
-   Class4perl("Polymake::tvarieties::Ideal", Ideal);
-
    template <typename T0>
    FunctionInterface4perl( new, T0 ) {
       WrapperReturnNew(T0, () );
    };
 
    FunctionInstance4perl(new, Ideal);
+   OperatorInstance4perl(BinaryAssign_add, perl::Canned< Ideal >, perl::Canned< const Ideal >);
+   OperatorInstance4perl(Binary_add, perl::Canned< const Ideal >, perl::Canned< const Ideal >);
+   Class4perl("Polymake::tvarieties::Ideal", Ideal);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

@@ -1,4 +1,4 @@
-declare property_type Ideal : c++ (include => ["polymake/tvarieties/algebra.h"]) {
+declare property_type Ideal : c++ (include => ["polymake/tvarieties/algebra.h"], operators => '+ +=') {
    
    user_method set(Int,*) : void : c++;
 

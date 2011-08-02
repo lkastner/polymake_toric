@@ -21,14 +21,6 @@
 #include "polymake/Rational.h"
 namespace polymake { namespace tvarieties {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
-   template <typename T0, typename T1>
-   FunctionInterface4perl( set_int_X_f17, T0,T1 ) {
-      perl::Value arg0(stack[0]), arg1(stack[1]), arg2(stack[2]);
-      WrapperReturnVoid( arg0.get<T0>().set(arg1.get<int>(), arg2.get<T1>()) );
-   };
-
-   FunctionInstance4perl(set_int_X_f17, perl::Canned< Ideal >, perl::Canned< const Polynomial< Rational, int > >);
-   FunctionInstance4perl(set_int_X_f17, perl::Canned< Ideal >, perl::Canned< const Monomial< Rational, int > >);
 
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 
