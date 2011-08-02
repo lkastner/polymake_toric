@@ -8,7 +8,13 @@
 namespace polymake { namespace tvarieties {
 
 class Ideal : public Array<Polynomial<> > {
-   //Ring<> basering;
+   ring singRing;
+
+   void create_singRing() 
+   {
+      
+   }
+
 public:
 	Ideal()  {}
 
