@@ -27,8 +27,22 @@ quiverOfSections(Matrix, List) := (rays, lb) -> (
      n := #lb;
      A := subsets(n,2);
      << A << endl;
-     out := flatten apply(A, p -> {{toricGlobalSections(rays,lb#(p#1)-lb#(p#0)),(p#0,p#1)},{toricGlobalSections(rays,lb#(p#0)-lb#(p#1)),(p#1,p#0)}});
-     select(out, o -> #(o#0) >0)
+     arrows := flatten apply(A, p -> {{toricGlobalSections(rays,lb#(p#1)-lb#(p#0)),(p#0,p#1)},{toricGlobalSections(rays,lb#(p#0)-lb#(p#1)),(p#1,p#0)}});
+     arrows = select(arrows, o -> #(o#0) >0);
+     arrows = flatten apply(arrows, a -> apply(a#0, l-> {l, a#1}));
+     indec := {};
+     for cs from 0 to n-1 do (
+	  for ts from 0 to n-1 do (
+	       if not cs == ts then (
+		    ct := select(arrows, a -> a#1#0 == cs and a#1#1 == ts);
+		    <<ct<<endl;
+		    indec = flatten {indec, ct};
+		    
+			 
+		    )
+	       )
+	  );
+     indec
      )
 
 end
