@@ -26,23 +26,23 @@ quiverOfSections = method();
 quiverOfSections(Matrix, List) := (rays, lb) -> (
      n := #lb;
      A := subsets(n,2);
-     << A << endl;
+     --<< A << endl;
      arrows := flatten apply(A, p -> {{toricGlobalSections(rays,lb#(p#1)-lb#(p#0)),(p#0,p#1)},{toricGlobalSections(rays,lb#(p#0)-lb#(p#1)),(p#1,p#0)}});
      arrows = select(arrows, o -> #(o#0) >0);
      arrows = flatten apply(arrows, a -> apply(a#0, l-> {l, a#1}));
-     indec := {};
-     for cs from 0 to n-1 do (
-	  for ts from 0 to n-1 do (
-	       if not cs == ts then (
-		    ct := select(arrows, a -> a#1#0 == cs and a#1#1 == ts);
-		    <<ct<<endl;
-		    indec = flatten {indec, ct};
-		    
-			 
-		    )
-	       )
-	  );
-     indec
+     interred(n, arrows)
+     )
+
+interred = method();
+interred(ZZ, List) := (n,L) ->(
+     --<< L << endl;
+     sources := apply(n, i-> select(L, l-> l#1#0 == i));
+     targets := apply(n, i-> select(L, l-> l#1#1 == i));
+     --<< sources << endl << targets << endl;
+     eliminators := flatten flatten apply(n, k ->
+     apply(sources#k, s-> apply(targets#k, t -> {s#0+t#0, (t#1#0, s#1#1)}))
+     );
+     select(L, l -> #select(eliminators, e -> e#0 == l#0 and e#1 == l#1) == 0)
      )
 
 end
@@ -50,7 +50,7 @@ end
 restart
 load "quiver.m2"
 
--- Example of article by Greg and Alistair.
+-- Example 3.6 of article by Greg and Alistair.
 M = matrix {{1,0,-1,0},{0,1,1,-1}}
 
 L = {{{0,0,0,0}},{{1,0,0,0}},{{0,0,0,1}}}
@@ -58,6 +58,12 @@ L = apply(L, l->transpose matrix l)
 
 quiverOfSections(M,L)
 
+-- Example 3.7
+M = matrix{{1,0,-1,0},{0,1,2,-1}}
+L={{{0,0,0,0}},{{1,0,0,0}},{{0,0,0,1}},{{1,0,0,1}}};
+L = apply(L, l->transpose matrix l)
+
+quiverOfSections(M,L)
 
 
 -- Junk at the end.
