@@ -30,7 +30,7 @@ quiverOfSections(Matrix, List) := (rays, lb) -> (
      arrows := flatten apply(A, p -> {{toricGlobalSections(rays,lb#(p#1)-lb#(p#0)),(p#0,p#1)},{toricGlobalSections(rays,lb#(p#0)-lb#(p#1)),(p#1,p#0)}});
      arrows = select(arrows, o -> #(o#0) >0);
      arrows = flatten apply(arrows, a -> apply(a#0, l-> {l, a#1}));
-     interred(n, arrows)
+     (n, apply(interred(n, arrows), a -> a#1))
      )
 
 interred = method();
@@ -45,6 +45,16 @@ interred(ZZ, List) := (n,L) ->(
      select(L, l -> #select(eliminators, e -> e#0 == l#0 and e#1 == l#1) == 0)
      )
 
+indeg = method();
+indeg(ZZ, List) := (i, L) -> #select(L, l->l#1 == i);
+
+outdeg = method();
+outdeg(ZZ, List) := (i, L) -> #select(L, l->l#0 == i);
+
+canonicalWeight = method();
+canonicalWeight(ZZ, List) := (n,L) -> apply(n, i -> outdeg(i, L)-indeg(i,L))
+     
+
 end
 
 restart
@@ -56,15 +66,25 @@ M = matrix {{1,0,-1,0},{0,1,1,-1}}
 L = {{{0,0,0,0}},{{1,0,0,0}},{{0,0,0,1}}}
 L = apply(L, l->transpose matrix l)
 
-quiverOfSections(M,L)
+Q = quiverOfSections(M,L)
+indeg(1,Q#1)
+
+canonicalWeight Q
 
 -- Example 3.7
 M = matrix{{1,0,-1,0},{0,1,2,-1}}
 L={{{0,0,0,0}},{{1,0,0,0}},{{0,0,0,1}},{{1,0,0,1}}};
 L = apply(L, l->transpose matrix l)
 
-quiverOfSections(M,L)
+incidenceMatrix quiverOfSections(M,L)
 
+-- Example 5.8
+M = transpose matrix{{1,0,0},{0,1,0},{-1,-1,-1},{0,1,1},{1,0,1}}
+L={{{0,0,0,0,0}},{{0,1,0,0,0}},{{0,0,1,0,0}},{{0,1,1,0,0}},{{0,0,2,0,0}},{{0,1,2,0,0}}};
+L = apply(L, l->transpose matrix l)
+
+Q = quiverOfSections(M,L)
+canonicalWeight Q
 
 -- Junk at the end.
 
