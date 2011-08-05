@@ -105,6 +105,19 @@ P = flowPolytope(Q,canonicalWeight Q)
 vertices P
 halfspaces P
 
+-- Example 3.7 modified
+M = matrix{{1,0,-1,0},{0,1,2,-1}}
+L={{{0,0,0,0}},{{1,0,0,0}},{{0,1,0,0}},{{0,0,1,0}},{{0,0,0,1}}};
+L = apply(L, l->transpose matrix l)
+
+Q = quiverOfSections(M,L)
+
+P = flowPolytope(Q,canonicalWeight Q)
+vertices P
+halfspaces P
+hyperplanes P
+dim P
+
 -- Example 5.8
 M = transpose matrix{{1,0,0},{0,1,0},{-1,-1,-1},{0,1,1},{1,0,1}}
 L={{{0,0,0,0,0}},{{0,1,0,0,0}},{{0,0,1,0,0}},{{0,1,1,0,0}},{{0,0,2,0,0}},{{0,1,2,0,0}}};
