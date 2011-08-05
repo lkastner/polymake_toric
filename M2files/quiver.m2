@@ -5,6 +5,23 @@ incidenceMatrix(ZZ, List) := (n, L) -> (
      transpose matrix apply(L, l -> flatten {toList (l#0:0),1,toList ((n-l#0-1):0)}-flatten {toList (l#1:0),1,toList ((n-l#1-1):0)})
      )
 
+flowPolytope = method();
+flowPolytope(Sequence, Matrix) := (Q, w) -> (
+     EQ := incidenceMatrix Q;
+     n := #(Q#1);
+     inEQ := map(ZZ^n, ZZ^n, 1);
+     v := transpose matrix {toList (n:0)};
+     --<< v << endl;
+     P := intersection(-inEQ,v,EQ,w);
+     M := gens kernel EQ | transpose matrix {toList (n:1)}; 
+     --<< M << endl;
+     m := numColumns M -1;
+     L := apply(entries transpose vertices P, p -> gens kernel (- transpose matrix {p} | M));
+     L = apply(L, l -> transpose matrix {apply(flatten entries l, e -> e / l_(0,0))});
+     rl := toList (1..m);
+     convexHull apply(L, l -> l^rl)
+     )
+
 getFan = method();
 getFan(ZZ, List) := (n,L) -> (
      Cir := gens kernel incidenceMatrix(n, L);
@@ -52,7 +69,7 @@ outdeg = method();
 outdeg(ZZ, List) := (i, L) -> #select(L, l->l#0 == i);
 
 canonicalWeight = method();
-canonicalWeight(ZZ, List) := (n,L) -> apply(n, i -> outdeg(i, L)-indeg(i,L))
+canonicalWeight(ZZ, List) := (n,L) -> transpose matrix {apply(n, i -> outdeg(i, L)-indeg(i,L))}
      
 
 end
@@ -71,12 +88,21 @@ indeg(1,Q#1)
 
 canonicalWeight Q
 
+P = flowPolytope(Q,canonicalWeight Q)
+vertices P
+F = normalFan P
+
+gens kernel incidenceMatrix Q
+
 -- Example 3.7
 M = matrix{{1,0,-1,0},{0,1,2,-1}}
 L={{{0,0,0,0}},{{1,0,0,0}},{{0,0,0,1}},{{1,0,0,1}}};
 L = apply(L, l->transpose matrix l)
 
-incidenceMatrix quiverOfSections(M,L)
+Q = quiverOfSections(M,L)
+
+P = flowPolytope(Q,canonicalWeight Q)
+vertices P
 
 -- Example 5.8
 M = transpose matrix{{1,0,0},{0,1,0},{-1,-1,-1},{0,1,1},{1,0,1}}
