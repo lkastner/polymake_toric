@@ -103,6 +103,7 @@ Q = quiverOfSections(M,L)
 
 P = flowPolytope(Q,canonicalWeight Q)
 vertices P
+halfspaces P
 
 -- Example 5.8
 M = transpose matrix{{1,0,0},{0,1,0},{-1,-1,-1},{0,1,1},{1,0,1}}
