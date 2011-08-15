@@ -67,8 +67,6 @@ public:
       throw std::runtime_error("Not a singular ideal");
    }
 
-   static Ideal& upgrade(const Ideal& J);
-
 };
 
 
