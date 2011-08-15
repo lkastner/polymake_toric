@@ -3,6 +3,7 @@
 #include "polymake/Ring.h"
 #include "polymake/Polynomial.h"
 #include "polymake/internal/shared_object.h"
+#include "polymake/tvarieties/algebra.h"
 
 namespace singular {
 
@@ -29,14 +30,15 @@ static singular::number convert_Rational_to_number(const Rational& r)
    return singular::nlInit2gmp(num,denom);
 }
 
-class Ideal : public Array<Polynomial<> > {
+class SingularWrapper_impl : public SingularWrapper {
+private:
    singular::ring singRing;
-   singular::ideal I;
-   
-      
+   singular::ideal singIdeal;
+   const Ideal* polymakeIdeal; 
+
    void create_singRing() 
    {
-      const Ring<>& basering = get_ring();
+      const Ring<>& basering = polymakeIdeal->get_ring();
       int nvars = basering.n_vars();
       if(nvars == 0) throw std::runtime_error("Given ring is not a polynomial ring.");
       char **n=(char**)singular::omalloc(nvars*sizeof(char*));
@@ -49,7 +51,7 @@ class Ideal : public Array<Polynomial<> > {
 
    void create_singIdeal() 
    {
-      int npoly = this->size();
+      int npoly = polymakeIdeal->size();
       if(!npoly)
          throw std::runtime_error("Ideal has no generators.");
       if(singRing == NULL)
@@ -57,9 +59,9 @@ class Ideal : public Array<Polynomial<> > {
 
       singular::rChangeCurrRing(singRing);
 
-      I = singular::idInit(npoly,1);
+      singIdeal = singular::idInit(npoly,1);
       int j = 0;
-      for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*this); !mypoly.at_end(); ++mypoly, ++j) {
+      for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*polymakeIdeal); !mypoly.at_end(); ++mypoly, ++j) {
          singular::poly p = singular::p_ISet(0,singRing);
          
          for(Entire<Polynomial<>::term_hash>::const_iterator term = entire(mypoly->get_terms()); !term.at_end(); ++term)
@@ -74,67 +76,47 @@ class Ideal : public Array<Polynomial<> > {
             singular::p_Setm(monomial,singRing);
             p = singular::p_Add_q(p,monomial,singRing);
          }
-         I->m[j]=p;
+         singIdeal->m[j]=p;
       }
    }
 public:
-   Ideal() : Array<Polynomial<> >() 
+   SingularWrapper_impl() 
    {
       singRing=NULL;
-      I=NULL;
+      singIdeal=NULL;
    }
-
-	~Ideal() {}
-
-   void set(int i, const Polynomial<> & p) {
-      Array<Polynomial<> >::operator[](i)=p;
-   }
-
-   const Ring<>& get_ring() const {
-      return (this->empty() ? Ring<>() : this->front().get_ring());
-   }
-
-   Ideal& operator+=(const Ideal& I) {
-      if(this->get_ring() != I.get_ring()) throw std::runtime_error("Ideals of different rings.");
-      append(I.size(),I.begin());
-      return static_cast<Ideal&>(*this);
-   }
-
-   friend Ideal operator+(const Ideal& i1, const Ideal& i2) {
-      if(i1.get_ring() != i2.get_ring()) throw std::runtime_error("Ideals of different rings.x");
-      Ideal result = i1;
-      result+=i2;
-      return result;
-   }
-
-friend void groebner(const Ideal& I) 
+   
+   SingularWrapper_impl(const Ideal* J) 
    {
-      if(I.I==NULL) {
-         Ideal J = const_cast<Ideal&>(I);
-         J.create_singIdeal();
+      singRing=NULL;
+      singIdeal=NULL;
+      polymakeIdeal = J;
+      create_singRing();
+      create_singIdeal();
+      cout << "DONE CREATING singular object" << endl;
+   }
+
+//	~SingularWrapper_impl() {}
+
+   void groebner() 
+   {
+      if(singIdeal==NULL) {
+         create_singIdeal();
       }
+      throw std::runtime_error("created singIdeal");
       // check if singIdeal exists
       // set singulardefaultring
       // call groebner
       // create polymake ideal maybe with singRing and singIdeal
    }
+
 };
 
-
-// possibly do the following here:
-
-class PrimeDivisor{};
-class Divisor{};
-
+SingularWrapper* SingularWrapper::create(const Ideal* J) 
+{
+   return static_cast<SingularWrapper*>(new SingularWrapper_impl(J));
+}
 
 } }
-
-namespace pm {
-
-template <>
-struct spec_object_traits< polymake::tvarieties::Ideal >
-   : spec_object_traits<is_container> {};
-
-} // end namespace pm
 
 
