@@ -14,8 +14,9 @@ namespace polymake { namespace tvarieties {
 
 class Ideal : public Array<Polynomial<> > {
    singular::ring singRing;
+   singular::ideal I;
    
-
+      
    void create_singRing() 
    {
       const Ring<>& basering = get_ring();
@@ -39,19 +40,32 @@ class Ideal : public Array<Polynomial<> > {
 
       singular::rChangeCurrRing(singRing);
 
-      Array<singular::poly> polynomials(npoly);
-
-      Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*this);
-      for(Entire<Array<singular::poly> >::iterator poly=entire(polynomials); !poly.at_end(); ++mypoly, ++poly) {
-         *poly=singular::p_Init(singRing);
-         // foreach term in *mypoly add term to singular polynomial *poly
+      I = idInit(npoly,1);
+      int j = 0;
+      for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*this); !mypoly.at_end(); ++mypoly, ++j) {
+         singular::poly p = singular::p_ISet(0,singRing);
+         
+         for(typename Entire<Polynomial<>::term_hash>::const_iterator term = entire(*mypoly.get_terms()); !term.at_end(); ++term)
+         {
+            singular::poly monomial = singular::p_Init(singRing);
+            singular::p_SetCoeff(monomial,convert_Rational_to_number(term->second()),singRing);
+            
+            for(int k = 0; k<term->first.dim(); k++)
+            {
+               singular::p_SetExp(monomial,k+1,term->first[k],singRing);
+            }
+            singular::p_Setm(monomial,singRing);
+            p = singular::p_Add_q(p,monomial,singRing);
+         }
+         I.m[j]=p;
       }
-
-      // create singular ideal from polynomials
-      // set ideal to not yet existing private variable
    }
 public:
-	Ideal()  {}
+   Ideal() : Array<Polynomial<> >() 
+   {
+      singRing=NULL;
+      I=NULL;
+   }
 
 	~Ideal() {}
 
@@ -84,6 +98,16 @@ public:
       // create polymake ideal maybe with singRing and singIdeal
    }
 };
+
+static Rational& convert_number_to_Rational(singular::number* x, singular::ring* ring)
+{
+   return Rational((singular::nlGetNumerator(x,ring)).z,(singular::nlGetDenom(x,ring)).z);
+}
+
+static singular::number* convert_Rational_to_number(Rational& r)
+{
+   return singular::nlInit2gmp(r.numerator().get_rep(),r.denominator().get_rep());
+}
 
 // possibly do the following here:
 
