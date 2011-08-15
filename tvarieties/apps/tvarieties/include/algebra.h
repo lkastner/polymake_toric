@@ -107,10 +107,12 @@ public:
       return result;
    }
 
-   Ideal groebner() 
+friend void groebner(const Ideal& I) 
    {
-      if(I==NULL)
-         create_singIdeal();
+      if(I.I==NULL) {
+         Ideal J = const_cast<Ideal&>(I);
+         J.create_singIdeal();
+      }
       // check if singIdeal exists
       // set singulardefaultring
       // call groebner
