@@ -40,7 +40,7 @@ class Ideal : public Array<Polynomial<> > {
 
       singular::rChangeCurrRing(singRing);
 
-      I = idInit(npoly,1);
+      I = singular::idInit(npoly,1);
       int j = 0;
       for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*this); !mypoly.at_end(); ++mypoly, ++j) {
          singular::poly p = singular::p_ISet(0,singRing);
