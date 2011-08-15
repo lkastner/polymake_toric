@@ -12,6 +12,23 @@ namespace singular {
 
 namespace polymake { namespace tvarieties {
 
+static Rational& convert_number_to_Rational(singular::number* x, singular::ring* ring)
+{
+   Rational r((singular::nlGetNumerator(*x,*ring))->z,(singular::nlGetDenom(*x,*ring))->z);
+   return r;
+}
+
+static singular::number convert_Rational_to_number(const Rational& r)
+{
+   mpz_t num, denom;
+   mpz_init(num);
+   mpz_set(num,numerator(r).get_rep());
+   mpz_init(denom);
+   mpz_set(denom,denominator(r).get_rep());
+
+   return singular::nlInit2gmp(num,denom);
+}
+
 class Ideal : public Array<Polynomial<> > {
    singular::ring singRing;
    singular::ideal I;
@@ -45,10 +62,10 @@ class Ideal : public Array<Polynomial<> > {
       for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*this); !mypoly.at_end(); ++mypoly, ++j) {
          singular::poly p = singular::p_ISet(0,singRing);
          
-         for(typename Entire<Polynomial<>::term_hash>::const_iterator term = entire(*mypoly.get_terms()); !term.at_end(); ++term)
+         for(Entire<Polynomial<>::term_hash>::const_iterator term = entire(mypoly->get_terms()); !term.at_end(); ++term)
          {
             singular::poly monomial = singular::p_Init(singRing);
-            singular::p_SetCoeff(monomial,convert_Rational_to_number(term->second()),singRing);
+            singular::p_SetCoeff(monomial,convert_Rational_to_number(term->second),singRing);
             
             for(int k = 0; k<term->first.dim(); k++)
             {
@@ -57,7 +74,7 @@ class Ideal : public Array<Polynomial<> > {
             singular::p_Setm(monomial,singRing);
             p = singular::p_Add_q(p,monomial,singRing);
          }
-         I.m[j]=p;
+         I->m[j]=p;
       }
    }
 public:
@@ -90,8 +107,12 @@ public:
       return result;
    }
 
-   Ideal groebner() 
+friend void groebner(const Ideal& I) 
    {
+      if(I.I==NULL) {
+         Ideal J = const_cast<Ideal&>(I);
+         J.create_singIdeal();
+      }
       // check if singIdeal exists
       // set singulardefaultring
       // call groebner
@@ -99,15 +120,6 @@ public:
    }
 };
 
-static Rational& convert_number_to_Rational(singular::number* x, singular::ring* ring)
-{
-   return Rational((singular::nlGetNumerator(x,ring)).z,(singular::nlGetDenom(x,ring)).z);
-}
-
-static singular::number* convert_Rational_to_number(Rational& r)
-{
-   return singular::nlInit2gmp(r.numerator().get_rep(),r.denominator().get_rep());
-}
 
 // possibly do the following here:
 
