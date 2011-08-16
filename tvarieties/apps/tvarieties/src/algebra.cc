@@ -1,8 +1,3 @@
-#include "polymake/client.h"
-#include "polymake/Array.h"
-#include "polymake/Ring.h"
-#include "polymake/Polynomial.h"
-#include "polymake/internal/shared_object.h"
 #include "polymake/tvarieties/algebra.h"
 
 #include <libsingular.h>
@@ -12,15 +7,26 @@ namespace polymake { namespace tvarieties {
 
 int singular_initialized = 0;
 
-void init_singular(const std::string& path) {
+void singular_error_handler(const char* error)
+{
+   throw std::runtime_error(error);
+}
+
+void init_singular(const std::string& path) 
+{
    if(singular_initialized)
+   {
+      cout << "Singular has already been initialized, restart polymake to retry" << endl;
       return;
+   }
+   
    std::string p = path+"/lib/libsingular.so";
    char* cpath = omStrDup(p.c_str());
    siInit(cpath);
+   WerrorS_callback = &singular_error_handler;
+   
+   cout << "init_singular done" << endl;
    singular_initialized = 1;
-
-   //throw std::runtime_error("Could not initialize singular");
 }
 
 Rational convert_number_to_Rational(number* x, ring* ring)
@@ -50,7 +56,8 @@ private:
    {
       const Ring<>& basering = polymakeIdeal->get_ring();
       int nvars = basering.n_vars();
-      if(nvars == 0) throw std::runtime_error("Given ring is not a polynomial ring.");
+      if(nvars == 0) 
+         throw std::runtime_error("Given ring is not a polynomial ring.");
       char **n=(char**)omalloc(nvars*sizeof(char*));
       for(int i=0; i<nvars; i++)
       {
@@ -119,7 +126,16 @@ public:
       singIdeal=i;
    }
 
-//	~SingularWrapper_impl() {}
+	~SingularWrapper_impl() 
+   {
+      cout << "SingularWrapper_impl cleaning up" <<endl;
+      if(singRing!=NULL) {
+         if(singIdeal!=NULL)
+            id_Delete(&singIdeal,singRing);
+         //rKill(singRing);
+      }
+      cout << "SingularWrapper_impl destroyed" << endl;
+   }
 
    SingularWrapper* groebner() 
    {
@@ -141,7 +157,7 @@ public:
       // create polymake ideal maybe with singRing and singIdeal
    }
 
-   Array<Polynomial<> > polynomials()
+   Array<Polynomial<> > polynomials(const Ring<>& ring)
    {
       rChangeCurrRing(singRing);
 

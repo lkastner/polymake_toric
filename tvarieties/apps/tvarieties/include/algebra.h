@@ -8,14 +8,13 @@ namespace polymake { namespace tvarieties {
 
 class Ideal;
 
-//void init_singular(const std::string& path);
-
 class SingularWrapper {
 public:
+   virtual ~SingularWrapper() {cout << "SingularWrapper destroyed" << endl; }
 
    virtual SingularWrapper* groebner() = 0;
 
-   virtual Array<Polynomial<> > polynomials() = 0;
+   virtual Array<Polynomial<> > polynomials(const Ring<>& ring) = 0;
    
 
    static SingularWrapper* create(const Ideal* J);
@@ -27,7 +26,7 @@ private:
    SingularWrapper* singObj;
 
 public:
-   Ideal() : Array<Polynomial<> >()  
+   Ideal() : Array<Polynomial<> >() 
    {
       singObj=NULL;
    }
@@ -38,12 +37,18 @@ public:
       singObj=wrap;
    }
 
+   ~Ideal()
+   {
+      cout << "destroying Ideal" << endl;
+      if(singObj!=NULL)
+         delete singObj;
+   }
 
  /*  void set(int i, const Polynomial<> & p) {
       Array<Polynomial<> >::operator[](i)=p;
    }
 */
-   const Ring<>& get_ring() const {
+   const Ring<> get_ring() const {
       if(this->empty()) {
          Ring<> r = Ring<>();
          return r;  
@@ -74,7 +79,7 @@ public:
          singObj = SingularWrapper::create(this);
       }
       SingularWrapper* basis = singObj->groebner();
-      return Ideal(basis->polynomials(),basis);
+      return Ideal(basis->polynomials(this->get_ring()),basis);
 
    }
 
