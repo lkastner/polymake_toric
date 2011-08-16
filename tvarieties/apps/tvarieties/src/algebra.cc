@@ -15,7 +15,7 @@ int singular_initialized = 0;
 void init_singular(const std::string& path) {
    if(singular_initialized)
       return;
-   std::string p = path+"lib/libsingular.so";
+   std::string p = path+"/lib/libsingular.so";
    char* cpath = omStrDup(p.c_str());
    siInit(cpath);
    singular_initialized = 1;
@@ -164,6 +164,6 @@ SingularWrapper* SingularWrapper::create(const Ideal* J)
 
 UserFunction4perl("# @category Other"
                   "# @param String path Path to the singular directory",
-                  &init_singular, "init_singular(String)");
+                  &init_singular, "init_singular($)");
 } }
 

@@ -6,5 +6,5 @@ declare property_type Ideal : c++ (include => ["polymake/tvarieties/algebra.h"],
 
 }
 
-user_function init_singular(String) : void : c++ (include => ["polymake/tvarieties/algebra.h"]);
+#user_function init_singular(String) : void : c++ (include => ["polymake/tvarieties/algebra.h"]);
 

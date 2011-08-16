@@ -1,4 +1,5 @@
 application "tvarieties";
+init_singular("/home/forti/polymake/install/singular");
 $r=new Ring(qw(x y z));
 ($x,$y,$z)=$r->variables;
 $p1=3*$x*$y + 2*$z + 1;

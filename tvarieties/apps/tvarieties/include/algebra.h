@@ -8,7 +8,7 @@ namespace polymake { namespace tvarieties {
 
 class Ideal;
 
-void init_singular(const std::string& path);
+//void init_singular(const std::string& path);
 
 class SingularWrapper {
 public:
