@@ -6,6 +6,7 @@ print $p;
 $i = new Ideal($p,$x,$y,$x+$y);
 print $i;
 print $i->[0];
+$i->groebner();
 $i->set(1,$p);
 foreach my $x (@$i) {
    print "generator: ",$x,"\n";

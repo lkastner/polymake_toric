@@ -11,7 +11,7 @@ class Ideal;
 class SingularWrapper {
 public:
 
-   void groebner();
+   virtual void groebner() = 0;
    
 
    static SingularWrapper* create(const Ideal* J);
@@ -64,7 +64,6 @@ public:
          writable->singObj = SingularWrapper::create(this);
       }
       singObj->groebner();
-      throw std::runtime_error("Not a singular ideal");
    }
 
    static Ideal& upgrade(const Ideal& J);

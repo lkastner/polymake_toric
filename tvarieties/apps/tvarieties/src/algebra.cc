@@ -5,21 +5,29 @@
 #include "polymake/internal/shared_object.h"
 #include "polymake/tvarieties/algebra.h"
 
-namespace singular {
-
 #include <libsingular.h>
 
-}
 
 namespace polymake { namespace tvarieties {
 
-static Rational& convert_number_to_Rational(singular::number* x, singular::ring* ring)
+int singular_initialized = 0;
+
+void init_singular() {
+   if(singular_initialized)
+      return;
+
+   siInit("/home/forti/polymake/install/singular/lib/libsingular.so");
+
+   //throw std::runtime_error("Could not initialize singular");
+}
+
+Rational& convert_number_to_Rational(number* x, ring* ring)
 {
-   Rational r((singular::nlGetNumerator(*x,*ring))->z,(singular::nlGetDenom(*x,*ring))->z);
+   Rational r((nlGetNumerator(*x,*ring))->z,(nlGetDenom(*x,*ring))->z);
    return r;
 }
 
-static singular::number convert_Rational_to_number(const Rational& r)
+number convert_Rational_to_number(const Rational& r)
 {
    mpz_t num, denom;
    mpz_init(num);
@@ -27,13 +35,13 @@ static singular::number convert_Rational_to_number(const Rational& r)
    mpz_init(denom);
    mpz_set(denom,denominator(r).get_rep());
 
-   return singular::nlInit2gmp(num,denom);
+   return nlInit2gmp(num,denom);
 }
 
 class SingularWrapper_impl : public SingularWrapper {
 private:
-   singular::ring singRing;
-   singular::ideal singIdeal;
+   ring singRing;
+   ideal singIdeal;
    const Ideal* polymakeIdeal; 
 
    void create_singRing() 
@@ -41,12 +49,12 @@ private:
       const Ring<>& basering = polymakeIdeal->get_ring();
       int nvars = basering.n_vars();
       if(nvars == 0) throw std::runtime_error("Given ring is not a polynomial ring.");
-      char **n=(char**)singular::omalloc(nvars*sizeof(char*));
+      char **n=(char**)omalloc(nvars*sizeof(char*));
       for(int i=0; i<nvars; i++)
       {
-         n[i] = singular::omStrDup(basering.names()[i].c_str());
+         n[i] = omStrDup(basering.names()[i].c_str());
       }
-      singRing = singular::rDefault(0,nvars,n);
+      singRing = rDefault(0,nvars,n);
    }
 
    void create_singIdeal() 
@@ -57,24 +65,24 @@ private:
       if(singRing == NULL)
          create_singRing();
 
-      singular::rChangeCurrRing(singRing);
+      rChangeCurrRing(singRing);
 
-      singIdeal = singular::idInit(npoly,1);
+      singIdeal = idInit(npoly,1);
       int j = 0;
       for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*polymakeIdeal); !mypoly.at_end(); ++mypoly, ++j) {
-         singular::poly p = singular::p_ISet(0,singRing);
+         poly p = p_ISet(0,singRing);
          
          for(Entire<Polynomial<>::term_hash>::const_iterator term = entire(mypoly->get_terms()); !term.at_end(); ++term)
          {
-            singular::poly monomial = singular::p_Init(singRing);
-            singular::p_SetCoeff(monomial,convert_Rational_to_number(term->second),singRing);
+            poly monomial = p_Init(singRing);
+            p_SetCoeff(monomial,convert_Rational_to_number(term->second),singRing);
             
             for(int k = 0; k<term->first.dim(); k++)
             {
-               singular::p_SetExp(monomial,k+1,term->first[k],singRing);
+               p_SetExp(monomial,k+1,term->first[k],singRing);
             }
-            singular::p_Setm(monomial,singRing);
-            p = singular::p_Add_q(p,monomial,singRing);
+            p_Setm(monomial,singRing);
+            p = p_Add_q(p,monomial,singRing);
          }
          singIdeal->m[j]=p;
       }
@@ -82,12 +90,16 @@ private:
 public:
    SingularWrapper_impl() 
    {
+      init_singular();
+
       singRing=NULL;
       singIdeal=NULL;
    }
    
    SingularWrapper_impl(const Ideal* J) 
    {
+      init_singular();
+
       singRing=NULL;
       singIdeal=NULL;
       polymakeIdeal = J;
@@ -103,7 +115,10 @@ public:
       if(singIdeal==NULL) {
          create_singIdeal();
       }
-      throw std::runtime_error("created singIdeal");
+      ideal res;
+      res = kStd(singIdeal,NULL,testHomog,NULL);
+      cout << "DONE COMPUTING std basis" << endl;
+//      throw std::runtime_error("created singIdeal");
       // check if singIdeal exists
       // set singulardefaultring
       // call groebner
@@ -114,7 +129,7 @@ public:
 
 SingularWrapper* SingularWrapper::create(const Ideal* J) 
 {
-   return static_cast<SingularWrapper*>(new SingularWrapper_impl(J));
+   return new SingularWrapper_impl(J);
 }
 
 } }
