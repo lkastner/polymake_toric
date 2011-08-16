@@ -102,7 +102,7 @@ public:
    {
       if (!singular_initialized)
          throw std::runtime_error("singular not yet initialized, call init_singular(Path)");
-
+      cout << "creating empty SingularWrapper_impl" << endl;
       singRing=NULL;
       singIdeal=NULL;
    }
@@ -111,7 +111,7 @@ public:
    {
       if (!singular_initialized)
          throw std::runtime_error("singular not yet initialized, call init_singular(Path)");
-
+      cout << "creating SingularWrapper_impl from Ideal" << endl;
       singRing=NULL;
       singIdeal=NULL;
       polymakeIdeal = J;
@@ -122,6 +122,9 @@ public:
 
    SingularWrapper_impl(ring r, ideal i)
    {
+      if (!singular_initialized)
+         throw std::runtime_error("singular not yet initialized, call init_singular(Path)");
+      cout << "creating SingularWrapper_impl from singular stuff" << endl;
       singRing=r;
       singIdeal=i;
    }
@@ -129,11 +132,11 @@ public:
 	~SingularWrapper_impl() 
    {
       cout << "SingularWrapper_impl cleaning up" <<endl;
-      if(singRing!=NULL) {
+      /*if(singRing!=NULL) {
          if(singIdeal!=NULL)
             id_Delete(&singIdeal,singRing);
          //rKill(singRing);
-      }
+      }*/
       cout << "SingularWrapper_impl destroyed" << endl;
    }
 
@@ -166,7 +169,8 @@ public:
 
       int j = 0;
       for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(polys); !mypoly.at_end(); ++mypoly, ++j) {
-         cout << p_String(singIdeal->m[j],singRing,singRing)<<endl;
+         if(singIdeal->m[j] != NULL)
+            cout << p_String(singIdeal->m[j],singRing,singRing)<<endl;
       }
       return polys;
    }

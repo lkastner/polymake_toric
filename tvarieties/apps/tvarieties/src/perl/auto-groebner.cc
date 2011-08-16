@@ -20,12 +20,12 @@
 namespace polymake { namespace tvarieties {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0>
-   FunctionInterface4perl( groebner_f17, T0 ) {
+   FunctionInterface4perl( groebner_f1, T0 ) {
       perl::Value arg0(stack[0]);
-      WrapperReturnVoid( arg0.get<T0>().groebner() );
-   };
+      WrapperReturn( arg0.get<T0>().groebner() );
+   }; 
 
-   FunctionInstance4perl(groebner_f17, perl::Canned< Ideal >);
+   FunctionInstance4perl(groebner_f1, perl::Canned< Ideal >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 
 } }

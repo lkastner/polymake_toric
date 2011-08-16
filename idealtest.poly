@@ -8,7 +8,7 @@ print $p1," , ",$p2,"\n";
 $i = new Ideal($p1,$p2);
 print $i;
 print $i->[0];
-$i->groebner();
+$j = $i->groebner();
 foreach my $x (@$i) {
    print "generator: ",$x,"\n";
 }

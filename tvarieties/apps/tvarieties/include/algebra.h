@@ -40,8 +40,8 @@ public:
    ~Ideal()
    {
       cout << "destroying Ideal" << endl;
-      if(singObj!=NULL)
-         delete singObj;
+      //if(singObj!=NULL)
+         //delete singObj;
    }
 
  /*  void set(int i, const Polynomial<> & p) {
