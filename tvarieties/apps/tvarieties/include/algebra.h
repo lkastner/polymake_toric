@@ -66,8 +66,6 @@ public:
       singObj->groebner();
    }
 
-   static Ideal& upgrade(const Ideal& J);
-
 };
 
 
