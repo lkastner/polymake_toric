@@ -1,15 +1,13 @@
 application "tvarieties";
-$r=new Ring(qw(x y));
-($x,$y)=$r->variables;
-$p=1+$x+$y;
-print $p;
-$i = new Ideal($p,$x,$y,$x+$y);
+$r=new Ring(qw(x y z));
+($x,$y,$z)=$r->variables;
+$p1=3*$x*$y + 2*$z + 1;
+$p2=2*$x + 1/2;
+print $p1," , ",$p2,"\n";
+$i = new Ideal($p1,$p2);
 print $i;
 print $i->[0];
 $i->groebner();
-$i->set(1,$p);
 foreach my $x (@$i) {
    print "generator: ",$x,"\n";
 }
-$i->set(0,2+$x);
-$i->set(2,$x);

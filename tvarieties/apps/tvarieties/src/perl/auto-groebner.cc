@@ -25,7 +25,7 @@ namespace polymake { namespace tvarieties {
       WrapperReturnVoid( arg0.get<T0>().groebner() );
    };
 
-   FunctionInstance4perl(groebner_f17, perl::Canned< const Ideal >);
+   FunctionInstance4perl(groebner_f17, perl::Canned< Ideal >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 
 } }

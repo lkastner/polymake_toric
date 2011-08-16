@@ -12,16 +12,18 @@ namespace polymake { namespace tvarieties {
 
 int singular_initialized = 0;
 
-void init_singular() {
+void init_singular(const std::string& path) {
    if(singular_initialized)
       return;
-
-   siInit("/home/forti/polymake/install/singular/lib/libsingular.so");
+   std::string p = path+"lib/libsingular.so";
+   char* cpath = omStrDup(p.c_str());
+   siInit(cpath);
+   singular_initialized = 1;
 
    //throw std::runtime_error("Could not initialize singular");
 }
 
-Rational& convert_number_to_Rational(number* x, ring* ring)
+Rational convert_number_to_Rational(number* x, ring* ring)
 {
    Rational r((nlGetNumerator(*x,*ring))->z,(nlGetDenom(*x,*ring))->z);
    return r;
@@ -84,13 +86,15 @@ private:
             p_Setm(monomial,singRing);
             p = p_Add_q(p,monomial,singRing);
          }
-         singIdeal->m[j]=p;
+         cout << "poly: " << p_String(p,singRing,singRing) << endl;
+         singIdeal->m[j]=p_Copy(p,singRing);
       }
    }
 public:
    SingularWrapper_impl() 
    {
-      init_singular();
+      if (!singular_initialized)
+         throw std::runtime_error("singular not yet initialized, call init_singular(Path)");
 
       singRing=NULL;
       singIdeal=NULL;
@@ -98,7 +102,8 @@ public:
    
    SingularWrapper_impl(const Ideal* J) 
    {
-      init_singular();
+      if (!singular_initialized)
+         throw std::runtime_error("singular not yet initialized, call init_singular(Path)");
 
       singRing=NULL;
       singIdeal=NULL;
@@ -108,21 +113,46 @@ public:
       cout << "DONE CREATING singular object" << endl;
    }
 
+   SingularWrapper_impl(ring r, ideal i)
+   {
+      singRing=r;
+      singIdeal=i;
+   }
+
 //	~SingularWrapper_impl() {}
 
-   void groebner() 
+   SingularWrapper* groebner() 
    {
       if(singIdeal==NULL) {
          create_singIdeal();
       }
+      
+      rChangeCurrRing(singRing);
+
       ideal res;
       res = kStd(singIdeal,NULL,testHomog,NULL);
       cout << "DONE COMPUTING std basis" << endl;
+
+      return new SingularWrapper_impl(singRing,res);
 //      throw std::runtime_error("created singIdeal");
       // check if singIdeal exists
       // set singulardefaultring
       // call groebner
       // create polymake ideal maybe with singRing and singIdeal
+   }
+
+   Array<Polynomial<> > polynomials()
+   {
+      rChangeCurrRing(singRing);
+
+      int numgen = IDELEMS(singIdeal);
+      Array<Polynomial<> > polys = Array<Polynomial<> >(numgen);
+
+      int j = 0;
+      for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(polys); !mypoly.at_end(); ++mypoly, ++j) {
+         cout << p_String(singIdeal->m[j],singRing,singRing)<<endl;
+      }
+      return polys;
    }
 
 };
@@ -132,6 +162,8 @@ SingularWrapper* SingularWrapper::create(const Ideal* J)
    return new SingularWrapper_impl(J);
 }
 
+UserFunction4perl("# @category Other"
+                  "# @param String path Path to the singular directory",
+                  &init_singular, "init_singular(String)");
 } }
-
 
