@@ -2,6 +2,7 @@
 --  under the action of the two-dim, maximal torus of PGL(3)
 --
 -------------------------------------------------------------------------
+restart
 loadPackage "Polyhedra";
 loadPackage "PPDivisor";
 e1 = transpose matrix {{1,0,0,0,0,0}};
@@ -69,6 +70,21 @@ scan(pairs ppcoefficients(pF87#1#0), cc -> (
 		v = v +tray));
 	print(transpose v)));
 ------------------------------------------------------------------------
-	
-
-
+F = imageFan(transpose iN,CDual)
+rays F
+u = (rays F)#0 + (rays F)#2
+sM = transpose sN
+P = delta(CDual,iM, pM, u)
+rays normalFan P
+raysY87
+iN
+affineImage(sM, intersection(affinePreimage(iN, convexHull(u)),coneToPolyhedron(CDual)))
+pN*iN
+iN
+pN
+tN
+tN*sN
+sN
+iN
+tN
+transpose integerSection pN

@@ -15,7 +15,7 @@ newPackage("PPDivisor",
     Configuration => {}
     )
 
-export {PolyhedralDivisor, makePolDiv, base, basedim, completeSequence, integerSection, ppcoefficients, torusdim, ppFan}
+export {delta, PolyhedralDivisor, makePolDiv, base, basedim, completeSequence, integerSection, ppcoefficients, torusdim, ppFan}
 
 needsPackage "Polyhedra"
 
@@ -92,6 +92,7 @@ integerSection Matrix := M -> (
 
 ppFan = method()
 ppFan (Cone,Matrix,Matrix,Matrix) := (C,M,N,r) -> (
+     -- todo: documentation
      MSeq := {transpose(M),N};
      NSeq := {transpose(N),M};
      r = transpose r;
@@ -110,9 +111,10 @@ ppFan (Cone,Matrix,Matrix,Matrix) := (C,M,N,r) -> (
 	  maxCones = {C})
      else (
 	  maxCones = maxCones(C));
-     << #maxCones << endl;
+     --<< #maxCones << endl;
      newppfan := apply(maxCones, Cm -> (
 	       tailCm := tailCone(affineImage(r,intersection(preimorigin,coneToPolyhedron(Cm))));
+	       -- Getting polyhedral coefficient for each ray:
 	       ppcoeff := apply(#RF, i -> (
    			 Delta := affineImage(r,intersection(preimrays#i,coneToPolyhedron(Cm)));
 	   		 {RF#i,Delta}));
@@ -120,3 +122,14 @@ ppFan (Cone,Matrix,Matrix,Matrix) := (C,M,N,r) -> (
 	       PD := makePolDiv(F,ppcoeff,tailCm);
 	       PD));
      (F,newppfan));
+
+delta = method()
+delta(Cone, Matrix, Matrix, Matrix) := (C,i,p,a) -> (
+     -- Sequence: 0 -> N -i-> \tilde{N} -p-> N_Y -> 0
+     -- a\in N_Y
+     -- C\subseteq \tilde{N} a cone
+     -- returns delta(a)\subseteq N
+     -- todo: describe what delta(a) means
+     t := integerSection transpose i;
+     affineImage(t, intersection(affinePreimage(p,convexHull(a)),coneToPolyhedron(C)))
+     )
