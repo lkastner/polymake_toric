@@ -124,12 +124,11 @@ ppFan (Cone,Matrix,Matrix,Matrix) := (C,M,N,r) -> (
      (F,newppfan));
 
 delta = method()
-delta(Cone, Matrix, Matrix, Matrix) := (C,i,p,a) -> (
-     -- Sequence: 0 -> N -i-> \tilde{N} -p-> N_Y -> 0
+delta(Cone, Matrix, Matrix, Matrix) := (C,t,p,a) -> (
+     -- Sequence: 0 -> N <-t- \tilde{N} -p-> N_Y -> 0
      -- a\in N_Y
      -- C\subseteq \tilde{N} a cone
      -- returns delta(a)\subseteq N
      -- todo: describe what delta(a) means
-     t := integerSection transpose i;
      affineImage(t, intersection(affinePreimage(p,convexHull(a)),coneToPolyhedron(C)))
      )

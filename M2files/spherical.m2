@@ -71,20 +71,7 @@ scan(pairs ppcoefficients(pF87#1#0), cc -> (
 	print(transpose v)));
 ------------------------------------------------------------------------
 F = imageFan(transpose iN,CDual)
-rays F
 u = (rays F)#0 + (rays F)#2
-sM = transpose sN
-P = delta(CDual,iM, pM, u)
+P = delta(CDual,tM, pM, u)
 rays normalFan P
 raysY87
-iN
-affineImage(sM, intersection(affinePreimage(iN, convexHull(u)),coneToPolyhedron(CDual)))
-pN*iN
-iN
-pN
-tN
-tN*sN
-sN
-iN
-tN
-transpose integerSection pN
