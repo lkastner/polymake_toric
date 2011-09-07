@@ -15,7 +15,7 @@ newPackage("PPDivisor",
     Configuration => {}
     )
 
-export {delta, PolyhedralDivisor, makePolDiv, base, basedim, completeSequence, integerSection, ppcoefficients, torusdim, ppFan}
+export {gitFanStructure, delta, PolyhedralDivisor, makePolDiv, base, basedim, completeSequence, integerSection, ppcoefficients, torusdim, ppFan}
 
 needsPackage "Polyhedra"
 
@@ -132,3 +132,45 @@ delta(Cone, Matrix, Matrix, Matrix) := (C,t,p,a) -> (
      -- todo: describe what delta(a) means
      affineImage(t, intersection(affinePreimage(p,convexHull(a)),coneToPolyhedron(C)))
      )
+
+gitFanStructure = method()
+gitFanStructure(Cone, Matrix) := (CDual, DEG) -> (
+     C := dualCone CDual;
+     MSeq := completeSequence(DEG,"surj");
+     iM := MSeq#0;
+     pM := MSeq#1;
+     pN := transpose iM;
+     iN := transpose pM;
+     tN := integerSection(MSeq#1);
+     sM := transpose tN;
+     m := inverse(pN||tN);
+     sN := submatrix(m,,{0..(numgens target pN)-1});
+     tM := transpose sN;
+     << "Computing GIT fan." << endl;
+     gitFan := imageFan(transpose iN, CDual);
+     pFan := ppFan(C, pN, transpose iN, transpose tN);
+     Sigma := pFan#0;
+     gensSigma := maxCones Sigma;
+     SigmaRayHash := hashTable(toList apply(#(rays Sigma), i-> {(rays Sigma)#i, "sr" | (toString i)}));
+     gitFanRayHash := hashTable(toList apply(#(rays gitFan), i-> {(rays gitFan)#i, "gr" | (toString i)}));
+     SigmaConeHash := hashTable(toList apply(#gensSigma, i->{gensSigma#i, "sc" | (toString i)}));
+     << endl;
+     << "sr = sigma ray, gr = gitFan ray, sc = Sigma cone" << endl << endl;
+     << "Fan structure of Sigma:" << endl;
+     << apply(maxCones Sigma,C->apply(numColumns rays C, r->SigmaRayHash#((rays C)_{r}))) << endl << endl;
+     scan(maxCones gitFan, C->( 
+  	       u:=(rays C)*(transpose matrix {toList (numColumns rays C:1)});
+	       << "u:" << endl << u << endl;
+  	       << "Cone in GIT Fan:"<< endl << apply(numColumns rays C, r->gitFanRayHash#((rays C)_{r}))<<endl;
+  	       P := delta(CDual, tM, pM, u);
+	       nP := normalFan P;
+  	       << "Normal fan of delta(u) as subfan of Sigma:" << endl;
+	       << apply(maxCones nP, C->apply(numColumns rays C, r->SigmaRayHash#((rays C)_{r})))<< endl;
+	       << "Coarsening structure of delta(u) as subfan of Sigma:" << endl;
+	       << apply(maxCones nP, C->apply(select(gensSigma, gs -> contains(C,gs)), sgs -> SigmaConeHash#sgs))<<endl;
+	       << endl << endl;
+	       )
+	  )
+     )
+	  
+     

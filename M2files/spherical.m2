@@ -75,3 +75,28 @@ u = (rays F)#0 + (rays F)#2
 P = delta(CDual,tM, pM, u)
 rays normalFan P
 raysY87
+T = hashTable(toList apply(#raysY87, i-> {raysY87#i, i}))
+
+apply(maxCones normalFan P, C->apply(numColumns rays C, r->T#((rays C)_{r})))
+apply(maxCones pF87#0, C->apply(numColumns rays C, r->T#((rays C)_{r})))
+
+
+u1 = (rays (maxCones F)#2) * matrix{{1},{1},{1}} + u
+P1 = delta(CDual, iM, pM, u1)
+vertices P1
+rays normalFan P1
+
+apply(maxCones normalFan P1, C->apply(numColumns rays C, r->T#((rays C)_{r})))
+apply(maxCones pF87#0, C->apply(numColumns rays C, r->T#((rays C)_{r})))
+
+maxCones pF87#0
+raysY87
+
+program(CDual, DEG)
+
+-------------------------------------------------------------------------
+vertices P
+vertices affinePreimage(pM,convexHull(u))
+vertices intersection(affinePreimage(pM,convexHull(u)),coneToPolyhedron(CDual))
+pM*iM
+integerSection transpose iM
