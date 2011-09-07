@@ -124,5 +124,8 @@ e6 = transpose matrix {{0,0,0,0,0,1}};
 CDual = posHull(e1|e2|e3|e4|e5|e6);
 DEG = transpose matrix {{-1,1,1}, {1,-1,1}, {1,1,-1}, {1,0,0}, {0,1,0}, {0,0,1}};
      
-gitFanStructure(CDual, DEG)
+gfs = gitFanStructure(CDual, DEG);
+gfs#"structure"
+gfs#"iN"
+gfs#"ppFan"
 ------------------------------------------------------------------------
