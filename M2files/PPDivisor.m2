@@ -151,6 +151,7 @@ gitFanStructure(Cone, Matrix) := (CDual, DEG) -> (
      pFan := ppFan(C, pN, transpose iN, transpose tN);
      Sigma := pFan#0;
      gensSigma := maxCones Sigma;
+     -- The following three lines assign indices to rays and cones of Sigma and the GIT fan.
      SigmaRayHash := hashTable(toList apply(#(rays Sigma), i-> {(rays Sigma)#i, "sr" | (toString i)}));
      gitFanRayHash := hashTable(toList apply(#(rays gitFan), i-> {(rays gitFan)#i, "gr" | (toString i)}));
      SigmaConeHash := hashTable(toList apply(#gensSigma, i->{gensSigma#i, "sc" | (toString i)}));
@@ -159,11 +160,16 @@ gitFanStructure(Cone, Matrix) := (CDual, DEG) -> (
      << "Fan structure of Sigma:" << endl;
      << apply(maxCones Sigma,C->apply(numColumns rays C, r->SigmaRayHash#((rays C)_{r}))) << endl << endl;
      scan(maxCones gitFan, C->( 
+	       -- Walk through maximal cones of the GIT fan
+	       -- Build u as sum of generators of a maximal cone
   	       u:=(rays C)*(transpose matrix {toList (numColumns rays C:1)});
 	       << "u:" << endl << u << endl;
   	       << "Cone in GIT Fan:"<< endl << apply(numColumns rays C, r->gitFanRayHash#((rays C)_{r}))<<endl;
+	       -- Build delta(u).
   	       P := delta(CDual, tM, pM, u);
+	       -- Build normal fan of delta(u).
 	       nP := normalFan P;
+	       -- Analyse structure.
   	       << "Normal fan of delta(u) as subfan of Sigma:" << endl;
 	       << apply(maxCones nP, C->apply(numColumns rays C, r->SigmaRayHash#((rays C)_{r})))<< endl;
 	       << "Coarsening structure of delta(u) as subfan of Sigma:" << endl;
