@@ -7,7 +7,7 @@
 		\item[] Functions as in M2: all, select, unique, positions, apply
 	\end{itemize}
 \end{itemize}
-All this can be done by perl, which is part of polymake.
+All this can be done by perl, which is part of polymake. One should not have to use loops for all this, since one then would have to create new lists all the time, even if the old ones are going to be replaced. Also for select and positions, etc. faster search algorithms can be used. Hash Tables?
 \section{Mathematics}
 \subsection{Combinatorics}
 \begin{itemize}
@@ -26,8 +26,14 @@ Everything here can be solved by Polymake. Their interface to gfan needs to be u
 	\item[] Divisors
 	\item[] Modules
 	\item[] Rings (local monomial ordering?)
-	\item[] Varieties
+	\item[] Varieties: It would be nice to have functors like Proj and Spec. At the same time we need to be able to specify subvarieties of these to get Divisors.
 \end{itemize}
 We need to compute a standard basis for any ideal, as well as saturations and reduction of ring elements.
 This can be done by singular.
+\section{Projects}
+\begin{itemize}
+\item Implement the algorithm by Nathan for up and downgrading.
+\item The hyperdeterminant problem.
+\item Quivers of sections.
+\end{itemize}
 \end{document}
