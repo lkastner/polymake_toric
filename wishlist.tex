@@ -14,18 +14,30 @@ We would like to do the usual operations, like calculating the sum, etc.
 We would like to determine, whether a divisor is semiample, ample, nef, big, etc., I am not sure for which of these there are algorithms.
 \item Fans:
 
+\item Graphs:
+
+For quivers.
 \item Groups:
 
 We need abelian groups with torsion. Then we need to do the usual operations, like direct sum, Hom(), etc.
 \item Ideals:
 
 We need to have the standard operations, like intersection, saturation, sum, product, standard basis, groebner basis, etc.
+
+\item Modules:
+
+We need the standard operations, like Ext, Tor, $\otimes$, $\oplus$. We need to compute free resolutions and syzygies. The same in the graded cases.
 \item Polyhedron:
 
 We need to compute the vertices, the tailcone, the dimension, the d-dimensional faces, again switch between the two possible representations.
 Also we would like to know the ambient dimension, whether the polyhedron is bounded/reflexive/full-dimensional/smooth/normal, the lattice points, etc.
 We need to optimize linear functionals at polyhedra, and compute the minimal vertex/lattice point.
 \item Rings:
+
+Quotient rings, normalization, localization. Check whether two rings have the same quotient field.
+\item Tropical Varieties:
+
+Maybe not as a subclass of variety?
 \item Varieties:
 
 \end{itemize}
@@ -48,6 +60,14 @@ Specifying the monomial ordering should be optional, the regular user would only
 
 Also one should be able to specify new objects. This should be as intuitive as possible and stable. One should not have to contact the programmers in Kaiserslautern to declare a new object called p-divisor and simply made of two lists.
 
+For varieties/rings/modules/groups we also need maps between these objects. I think maps are easier to construct if one provides both source and target, instead of using {\tt setring} over and over.
+
+For error handling it would be very nice to include tests that are automatically run for every new version. It should also be checked which code really is accessed by such tests.
+\section{Projects}
+
+\subsection{Quivers vs. MDS}
+\subsection{The Hyperdeterminant}
+Compute the Chow quotient of the hyperdeterminant.
 
 \section{Programming}
 \begin{itemize}
