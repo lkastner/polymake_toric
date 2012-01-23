@@ -11,3 +11,15 @@ object Polytope {
 	}
 
 }
+
+sub pairwise_differences {
+	my ($in) = @_;
+	my @out = ();
+	my $c = $in->[0];
+	foreach my $p (@$in) {
+		if($p != $c) {
+			push @out, ($p-$c);
+		}
+	}
+	return new Matrix<Integer>(\@out);
+}
