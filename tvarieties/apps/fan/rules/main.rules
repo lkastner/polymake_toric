@@ -1,0 +1,25 @@
+IMPORT polytope
+
+declare object ToricVariety;
+
+object ToricVariety {
+
+	property FAN : PolyhedralFan;
+	
+	property COMPLETE : Bool;
+
+	rule COMPLETE : FAN {
+		$this->COMPLETE = $this->FAN->COMPLETE;
+	}
+
+	property PROJECTIVE : Bool;
+
+	property SIMPLICIAL : Bool;
+
+	rule SIMPLICIAL : FAN {
+		$this->SIMPLICIAL = $this->FAN->SIMPLICIAL;
+	}
+
+	property SMOOTH : Bool;
+
+}
