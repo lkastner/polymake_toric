@@ -1,7 +1,7 @@
 IMPORT polytope
 
 
-declare object ToricVariety : PolyhedralFan; 
+declare object ToricVariety<Scalar=Rational [ typechecks::is_ordered_field(Scalar) ]> : PolyhedralFan<Scalar>; 
 
 object ToricVariety {
 
