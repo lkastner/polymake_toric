@@ -7,6 +7,12 @@ object ToricVariety {
 
 	property SMOOTH : Bool;
 
+	property PROJECTIVE : Bool;
+
+	rule PROJECTIVE : MAXIMAL_CONES {
+		$this->PROJECTIVE = 1;
+	}
+
 }
 
 declare object HyperplaneInTV;
@@ -15,4 +21,9 @@ object HyperplaneInTV {
 	
 	property TROPICAL : TropicalVariety;
 
+}
+
+sub gale_dual{
+	# TODO
+	return 0;
 }
