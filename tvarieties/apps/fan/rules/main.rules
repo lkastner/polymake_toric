@@ -3,6 +3,12 @@ IMPORT polytope
 
 declare object ToricVariety<Scalar=Rational [ typechecks::is_ordered_field(Scalar) ]> : PolyhedralFan<Scalar>; 
 
+object PolyhedralFan<Rational> {
+
+	auto_cast : ToricVariety<Rational>;
+
+}
+
 object ToricVariety {
 
 	property AFFINE : Bool;
