@@ -13,7 +13,7 @@ object ToricVariety {
 		$this->PROJECTIVE = 1;
 	}
 	
-	property SMOOTH : Bool;
+	property SMOOTH = override SMOOTH_FAN;
 
 }
 
