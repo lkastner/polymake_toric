@@ -1,3 +1,7 @@
 $r = new Ring(qw(x y));
 ($x, $y)=$r->variables;
 $g = 1+$x+$y+$x*$y;
+
+application "fan";
+$f = normal_fan(cube(3));
+$t = new ToricVariety($f);

@@ -5,13 +5,15 @@ declare object ToricVariety<Scalar=Rational [ typechecks::is_ordered_field(Scala
 
 object ToricVariety {
 
-	property SMOOTH : Bool;
+	property AFFINE : Bool;
 
 	property PROJECTIVE : Bool;
 
 	rule PROJECTIVE : MAXIMAL_CONES {
 		$this->PROJECTIVE = 1;
 	}
+	
+	property SMOOTH : Bool;
 
 }
 
