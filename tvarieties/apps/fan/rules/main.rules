@@ -23,11 +23,17 @@ object ToricVariety {
 
 }
 
-declare object HyperplaneInTV;
+declare object HypersurfaceInTV;
 
-object HyperplaneInTV {
+object HypersurfaceInTV {
 	
+	property EQUATION : Polynomial;
+
 	property TROPICAL : TropicalVariety;
+
+}
+
+sub gfan_tropicalvarietybruteforce{
 
 }
 

@@ -1,0 +1,5 @@
+property_type Polynomial{
+
+	user_method monomials_as_matrix() : c++;
+
+}
