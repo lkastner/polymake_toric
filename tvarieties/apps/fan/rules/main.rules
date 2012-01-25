@@ -33,8 +33,54 @@ object HypersurfaceInTV {
 
 }
 
-sub gfan_tropicalvarietybruteforce{
+user_function gfan_tropicalbruteforce(Int,Matrix,Matrix){
+	my ($nvars, $coefficients, $exponents) = @_;
+	my $tempfile=new Tempfile;
+	
+	# Writing data to file:
+	open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
+	print $input "Q[";
+	
+	my @vars = ( "s", map { "x$_" } (1..$nvars) );
+	my $R = new Ring(@vars);
+	my $p = new Polynomial($exponents,$coefficients,$R); 
+	
+	print $p;
+	#gfan_print_matrix($tempfile,$M);
+	#system "$gfan_secondaryfan --xml <$tempfile.txt >$tempfile.poly 2>/dev/null";
+	#my $gfan_out= User::load("$tempfile.poly");
+	# WARNING: file automatically converted via XSLT to correct F_VECTOR
+	#return $gfan_out;
+}
 
+sub gfan_print_matrix {
+  my ($tempname, $M) = @_;
+
+  open(my $infile, ">$tempname.txt")
+    or die "can't create temporary file $tempname.txt: $!";
+
+  print $infile "{";
+  my $r=$M->rows();
+  my $c=$M->cols();
+  for (my $i=0; $i<$r; ++$i) {
+    print $infile "," unless $i==0;
+    print $infile "(";
+    for (my $j=0; $j<$c; ++$j) {
+      print $infile "," unless $j==0;
+      print $infile $M->($i,$j);
+    }
+      print $infile ")";
+  }
+  print $infile "}\n";
+
+  close $infile;
+}
+
+
+
+sub homogenize { 
+	my ($in) = @_;
+	
 }
 
 sub gale_dual{
