@@ -33,7 +33,7 @@ object HypersurfaceInTV {
 
 }
 
-user_function gfan_tropicalbruteforce(Int,Matrix,Matrix){
+user_function gfan_tropicalbruteforce($,Matrix,Matrix){
 	my ($nvars, $coefficients, $exponents) = @_;
 	my $tempfile=new Tempfile;
 	
