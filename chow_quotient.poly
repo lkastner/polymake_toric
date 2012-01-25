@@ -5,3 +5,7 @@ $g = 1+$x+$y+$x*$y;
 application "fan";
 $f = normal_fan(cube(3));
 $t = cast<ToricVariety>($f);
+
+$m = new Matrix<Integer>[[1,0],[0,1]];
+$c = new Matrix<Integer>[[1,2]];
+gfan_tropicalbruteforce(4,$c,$m);
