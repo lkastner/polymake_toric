@@ -1,5 +1,6 @@
 IMPORT polytope
 
+# Is the following line neccessary?
 IMPORT common
 
 
@@ -16,6 +17,14 @@ CONFIGURE {
 }
 
 
+#######################################
+#######################################
+###
+### Toric Variety
+###
+#######################################
+#######################################
+
 declare object ToricVariety<Scalar=Rational [ typechecks::is_ordered_field(Scalar) ]> : PolyhedralFan<Scalar>; 
 
 object PolyhedralFan<Rational> {
@@ -26,21 +35,35 @@ object PolyhedralFan<Rational> {
 
 object ToricVariety {
 
+	# Properties:
+
 	property AFFINE : Bool;
 
 	property PROJECTIVE : Bool;
+
+	property SMOOTH = override SMOOTH_FAN;
+	
+	# Rules:
 
 	rule PROJECTIVE : MAXIMAL_CONES {
 		$this->PROJECTIVE = 1;
 	}
 	
-	property SMOOTH = override SMOOTH_FAN;
-
 }
+
+#######################################
+#######################################
+###
+### Hypersurface in Toric Variety
+###
+#######################################
+#######################################
 
 declare object HypersurfaceInTV;
 
 object HypersurfaceInTV {
+
+	# Properties:
 	
 	property EQUATION : Polynomial;
 
@@ -52,19 +75,29 @@ object HypersurfaceInTV {
 
 	property TROPICAL_FAN : PolyhedralFan;
 	
+	# Rules:
+	
+	# It would be nice to have the opposite rules as well. TODO
 	rule EQUATION : EXPONENTS, COEFFICIENTS {
 		my $nvars = $this->EXPONENTS->cols();
         	my @vars = (map { "x$_" } (1..$nvars) );
         	my $R = new Ring(@vars);
         	$this->EQUATION = new Polynomial($this->EXPONENTS,$this->COEFFICIENTS,$R);
 	}
-
+	
+	# Note that this method first homogenizes the input polynome
+	# and that the output fan is not 'dehomogenized', yet. Also this
+	# is only right up to sign, i.e. min or max in the tropical
+	# language. I think for the Sturmfels/Maclagan Theorem to hold
+	# the sign has to be changed.
 	rule TROPICAL_FAN : EXPONENTS, COEFFICIENTS {
 		$this->TROPICAL_FAN = gfan_tropicalbruteforce($this->COEFFICIENTS, $this->EXPONENTS);
 	}
 
 }
 
+# This program preprocesses the input for gfan and then reads in the gfan output.
+# It should be checked whether gfan_groebnerbla can really be left out.
 sub gfan_tropicalbruteforce {
 	my ($coefficients, $exponents) = @_;
 	my $tempfile=new Tempfile;
@@ -95,7 +128,6 @@ sub gfan_tropicalbruteforce {
 	system "$gfan_tropicalbruteforce --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
 	
 	my $gfan_out= User::load("$tempfile.poly");
-	# WARNING: file automatically converted via XSLT to correct F_VECTOR
 	return $gfan_out;
 }
 
