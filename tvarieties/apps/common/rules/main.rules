@@ -1,5 +1,0 @@
-#property_type Polynomial (include => ["polymake/Polynomial.h"]) {
-#
-#	user_method monomials_as_matrix() : c++;
-#
-#}
