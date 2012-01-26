@@ -3,6 +3,19 @@ IMPORT polytope
 IMPORT common
 
 
+CREDIT gfan
+  Gfan is a software package for computing Groebner fans and tropical varieties.
+  Copyright by Anders Jensen
+  http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html
+
+# path to gfan
+custom $gfan_tropicalbruteforce;
+
+CONFIGURE {
+    find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
+}
+
+
 declare object ToricVariety<Scalar=Rational [ typechecks::is_ordered_field(Scalar) ]> : PolyhedralFan<Scalar>; 
 
 object PolyhedralFan<Rational> {
@@ -38,35 +51,34 @@ object HypersurfaceInTV {
 user_function gfan_tropicalbruteforce(Vector,Matrix){
 	my ($coefficients, $exponents) = @_;
 	my $tempfile=new Tempfile;
+	#my $tempfile="test";
 	
-	# Writing data to file:
-	# open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
-	# print $input "Q[";
+	# Homogenizing polynomial and preparing to write to file:	
 	my $nvars = $exponents->cols();
 	my @vars = ( "t" , map { "x$_" } (1..$nvars) );
-	print @vars;
-	print "\n";
-	my $one = new Vector<Int>(map{1} (1..$nvars));
-	#print $one;
+	my $one = ones_vector<Int>($nvars);
 	my $degrees = $exponents*$one;
-	#print $degrees;
 	my $homog = new Matrix<Int>[[map{maximum($degrees)-$degrees->[$_]} (0..($nvars-1))]];
-	#print $homog;
-	#print $homog->cols();
 	my $newexp = transpose($homog)|$exponents;
-	print "\nNew Exponents:\n";
-	print $newexp;
 	my $R = new Ring(@vars);
 	my $p = new Polynomial($newexp,$coefficients,$R); 
 	
-	print $p;
-	print "The Ring: \n";
-	print $R;
-	#gfan_print_matrix($tempfile,$M);
-	#system "$gfan_secondaryfan --xml <$tempfile.txt >$tempfile.poly 2>/dev/null";
-	#my $gfan_out= User::load("$tempfile.poly");
+	# Writing data to file:
+	open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
+	print $input "Q[";
+	print $input join(",",$R->variables);
+	print $input "]{\n";
+	print $input $p;
+	print $input "\n}";
+	print $tempfile;
+	close $input;
+	
+	# Accessing gfan:
+	system "$gfan_tropicalbruteforce --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
+	
+	my $gfan_out= User::load("$tempfile.poly");
 	# WARNING: file automatically converted via XSLT to correct F_VECTOR
-	#return $gfan_out;
+	return $gfan_out;
 }
 
 sub gfan_print_matrix {
