@@ -1,5 +1,7 @@
 IMPORT polytope
 
+IMPORT common
+
 
 declare object ToricVariety<Scalar=Rational [ typechecks::is_ordered_field(Scalar) ]> : PolyhedralFan<Scalar>; 
 
@@ -33,19 +35,33 @@ object HypersurfaceInTV {
 
 }
 
-user_function gfan_tropicalbruteforce($,Matrix,Matrix){
-	my ($nvars, $coefficients, $exponents) = @_;
+user_function gfan_tropicalbruteforce(Vector,Matrix){
+	my ($coefficients, $exponents) = @_;
 	my $tempfile=new Tempfile;
 	
 	# Writing data to file:
-	open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
-	print $input "Q[";
-	
-	my @vars = ( "s", map { "x$_" } (1..$nvars) );
+	# open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
+	# print $input "Q[";
+	my $nvars = $exponents->cols();
+	my @vars = ( "t" , map { "x$_" } (1..$nvars) );
+	print @vars;
+	print "\n";
+	my $one = new Vector<Int>(map{1} (1..$nvars));
+	#print $one;
+	my $degrees = $exponents*$one;
+	#print $degrees;
+	my $homog = new Matrix<Int>[[map{maximum($degrees)-$degrees->[$_]} (0..($nvars-1))]];
+	#print $homog;
+	#print $homog->cols();
+	my $newexp = transpose($homog)|$exponents;
+	print "\nNew Exponents:\n";
+	print $newexp;
 	my $R = new Ring(@vars);
 	my $p = new Polynomial($exponents,$coefficients,$R); 
 	
 	print $p;
+	print "The Ring: \n";
+	print $R;
 	#gfan_print_matrix($tempfile,$M);
 	#system "$gfan_secondaryfan --xml <$tempfile.txt >$tempfile.poly 2>/dev/null";
 	#my $gfan_out= User::load("$tempfile.poly");

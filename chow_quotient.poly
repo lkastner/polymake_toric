@@ -6,6 +6,9 @@ application "fan";
 $f = normal_fan(cube(3));
 $t = cast<ToricVariety>($f);
 
-$m = new Matrix<Integer>[[1,0],[0,1]];
-$c = new Matrix<Integer>[[1,2]];
-gfan_tropicalbruteforce(4,$c,$m);
+$m = new Matrix<Int>[[1,0],[0,1]];
+$c = new Vector<Rational>([1,2]);
+gfan_tropicalbruteforce($c,$m);
+
+load_commands("chow_quotient.poly");
+exit;
