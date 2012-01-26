@@ -44,11 +44,28 @@ object HypersurfaceInTV {
 	
 	property EQUATION : Polynomial;
 
+	property EXPONENTS : Matrix<Int>;
+
+	property COEFFICIENTS : Vector<Rational>;
+
 	property TROPICAL : TropicalVariety;
+
+	property TROPICAL_FAN : PolyhedralFan;
+	
+	rule EQUATION : EXPONENTS, COEFFICIENTS {
+		my $nvars = $this->EXPONENTS->cols();
+        	my @vars = (map { "x$_" } (1..$nvars) );
+        	my $R = new Ring(@vars);
+        	$this->EQUATION = new Polynomial($this->EXPONENTS,$this->COEFFICIENTS,$R);
+	}
+
+	rule TROPICAL_FAN : EXPONENTS, COEFFICIENTS {
+		$this->TROPICAL_FAN = gfan_tropicalbruteforce($this->COEFFICIENTS, $this->EXPONENTS);
+	}
 
 }
 
-user_function gfan_tropicalbruteforce(Vector,Matrix){
+sub gfan_tropicalbruteforce {
 	my ($coefficients, $exponents) = @_;
 	my $tempfile=new Tempfile;
 	#my $tempfile="test";
@@ -58,7 +75,8 @@ user_function gfan_tropicalbruteforce(Vector,Matrix){
 	my @vars = ( "t" , map { "x$_" } (1..$nvars) );
 	my $one = ones_vector<Int>($nvars);
 	my $degrees = $exponents*$one;
-	my $homog = new Matrix<Int>[[map{maximum($degrees)-$degrees->[$_]} (0..($nvars-1))]];
+	my $homog = new Matrix<Int>[[map{maximum($degrees)-$degrees->[$_]} (0..($exponents->rows()-1))]];
+	print $homog;
 	my $newexp = transpose($homog)|$exponents;
 	my $R = new Ring(@vars);
 	my $p = new Polynomial($newexp,$coefficients,$R); 
@@ -80,30 +98,6 @@ user_function gfan_tropicalbruteforce(Vector,Matrix){
 	# WARNING: file automatically converted via XSLT to correct F_VECTOR
 	return $gfan_out;
 }
-
-sub gfan_print_matrix {
-  my ($tempname, $M) = @_;
-
-  open(my $infile, ">$tempname.txt")
-    or die "can't create temporary file $tempname.txt: $!";
-
-  print $infile "{";
-  my $r=$M->rows();
-  my $c=$M->cols();
-  for (my $i=0; $i<$r; ++$i) {
-    print $infile "," unless $i==0;
-    print $infile "(";
-    for (my $j=0; $j<$c; ++$j) {
-      print $infile "," unless $j==0;
-      print $infile $M->($i,$j);
-    }
-      print $infile ")";
-  }
-  print $infile "}\n";
-
-  close $infile;
-}
-
 
 
 sub homogenize { 

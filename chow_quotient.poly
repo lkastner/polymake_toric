@@ -8,7 +8,9 @@ $t = cast<ToricVariety>($f);
 
 $m = new Matrix<Int>[[1,0],[0,1]];
 $c = new Vector<Rational>([1,2]);
-gfan_tropicalbruteforce($c,$m);
+$a = new HypersurfaceInTV(EXPONENTS=>$m, COEFFICIENTS=>$c);
 
-load_commands("chow_quotient.poly");
-exit;
+$m1 = new Matrix<Int>[[1,0],[0,1],[0,0]];
+$c1 = new Vector<Rational>([1,1,1]);
+$a1 = new HypersurfaceInTV(EXPONENTS=>$m1, COEFFICIENTS=>$c1);
+
