@@ -57,7 +57,7 @@ user_function gfan_tropicalbruteforce(Vector,Matrix){
 	print "\nNew Exponents:\n";
 	print $newexp;
 	my $R = new Ring(@vars);
-	my $p = new Polynomial($exponents,$coefficients,$R); 
+	my $p = new Polynomial($newexp,$coefficients,$R); 
 	
 	print $p;
 	print "The Ring: \n";
