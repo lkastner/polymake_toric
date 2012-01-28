@@ -132,6 +132,19 @@ sub gfan_tropicalbruteforce {
 }
 
 
+user_function add_ray(PolyhedralFan, Vector){
+	my($fan, $ray) = @_;
+	my $oldrays = $fan->RAYS;
+	my $newrays = $oldrays / $ray;
+	print $newrays;
+	my $mc = $fan->MAXIMAL_CONES;
+	for my $f (@$mc) {
+		print "$f\n";
+		my $gens = new Matrix<Rational>(@$oldrays[@$f]);
+		print $gens;	
+	}	
+}
+
 sub homogenize { 
 	my ($in) = @_;
 	
