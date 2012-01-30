@@ -131,6 +131,35 @@ sub gfan_tropicalbruteforce {
 	return $gfan_out;
 }
 
+# This program preprocesses the input for gfan and then reads in the gfan output.
+# It should be checked whether gfan_groebnerbla can really be left out.
+sub gfan_tropicalhypersurface {
+	my ($coefficients, $exponents) = @_;
+	my $tempfile=new Tempfile;
+	#my $tempfile="test";
+	
+	# Homogenizing polynomial and preparing to write to file:	
+	my $nvars = $exponents->cols();
+	my @vars = ( map { "x$_" } (1..$nvars) );
+	my $R = new Ring(@vars);
+	my $p = new Polynomial($exponents,$coefficients,$R); 
+	
+	# Writing data to file:
+	open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
+	print $input "Q[";
+	print $input join(",",$R->variables);
+	print $input "]{\n";
+	print $input $p;
+	print $input "\n}";
+	print $tempfile;
+	close $input;
+	
+	# Accessing gfan:
+	system "$gfan_tropicalhypersurface --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
+	
+	my $gfan_out= User::load("$tempfile.poly");
+	return $gfan_out;
+}
 
 user_function add_ray(PolyhedralFan, Vector){
 	my($fan, $ray) = @_;
