@@ -202,51 +202,61 @@ user_function cocoref_bruteforce(Matrix) {
 	# Refinement procedure:
 	my $repeat = 1;
 	my $num = 0;
+	my @old_cones = @new_cones;
+	my @collected = @new_cones;
+	my $in = @old_cones;
+	print "old: $in\n";
 	while ($repeat == 1) {
 		$repeat =0;
 		my @toadd = ();
-		foreach my $A (@new_cones){
+		foreach my $A (@old_cones){
 			foreach my $B (@new_cones){
 				if(!included_polyhedra($A, $B) && !included_polyhedra($B, $A)){
 					my $AB = intersection($A, $B);
 					if ($AB->DIM == $dim){
 						my $isnew = 1;
-						foreach my $C (@new_cones,@toadd){
+						foreach my $C (@collected,@toadd){
 							if(equal_polyhedra($AB, $C)){
 								$isnew = 0;
-								break;
+								last;
 							}
 						}
 						if($isnew == 1){
 							$repeat = 1;
 							push @toadd, $AB;
-							print "$num\n";
-							$num++;
 						}
 					}
 				}
 			}
+			my $s = @toadd;
+			print "$s\n";
 		}
 		if($repeat == 1){
-			@new_cones = @new_cones, @toadd;
+			@new_cones = @toadd;
+			@collected = (@collected, @toadd);
+			my $s = @collected;
+			print "size: $s\n";
 		}
 	}
 
 	# Removing superflous cones:
 	my @keep = ();
-	foreach my $A (@new_cones){
+	foreach my $A (@collected){
 		my $check = 1;
-		foreach my $B (@new_cones){
-			if(included_polyhedra($A, $B) || included_polyhedra($B, $A)){
+		foreach my $B (@collected){
+			if(included_polyhedra($B, $A) && !equal_polyhedra($A, $B)){
 				$check = 0;
-				break;
+				last;
 			}
 		}
 		if($check == 1){
 			push @keep, $A;
 		}
 	}
-	print @keep;
+	
+	$in = @keep;
+	print "Number of resulting cones: $in.\n";
+	return @keep;
 }
 
 sub homogenize { 
