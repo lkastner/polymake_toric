@@ -193,14 +193,24 @@ user_function cocoref_bruteforce(Matrix) {
 			map($_>=0?$contained_rays++:0, @$v);
 			print "$contained_rays\n";
 			if($contained_rays == $dim){
-				push @new_cones, new Cone<Rational>(RAYS=>$A);
+				push @new_cones, new Cone<Rational>(INPUT_RAYS=>$A);
 				print "$c\n";	
 			}
 		}
 	}
+
 	# Refinement procedure:
-	
+	my $repeat = 1;
+	while ($repeat == 1) {
+		$repeat =0;
+		foreach my ($A, $B) (@new_cones){
+
+		}
+		
+	}
+
 	# Removing superflous cones:
+	
 	print @new_cones;
 }
 
