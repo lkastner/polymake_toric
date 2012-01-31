@@ -42,32 +42,36 @@ Maybe not as a subclass of variety?
 
 \end{itemize}
 \section{Methods we need (...)}
-Not all of the methods do make sense for every possible input, this is just to give some idea.
+Not all of the methods do make sense for every possible input, this is just to give some idea. Most of the methods are at first only needed for toric varieties, thus they can be easily be implemented in Polymake.
 \begin{itemize}
-\item normalFan(Polyhedron) = Fan
+\item normalFan(Polyhedron) = Fan 
 \item Spec(Ring) = Variety, Proj(multigraded Ring) = Variety, TV(Fan) = Variety
 \item globalSections(Divisor) = ?
 \item dimension(Cone/Fan(?)/Variety/Ring/Polyhedron) = ZZ
 \item secondaryFan(Polyhedron) = Fan
 \item Cox(Variety) = Ring, Pic(Variety) = Group, Nef(Variey) = Cone, Eff(Variety) = Cone
+\item etc.
 \end{itemize}
 
 \section{Programming}
 We need the programming language to be very intuitive.
-It should be possible to write something like
-{\tt QQ[x,y,z]} without getting an error message. The system should then automatically specify the monomial ordering and the characteristic.
-Specifying the monomial ordering should be optional, the regular user would only be confused by having to do this.
+It would be nice to have a list management like in Macaulay2.
+...
+%It should be possible to write something like
+%{\tt QQ[x,y,z]} without getting an error message. The system should then automatically specify the monomial ordering and the characteristic.
+%Specifying the monomial ordering should be optional, the regular user would only be confused by having to do this.
 
-Also one should be able to specify new objects. This should be as intuitive as possible and stable. One should not have to contact the programmers in Kaiserslautern to declare a new object called p-divisor and simply made of two lists.
+%Also one should be able to specify new objects. This should be as intuitive as possible and stable. One should not have to contact the programmers in Kaiserslautern to declare a new object called p-divisor and simply made of two lists.
 
-For varieties/rings/modules/groups we also need maps between these objects. I think maps are easier to construct if one provides both source and target, instead of using {\tt setring} over and over.
+%For varieties/rings/modules/groups we also need maps between these objects. I think maps are easier to construct if one provides both source and target, instead of using {\tt setring} over and over.
 
-For error handling it would be very nice to include tests that are automatically run for every new version. It should also be checked which code really is accessed by such tests.
-\section{Projects}
+%For error handling it would be very nice to include tests that are automatically run for every new version. It should also be checked which code really is accessed by such tests.
+%\section{Projects}
 
-\subsection{Quivers vs. MDS}
-\subsection{The Hyperdeterminant}
-Compute the Chow quotient of the hyperdeterminant.
+%\subsection{Quivers vs. MDS}
+%\subsection{The Hyperdeterminant}
+%Compute the Chow quotient of the hyperdeterminant.
+\end{document}
 
 \section{Programming}
 \begin{itemize}

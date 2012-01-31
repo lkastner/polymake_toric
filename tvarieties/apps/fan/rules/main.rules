@@ -186,9 +186,22 @@ user_function cocoref_bruteforce(Matrix) {
 		my $A = new Matrix<Rational>(@$rays[@$c]);
 		if(rank($A)==$dim){
 			my $iA = inv($A);
-			
+			my $eval = $rays * $iA;
+			my $v = new Vector<Rational>(map(minimum($_), @$eval));
+			#print $v;
+			my $contained_rays = 0;
+			map($_>=0?$contained_rays++:0, @$v);
+			print "$contained_rays\n";
+			if($contained_rays == $dim){
+				push @new_cones, new Cone<Rational>(RAYS=>$A);
+				print "$c\n";	
+			}
 		}
 	}
+	# Refinement procedure:
+	
+	# Removing superflous cones:
+	print @new_cones;
 }
 
 sub homogenize { 
