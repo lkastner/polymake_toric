@@ -15,6 +15,10 @@ $f = normal_fan(cube(2));
 $v = new Vector<Rational>([1,1]);
 add_ray($f, $v);
 
+$r1 = new Matrix<Rational>([2,1,1],[-1,0,-1],[-1,-1,0],[0,0,1],[0,1,0],[1,0,0]);
+print $r1;
+$col = cocoref_bruteforce($r1);
+
 $r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
 print $r;
 $col = cocoref_bruteforce($r);

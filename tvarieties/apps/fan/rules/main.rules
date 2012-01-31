@@ -254,19 +254,21 @@ user_function cocoref_bruteforce(Matrix) {
 	print "Number of resulting cones: $in.\n";
 	
 	my @rays = ();
+	#print @keep;
 	foreach my $C (@keep){
-		my $r = $C->RAYS;
+		my $r = new Matrix<Rational>($C->RAYS);
 		@rays = (@rays, map(primitive($_), @$r));
 	}
+	#print @rays;
 	my $ray_set = new Set<Vector>(@rays);
-	print $ray_set;
+	#print $ray_set;
 	
 	my @gens = @$ray_set;
 	my $gs = @gens;
 	my $rays = new Matrix<Rational>(@gens);
-	print $rays;
+	#print $rays;
 	my $ray_map = new Map<Vector, Int>;
-	map($ray_map{@gens->[$_]}=$_, 0..($gs-1));
+	map($ray_map->{$gens[$_]}=$_, 0..($gs-1));
 	return @keep;
 }
 
