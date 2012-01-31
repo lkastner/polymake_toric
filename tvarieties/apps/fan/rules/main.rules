@@ -1,7 +1,3 @@
-IMPORT polytope
-
-# Is the following line neccessary?
-IMPORT common
 
 
 CREDIT gfan
@@ -256,6 +252,21 @@ user_function cocoref_bruteforce(Matrix) {
 	
 	$in = @keep;
 	print "Number of resulting cones: $in.\n";
+	
+	my @rays = ();
+	foreach my $C (@keep){
+		my $r = $C->RAYS;
+		@rays = (@rays, map(primitive($_), @$r));
+	}
+	my $ray_set = new Set<Vector>(@rays);
+	print $ray_set;
+	
+	my @gens = @$ray_set;
+	my $gs = @gens;
+	my $rays = new Matrix<Rational>(@gens);
+	print $rays;
+	my $ray_map = new Map<Vector, Int>;
+	map($ray_map{@gens->[$_]}=$_, 0..($gs-1));
 	return @keep;
 }
 
