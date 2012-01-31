@@ -203,10 +203,21 @@ user_function cocoref_bruteforce(Matrix) {
 	my $repeat = 1;
 	while ($repeat == 1) {
 		$repeat =0;
-		foreach my ($A, $B) (@new_cones){
-
+		my @toadd = ();
+		foreach my $A (@new_cones){
+			foreach my $B (@new_cones){
+				if(!equal_polyhedra($A, $B) && !included_polyhedra($A, $B) && !included_polyhedra($B, $A)){
+					my $AB = intersection($A, $B);
+					if ($AB->DIM == $dim){
+						$repeat = 1;
+						push @toadd, $AB;
+					}
+				}
+			}
 		}
-		
+		if($repeat == 1){
+			@new_cones = @new_cones, @toadd;
+		}
 	}
 
 	# Removing superflous cones:
