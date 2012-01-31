@@ -201,16 +201,28 @@ user_function cocoref_bruteforce(Matrix) {
 
 	# Refinement procedure:
 	my $repeat = 1;
+	my $num = 0;
 	while ($repeat == 1) {
 		$repeat =0;
 		my @toadd = ();
 		foreach my $A (@new_cones){
 			foreach my $B (@new_cones){
-				if(!equal_polyhedra($A, $B) && !included_polyhedra($A, $B) && !included_polyhedra($B, $A)){
+				if(!included_polyhedra($A, $B) && !included_polyhedra($B, $A)){
 					my $AB = intersection($A, $B);
 					if ($AB->DIM == $dim){
-						$repeat = 1;
-						push @toadd, $AB;
+						my $isnew = 1;
+						foreach my $C (@new_cones,@toadd){
+							if(equal_polyhedra($AB, $C)){
+								$isnew = 0;
+								break;
+							}
+						}
+						if($isnew == 1){
+							$repeat = 1;
+							push @toadd, $AB;
+							print "$num\n";
+							$num++;
+						}
 					}
 				}
 			}
@@ -221,8 +233,20 @@ user_function cocoref_bruteforce(Matrix) {
 	}
 
 	# Removing superflous cones:
-	
-	print @new_cones;
+	my @keep = ();
+	foreach my $A (@new_cones){
+		my $check = 1;
+		foreach my $B (@new_cones){
+			if(included_polyhedra($A, $B) || included_polyhedra($B, $A)){
+				$check = 0;
+				break;
+			}
+		}
+		if($check == 1){
+			push @keep, $A;
+		}
+	}
+	print @keep;
 }
 
 sub homogenize { 
