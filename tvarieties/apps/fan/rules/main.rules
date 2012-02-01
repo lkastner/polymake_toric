@@ -153,7 +153,7 @@ user_function gfan_tropicalhypersurface(Vector<Rational>, Matrix<Int>) {
 	print $tempfile;
 	close $input;
 	
-	print "$gfan_tropicalhypersurface\n";
+	# print "$gfan_tropicalhypersurface\nlala\n$gfan_tropicalbruteforce\nlala\n";
 	# Accessing gfan:
 	system "$gfan_tropicalhypersurface --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
 	
@@ -289,7 +289,29 @@ user_function cocoref_bruteforce(Matrix) {
 user_function relevant_cones(Polynomial, ToricVariety){
 	my ($g, $TV) = @_;
 	my $trop_g = gfan_tropicalhypersurface($g->coefficients_as_vector, dense($g->monomials_as_matrix));
-	print $trop_g->RAYS;
+	my @interesting_cones = map($trop_g->cone($_),0..($trop_g->N_MAXIMAL_CONES-1));
+	print "bla\n";	
+
+	my @relevant = ();
+	my $tvmc = $TV->MAXIMAL_CONES;
+	my $tvr = new Matrix<Rational>($TV->RAYS);
+	#print $tvr;
+	foreach my $C (@$tvmc) {
+		print $C;
+		my $m = new Matrix<Rational>(@$tvr[@$C]);
+		#print $m;
+		my $A = new Cone<Rational>(INPUT_RAYS=>$m);
+		foreach my $t (@interesting_cones){
+			my $tA = intersection($t, $A);
+			if($tA->CONE_DIM <= $t->CONE_DIM){
+				print "dim too low\n";
+				next;
+			} else {
+				print "maybe ok\n";
+			}
+		}
+		#print "la\n";	
+	}
 }
 
 sub homogenize { 
