@@ -1,12 +1,12 @@
-$r=new Ring(qw(x y));
-($x,$y)=$r->variables;
-$p=1+$x+$y;
-$t = $p->get_ring;
-print $t->variables;
-print $p->coefficients_as_vector;
+#$r=new Ring(qw(x y));
+#($x,$y)=$r->variables;
+#$p=1+$x+$y;
+#$t = $p->get_ring;
+#print $t->variables;
+#print $p->coefficients_as_vector;
 
 
-#application "fan";
+application "fan";
 #$f = normal_fan(cube(3));
 #$t = cast<ToricVariety>($f);
 
@@ -22,9 +22,16 @@ print $p->coefficients_as_vector;
 #$v = new Vector<Rational>([1,1]);
 #add_ray($f, $v);
 
-#$r1 = new Matrix<Rational>([2,1,1],[-1,0,-1],[-1,-1,0],[0,0,1],[0,1,0],[1,0,0]);
-#print $r1;
-#$col = cocoref_bruteforce($r1);
+$r1 = new Matrix<Rational>([2,1,1],[-1,0,-1],[-1,-1,0],[0,0,1],[0,1,0],[1,0,0]);
+print $r1;
+$col = cocoref_bruteforce($r1);
+$ring = new Ring(qw(x y z w));
+($x,$y,$z,$w) = $ring->variables;
+$g = $x*$x+$y*$y+$z*$z+$w*$w-2*($x+$y+$x*$z+$x*$w+$y*$z+$y*$w+$z*$w)+4*($y*$z*$w+$x);
+print $g;
+relevant_cones($g, cast<ToricVariety>($col));
+
+
 
 #$r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
 #print $r;

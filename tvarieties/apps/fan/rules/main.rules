@@ -6,9 +6,12 @@ CREDIT gfan
   http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html
 
 # path to gfan
+custom $gfan_tropicalhypersurface;
+
 custom $gfan_tropicalbruteforce;
 
 CONFIGURE {
+    find_program($gfan_tropicalhypersurface, "gfan_tropicalhypersurface");
     find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
 }
 
@@ -129,7 +132,7 @@ sub gfan_tropicalbruteforce {
 
 # This program preprocesses the input for gfan and then reads in the gfan output.
 # It should be checked whether gfan_groebnerbla can really be left out.
-sub gfan_tropicalhypersurface {
+user_function gfan_tropicalhypersurface(Vector<Rational>, Matrix<Int>) {
 	my ($coefficients, $exponents) = @_;
 	my $tempfile=new Tempfile;
 	#my $tempfile="test";
@@ -150,6 +153,7 @@ sub gfan_tropicalhypersurface {
 	print $tempfile;
 	close $input;
 	
+	print "$gfan_tropicalhypersurface\n";
 	# Accessing gfan:
 	system "$gfan_tropicalhypersurface --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
 	
@@ -282,9 +286,10 @@ user_function cocoref_bruteforce(Matrix) {
 	return check_fan($rays, new Array< Set<Integer>>(@max_cones));
 }
 
-user_function required_cones(Polynomial, ToricVariety){
+user_function relevant_cones(Polynomial, ToricVariety){
 	my ($g, $TV) = @_;
-	
+	my $trop_g = gfan_tropicalhypersurface($g->coefficients_as_vector, dense($g->monomials_as_matrix));
+	print $trop_g->RAYS;
 }
 
 sub homogenize { 
