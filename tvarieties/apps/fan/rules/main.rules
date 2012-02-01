@@ -282,6 +282,11 @@ user_function cocoref_bruteforce(Matrix) {
 	return check_fan($rays, new Array< Set<Integer>>(@max_cones));
 }
 
+user_function required_cones(Polynomial, ToricVariety){
+	my ($g, $TV) = @_;
+	
+}
+
 sub homogenize { 
 	my ($in) = @_;
 	

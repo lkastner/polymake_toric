@@ -1,5 +1,12 @@
+$r=new Ring(qw(x y));
+($x,$y)=$r->variables;
+$p=1+$x+$y;
+$t = $p->get_ring;
+print $t->variables;
+print $p->coefficients_as_vector;
 
-application "fan";
+
+#application "fan";
 #$f = normal_fan(cube(3));
 #$t = cast<ToricVariety>($f);
 
@@ -11,14 +18,14 @@ application "fan";
 #$c1 = new Vector<Rational>([1,1,1]);
 #$a1 = new HypersurfaceInTV(EXPONENTS=>$m1, COEFFICIENTS=>$c1);
 
-$f = normal_fan(cube(2));
-$v = new Vector<Rational>([1,1]);
-add_ray($f, $v);
+#$f = normal_fan(cube(2));
+#$v = new Vector<Rational>([1,1]);
+#add_ray($f, $v);
 
-$r1 = new Matrix<Rational>([2,1,1],[-1,0,-1],[-1,-1,0],[0,0,1],[0,1,0],[1,0,0]);
-print $r1;
-$col = cocoref_bruteforce($r1);
+#$r1 = new Matrix<Rational>([2,1,1],[-1,0,-1],[-1,-1,0],[0,0,1],[0,1,0],[1,0,0]);
+#print $r1;
+#$col = cocoref_bruteforce($r1);
 
-$r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
-print $r;
-$col1 = cocoref_bruteforce($r);
+#$r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
+#print $r;
+#$col1 = cocoref_bruteforce($r);
