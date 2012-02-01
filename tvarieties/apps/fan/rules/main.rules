@@ -297,17 +297,29 @@ user_function relevant_cones(Polynomial, ToricVariety){
 	my $tvr = new Matrix<Rational>($TV->RAYS);
 	#print $tvr;
 	foreach my $C (@$tvmc) {
-		print $C;
+		#print $C;
 		my $m = new Matrix<Rational>(@$tvr[@$C]);
 		#print $m;
 		my $A = new Cone<Rational>(INPUT_RAYS=>$m);
 		foreach my $t (@interesting_cones){
 			my $tA = intersection($t, $A);
-			if($tA->CONE_DIM <= $t->CONE_DIM){
-				print "dim too low\n";
+			if($tA->CONE_DIM < $t->CONE_DIM){
+				#print "dim too low\n";
 				next;
 			} else {
-				print "maybe ok\n";
+				#print "maybe ok\n";
+				my $tar = $tA->RAYS;
+				my $one = ones_vector($tar->rows);
+				my $interior_point = transpose($tar) * $one;
+				#print $interior_point;
+				my $eval = ($tA->FACETS)*$interior_point;
+				my $test = 1;
+				map($_<=0?$test=0:0,@$eval);
+				if($test == 1){
+					print "ok\n";
+				} else {
+					print "not ok\n";
+				}
 			}
 		}
 		#print "la\n";	

@@ -29,7 +29,7 @@ $ring = new Ring(qw(x y z w));
 ($x,$y,$z,$w) = $ring->variables;
 $g = $x*$x+$y*$y+$z*$z+$w*$w-2*($x+$y+$x*$z+$x*$w+$y*$z+$y*$w+$z*$w)+4*($y*$z*$w+$x);
 print $g;
-relevant_cones($g, cast<ToricVariety>(normal_fan(cube(3))));
+relevant_cones($g, cast<ToricVariety>(normal_fan(cube(4))));
 
 
 
