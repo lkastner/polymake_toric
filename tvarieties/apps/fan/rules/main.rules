@@ -187,10 +187,10 @@ user_function cocoref_bruteforce(Matrix) {
 			#print $v;
 			my $contained_rays = 0;
 			map($_>=0?$contained_rays++:0, @$v);
-			print "$contained_rays\n";
+			#print "$contained_rays\n";
 			if($contained_rays == $dim){
 				push @new_cones, new Cone<Rational>(INPUT_RAYS=>$A);
-				print "$c\n";	
+				#print "$c\n";	
 			}
 		}
 	}
@@ -269,7 +269,17 @@ user_function cocoref_bruteforce(Matrix) {
 	#print $rays;
 	my $ray_map = new Map<Vector, Int>;
 	map($ray_map->{$gens[$_]}=$_, 0..($gs-1));
-	return @keep;
+	my @max_cones;
+	foreach my $C (@keep){
+		my $r = new Matrix<Rational>($C->RAYS);
+		my @mc = map($ray_map->{primitive($_)}, @$r);
+		push @max_cones, new Set<Integer>(@mc);
+	}
+	print "Generating rays:\n";
+	print $rays;
+	print "\nMaximal cones:\n";
+	print "@max_cones\n";
+	return check_fan($rays, new Array< Set<Integer>>(@max_cones));
 }
 
 sub homogenize { 

@@ -21,4 +21,4 @@ $col = cocoref_bruteforce($r1);
 
 $r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
 print $r;
-$col = cocoref_bruteforce($r);
+$col1 = cocoref_bruteforce($r);
