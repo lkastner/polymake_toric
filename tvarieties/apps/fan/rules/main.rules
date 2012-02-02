@@ -79,7 +79,7 @@ object HypersurfaceInTV {
 		my $TV = $this->AMBIENT_TV;
 		my $trop = $this->TROPICAL_FAN;
 		my @interesting_cones = map($trop->cone($_),0..($trop->N_MAXIMAL_CONES-1));
-		print "bla\n";	
+		# print "bla\n";	
 
 		my @relevant = ();
 		my $tvmc = $TV->MAXIMAL_CONES;
@@ -100,18 +100,23 @@ object HypersurfaceInTV {
 					my $tar = $tA->RAYS;
 					my $one = ones_vector($tar->rows);
 					my $interior_point = transpose($tar) * $one;
-					print "IP: $interior_point\n";
-					my $eval = ($A->FACETS)*$interior_point;
-					print "eval: $eval\n";
-					my $test = 1;
-					map($_<=0?$test=0:0,@$eval);
-					print "Test: $test\n";
-					if($test == 1){
-						print "ok\n";
+					my $fac = $A->FACETS;
+					# print "\n\nFacets:\n$fac\n";
+					my @equations = grep($_*$interior_point == 0, @$fac);
+					my $eq_mat = new Matrix<Rational>(@equations);
+					# print "Equations:\n$eq_mat\n";
+					# print "IP: $interior_point\n";
+					my $test = $eq_mat->rows;
+					if($test == 0){
+						# print "ok\n";
 						push @relevant, $C;
 					} else {
-						print "not ok\n";
+						my $zero = zero_vector<Rational>($test);
+						my @good_rays = grep($eq_mat * $tvr->[$_] == $zero, @$C);
+						# print "good rays: @good_rays\n";
+						push @relevant, new Set<Integer>(@good_rays);
 					}
+					last;
 				}
 			}
 			#print "la\n";	
