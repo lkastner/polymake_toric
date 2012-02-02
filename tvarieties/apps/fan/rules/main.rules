@@ -1,9 +1,6 @@
 
 
 CREDIT gfan
-  Gfan is a software package for computing Groebner fans and tropical varieties.
-  Copyright by Anders Jensen
-  http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html
 
 # path to gfan
 custom $gfan_tropicalhypersurface;
