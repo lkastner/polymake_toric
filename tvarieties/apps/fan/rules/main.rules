@@ -356,6 +356,35 @@ user_function chow_quotient(Polynomial){
 	my $a = $dm1->DIM;
 	print "Dim:\n$a\n";
 	my $zero = zero_vector($B->cols);
-	my $fm = ((ones_vector(1) | new Vector<Rational>($c))/($zero | transpose(new Matrix<Rational>($B))));
-	print $fm;
+	my @fm = map(((ones_vector(1) | new Vector<Rational>($_))/($zero | transpose(new Matrix<Rational>($B)))), @$degs);
+	@fm = map((new Polytope<Rational>(POINTS=>$_)), @fm);
+	my $good_points = $dm1;
+	foreach my $P (@fm){
+		$good_points = intersection($good_points, $P);
+	}
+	my $cv = cube($D->cols)->VERTICES;
+	print $cv;
+	my $test = 0;
+	my $t = 1;
+	print $good_points->VERTICES;
+	while($test == 0){
+		my $vert = $t * $cv;
+		print $vert->[0];
+		my $cube = new Polytope<Rational>(POINTS=>$vert);
+		print $cube->VERTICES->[0];
+		my $inter = intersection($cube, $good_points);
+		my $lat = $inter->LATTICE_POINTS;
+		print $cube->AMBIENT_DIM;
+		print $inter->AMBIENT_DIM;
+		print $good_points->AMBIENT_DIM;
+		print $lat;
+		my $test = $lat->rows;
+		if($test > 0){
+			$good_points = $inter;
+		}
+		$t++;
+		undef $cube;
+		print "$t\n";
+	}
+	return $good_points;
 }
