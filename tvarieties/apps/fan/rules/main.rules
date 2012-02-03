@@ -330,3 +330,32 @@ sub gale_dual{
 	# TODO
 	return 0;
 }
+
+user_function chow_quotient(Polynomial){
+	my ($g) = @_;
+	print "Defining Polynomial:\n$g\n\n";
+	my $degs = dense($g->monomials_as_matrix);
+	print "Exponents:\n$degs\n";
+	my $coeffs = $g->coefficients_as_vector;
+	print "Coefficients:\n$coeffs\n\n";
+	my @r = @$degs;
+	my $c = $r[0];
+	#print $c;
+	my @diffmatrows  = map($_-$c, @r);
+	my $diffmat = new Matrix<Integer>(@diffmatrows);
+	print "Pairwise differences:\n$diffmat\n";
+	my $D = null_space($diffmat);
+	print "D:\n$D\n";
+	my $B = transpose(null_space($D));
+	print "B:\n$B\n";
+	print $D*$B;
+	my $deg_g = $D*$c;
+	print "degree of g:\n$deg_g\n\n";
+	print $D*transpose($degs);
+	my $dm1 = new Polytope<Rational>(EQUATIONS=>(-$deg_g | $D));
+	my $a = $dm1->DIM;
+	print "Dim:\n$a\n";
+	my $zero = zero_vector($B->cols);
+	my $fm = ((ones_vector(1) | new Vector<Rational>($c))/($zero | transpose(new Matrix<Rational>($B))));
+	print $fm;
+}
