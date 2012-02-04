@@ -348,13 +348,16 @@ user_function chow_quotient(Polynomial){
 	print "D:\n$D\n";
 	my $B = transpose(null_space($D));
 	print "B:\n$B\n";
-	print $D*$B;
+	# Test for exactness:
+	# print $D*$B;
 	my $deg_g = $D*$c;
-	print "degree of g:\n$deg_g\n\n";
-	print $D*transpose($degs);
+	# Test for homogenoucity:
+	# print "degree of g:\n$deg_g\n\n";
+	# print $D*transpose($degs);
 	my $dm1 = new Polytope<Rational>(EQUATIONS=>(-$deg_g | $D));
 	my $a = $dm1->DIM;
-	print "Dim:\n$a\n";
+	# Checking whether dimension is correct:
+	# print "Dim:\n$a\n";
 	my $zero = zero_vector($B->cols);
 	my @fm = map(((ones_vector(1) | new Vector<Rational>($_))/($zero | transpose(new Matrix<Rational>($B)))), @$degs);
 	@fm = map((new Polytope<Rational>(POINTS=>$_)), @fm);
@@ -362,29 +365,21 @@ user_function chow_quotient(Polynomial){
 	foreach my $P (@fm){
 		$good_points = intersection($good_points, $P);
 	}
-	my $cv = cube($D->cols)->VERTICES;
-	print $cv;
+	my $one_cube = cube($D->cols);
+	my $cube = cube($D->cols);
+	# print $cv;
 	my $test = 0;
-	my $t = 1;
-	print $good_points->VERTICES;
+	# Vertices of the set of good points:
+	# print $good_points->VERTICES;
 	while($test == 0){
-		my $vert = $t * $cv;
-		print $vert->[0];
-		my $cube = new Polytope<Rational>(POINTS=>$vert);
-		print $cube->VERTICES->[0];
 		my $inter = intersection($cube, $good_points);
 		my $lat = $inter->LATTICE_POINTS;
-		print $cube->AMBIENT_DIM;
-		print $inter->AMBIENT_DIM;
-		print $good_points->AMBIENT_DIM;
-		print $lat;
-		my $test = $lat->rows;
 		if($test > 0){
 			$good_points = $inter;
+		} else {
+			$cube = minkowski_sum($cube, $one_cube);
+			print "\nEnlarging cube.\n";
 		}
-		$t++;
-		undef $cube;
-		print "$t\n";
 	}
 	return $good_points;
 }
