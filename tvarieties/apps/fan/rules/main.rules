@@ -215,110 +215,103 @@ user_function cocoref_bruteforce(Matrix) {
 	my $m = $rays->rows();
 	my @init_cones = all_subsets_of_k($dim, 0..($m)-1);
 	@init_cones = map(new Set($_), @init_cones);
-	print @init_cones;
-	my @new_cones = ();
-	foreach my $c (@init_cones){
-		my $A = new Matrix<Rational>(@$rays[@$c]);
-		if(rank($A)==$dim){
-			my $iA = inv($A);
-			my $eval = $rays * $iA;
-			my $v = new Vector<Rational>(map(minimum($_), @$eval));
-			#print $v;
-			my $contained_rays = 0;
-			map($_>=0?$contained_rays++:0, @$v);
-			#print "$contained_rays\n";
-			if($contained_rays == $dim){
-				push @new_cones, new Cone<Rational>(INPUT_RAYS=>$A);
-				#print "$c\n";	
-			}
-		}
+	# print @init_cones;
+	@init_cones = map((new Matrix<Rational>(@$rays[@$_])), @init_cones);
+	@init_cones = grep(rank($_) == $dim, @init_cones);
+	foreach my $r (@$rays){
+		@init_cones = grep {
+			my $ina = inv($_);
+			minimum($ina * $r) <= 0
+		} @init_cones;
 	}
+	my $added = 1;
 
-	# Refinement procedure:
-	my $repeat = 1;
-	my $num = 0;
-	my @old_cones = @new_cones;
-	my @collected = @new_cones;
-	my $in = @old_cones;
-	print "old: $in\n";
-	while ($repeat == 1) {
-		$repeat =0;
-		my @toadd = ();
-		foreach my $A (@old_cones){
-			foreach my $B (@new_cones){
-				if(!included_polyhedra($A, $B) && !included_polyhedra($B, $A)){
-					my $AB = intersection($A, $B);
-					if ($AB->DIM == $dim){
-						my $isnew = 1;
-						foreach my $C (@collected,@toadd){
-							if(equal_polyhedra($AB, $C)){
-								$isnew = 0;
-								last;
-							}
-						}
-						if($isnew == 1){
-							$repeat = 1;
-							push @toadd, $AB;
+	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
+	@init_cones = unique(@init_cones);
+	my @refined = ();
+	my @ti = @init_cones;
+	while ($added == 1){
+		$added = 0;
+		my @next = ();
+		foreach my $c (@ti){
+			my @is = map(intersection($c, $_), @init_cones);
+			@is = grep($_->DIM == $dim, @is);
+			@is = grep(!included_polyhedra($c, $_), @is);
+			my $keep = @is;
+			if($keep == 0){
+				push @refined, $c;
+				my $ref = @refined;
+				print "Pushed something. $ref\n"	
+			} else {
+				$added = 1;
+				my $size = @is;
+				while ($size > 0){
+					my $new = pop @is;
+					my $dontadd = 0;
+					foreach my $old (@next, @refined){
+						if (equal_polyhedra($new, $old)){
+							$dontadd = 1;
+							last;
 						}
 					}
+					if ($dontadd == 0){
+						push @next, $new;
+					}
+					$size = @is;
 				}
-			}
-			my $s = @toadd;
-			print "$s\n";
-		}
-		if($repeat == 1){
-			@new_cones = @toadd;
-			@collected = (@collected, @toadd);
-			my $s = @collected;
-			print "size: $s\n";
-		}
-	}
-
-	# Removing superflous cones:
-	my @keep = ();
-	foreach my $A (@collected){
-		my $check = 1;
-		foreach my $B (@collected){
-			if(included_polyhedra($B, $A) && !equal_polyhedra($A, $B)){
-				$check = 0;
-				last;
+				
+				my $add = @next;
+				print "Added something. $add\n";
 			}
 		}
-		if($check == 1){
-			push @keep, $A;
-		}
+		@ti = @next;
+		my $a = @ti;
+		print "Ending inner loop. $a\n\n";
 	}
+	@refined = unique(@refined);
+	my $in = @refined;
 	
-	$in = @keep;
 	print "Number of resulting cones: $in.\n";
-	
-	my @rays = ();
-	#print @keep;
-	foreach my $C (@keep){
-		my $r = new Matrix<Rational>($C->RAYS);
-		@rays = (@rays, map(primitive($_), @$r));
+	return check_fan_objects(@refined);
+}
+
+sub mincones {
+	my (@cones) = @_;
+	my @result = ();
+	my $c = @cones;
+	while ($c > 0){
+		my $cone = pop @cones;
+		my @cj = ();
+		my $min = 1;
+		foreach my $D (@cones){
+			if(included_polyhedra($D, $cone)){
+				$min = 0;
+				last;
+			} elsif (!included_polyhedra($cone, $D)) {
+				push @cj, $D;
+			}
+		}
+		if ($min == 1){
+			push @result, $cone;
+		}
+		@cones = @cj;
+		$c = @cones;
+		print "$c\n";
 	}
-	#print @rays;
-	my $ray_set = new Set<Vector>(@rays);
-	#print $ray_set;
-	
-	my @gens = @$ray_set;
-	my $gs = @gens;
-	my $rays = new Matrix<Rational>(@gens);
-	#print $rays;
-	my $ray_map = new Map<Vector, Int>;
-	map($ray_map->{$gens[$_]}=$_, 0..($gs-1));
-	my @max_cones;
-	foreach my $C (@keep){
-		my $r = new Matrix<Rational>($C->RAYS);
-		my @mc = map($ray_map->{primitive($_)}, @$r);
-		push @max_cones, new Set<Integer>(@mc);
+	return @result;
+}
+
+sub unique {
+	my (@cones) = @_;
+	my @result = ();
+	my $n = @cones;
+	while($n>0){
+		my $c = pop @cones;
+		@cones = grep(!equal_polyhedra($c, $_), @cones);
+		push @result, $c;
+		$n = @cones;
 	}
-	print "Generating rays:\n";
-	print $rays;
-	print "\nMaximal cones:\n";
-	print "@max_cones\n";
-	return check_fan($rays, new Array< Set<Integer>>(@max_cones));
+	return @result;
 }
 
 sub homogenize { 
@@ -387,4 +380,34 @@ user_function chow_quotient(Polynomial){
 	print "g_tilda: $g_tilda\n";
 	my $ambient_tv = cocoref_bruteforce(new Matrix<Rational>($B));
 	return new HypersurfaceInTV(EQUATION=>$g_tilda, AMBIENT_TV=>cast<ToricVariety>($ambient_tv));
+}
+
+# Checking if a fan is complete by checking if every facet appears with an even factor.
+user_function is_complete(PolyhedralFan<Rational>){
+	my ($f) = @_;
+	my $check = new Set<Cone<Rational>>();
+	my $rays = new Matrix<Rational>($f->RAYS);
+	# print $rays;
+	my $mc = $f->MAXIMAL_CONES;
+	# print $mc;
+	foreach my $c (@$mc){
+                my $A = new Cone<Rational>(INPUT_RAYS=>(new Matrix<Rational>(@$rays[@$c])));
+		if($A->DIM < $A->AMBIENT_DIM){
+			return (0==1);
+		}
+		my $F = $A->FACETS;
+		# print $F;
+		foreach my $f (@$F){
+			# print "\n$f\n\n";
+			my $sf = new Set<Cone<Rational>>(new Cone<Rational>(LINEALITY_SPACE=>$f));
+			my $n = $check->size();
+			$check = $check + $sf;
+			if($n == $check->size){
+				$check = $check - $sf;
+			}
+			# print "$check\n";
+		}
+	}
+	print "$check\n";
+	return ($check->size == 0);
 }

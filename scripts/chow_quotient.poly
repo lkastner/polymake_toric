@@ -31,7 +31,7 @@ application "fan";
 
 #$r1 = new Matrix<Rational>([2,1,1],[-1,0,-1],[-1,-1,0],[0,0,1],[0,1,0],[1,0,0]);
 #print $r1;
-#$col = cocoref_bruteforce($r1);
+#$col1 = cocoref_bruteforce($r1);
 
 # Testing with Renes input:
 #$ring = new Ring(qw(x y z w));
@@ -40,16 +40,16 @@ application "fan";
 #print $g;
 #$tv = cast<ToricVariety>(normal_fan(cube(4)));
 #$htv = new HypersurfaceInTV(EQUATION=>$g, AMBIENT_TV=>$tv);
-#$r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
-#print $r;
-#$col1 = cocoref_bruteforce($r);
+$r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
+print $r;
+$col = cocoref_bruteforce($r);
 #$htv = new HypersurfaceInTV(EQUATION=>$g, AMBIENT_TV=>cast<ToricVariety>($col1));
 #print $htv->RELEVANT_CONES->MAXIMAL_CONES;
 
 # Testing Chow Quotient:
-$ring = new Ring(qw(a b c d e f g h));
-($x000, $x001, $x010, $x011, $x100, $x101, $x110, $x111) = $ring->variables;
-$g = $x000*$x000*$x111*$x111 + $x001*$x001*$x110*$x110 + $x010*$x010*$x101*$x101 + $x011*$x011*$x100*$x100;
-$g = $g - 2*($x000*$x001*$x110*$x111 + $x000*$x010*$x101*$x111 + $x000*$x100*$x011*$x111 + $x001*$x010*$x101*$x110 + $x001*$x100*$x011*$x110 + $x010*$x100*$x011*$x101);
-$g = $g + 4*($x000*$x011*$x101*$x110 + $x001*$x010*$x100*$x111);
-$cq = chow_quotient($g);
+#$ring = new Ring(qw(a b c d e f g h));
+#($x000, $x001, $x010, $x011, $x100, $x101, $x110, $x111) = $ring->variables;
+#$g = $x000*$x000*$x111*$x111 + $x001*$x001*$x110*$x110 + $x010*$x010*$x101*$x101 + $x011*$x011*$x100*$x100;
+#$g = $g - 2*($x000*$x001*$x110*$x111 + $x000*$x010*$x101*$x111 + $x000*$x100*$x011*$x111 + $x001*$x010*$x101*$x110 + $x001*$x100*$x011*$x110 + $x010*$x100*$x011*$x101);
+#$g = $g + 4*($x000*$x011*$x101*$x110 + $x001*$x010*$x100*$x111);
+#$cq = chow_quotient($g);
