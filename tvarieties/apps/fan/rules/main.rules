@@ -248,8 +248,12 @@ user_function cocoref_bruteforce(Matrix) {
 			$added = 1;
 			@intersections = unique(@intersections);
 			@collection = (@collection, @intersections);
+			print "done.\n";
 		}
 		@collection = unique(@collection);
+		foreach my $r (@refined){
+			@collection = grep(!equal_polyhedra($r, $_), @collection);
+		}
 		my $collected = @collection;
 		print "Collected $collected new cones.\n";
 		@nc = @collection;
@@ -260,32 +264,6 @@ user_function cocoref_bruteforce(Matrix) {
 	
 	print "Number of resulting cones: $in.\n";
 	return check_fan_objects(@refined);
-}
-
-sub mincones {
-	my (@cones) = @_;
-	my @result = ();
-	my $c = @cones;
-	while ($c > 0){
-		my $cone = pop @cones;
-		my @cj = ();
-		my $min = 1;
-		foreach my $D (@cones){
-			if(included_polyhedra($D, $cone)){
-				$min = 0;
-				last;
-			} elsif (!included_polyhedra($cone, $D)) {
-				push @cj, $D;
-			}
-		}
-		if ($min == 1){
-			push @result, $cone;
-		}
-		@cones = @cj;
-		$c = @cones;
-		print "$c\n";
-	}
-	return @result;
 }
 
 sub unique {
@@ -306,10 +284,6 @@ sub homogenize {
 	
 }
 
-sub gale_dual{
-	# TODO
-	return 0;
-}
 
 user_function chow_quotient(Polynomial){
 	my ($g) = @_;
@@ -372,24 +346,26 @@ user_function chow_quotient(Polynomial){
 # Checking if a fan is complete by checking if every facet appears with an even factor.
 user_function is_complete(PolyhedralFan<Rational>){
 	my ($f) = @_;
-	my $check = zero_vector($f->AMBIENT_DIM);
-	my $rays = new Matrix<Rational>($f->RAYS);
-	# print $rays;
+	my $check = (1 == 1);
 	my $mc = $f->MAXIMAL_CONES;
-	# print $mc;
-	
-	foreach my $c (@$mc){
-                my $A = new Cone<Rational>(INPUT_RAYS=>(new Matrix<Rational>(@$rays[@$c])));
-		if($A->DIM < $A->AMBIENT_DIM){
-			return (0==1);
-		}
-		my $F = $A->FACETS;
-		# print $F;
-		
-		foreach my $facet (@$F){
-			$check = $check + $facet;
-		}
+	my $fanrays = new Matrix<Rational>($f->RAYS);
+	my @init_cones = map((new Matrix<Rational>(@$fanrays[@$_])), @$mc);
+	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
+	my @collection = ();
+	foreach my $c (@init_cones){
+		my $rays = $c->RAYS;
+                my $frc = $c->RAYS_IN_FACETS;
+		#print $frc;
+		#print $rays;
+		my @facet_cones = map((new Matrix<Rational>(@$rays[@$_])), @$frc);
+		@facet_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @facet_cones);
+		@collection = (@collection, @facet_cones);
+	}
+	foreach my $facet (@collection){
+		my $ref = grep(equal_polyhedra($facet, $_), @collection);
+		print "$ref\n";
+		$check = $check && ($ref == 2);
 	}
 	print "$check\n";
-	return ($check == zero_vector($f->AMBIENT_DIM));
+	return $check;
 }
