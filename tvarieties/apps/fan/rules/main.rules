@@ -218,56 +218,43 @@ user_function cocoref_bruteforce(Matrix) {
 	# print @init_cones;
 	@init_cones = map((new Matrix<Rational>(@$rays[@$_])), @init_cones);
 	@init_cones = grep(rank($_) == $dim, @init_cones);
-	foreach my $r (@$rays){
-		@init_cones = grep {
-			my $ina = inv($_);
-			minimum($ina * $r) <= 0
-		} @init_cones;
-	}
-	my $added = 1;
-
 	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
 	@init_cones = unique(@init_cones);
+	@init_cones = grep{
+		my $facets = $_->FACETS;
+		my $contained = grep{minimum($facets * $_)>=0} @$rays;
+		$contained == $dim
+	} @init_cones;
 	my @refined = ();
-	my @ti = @init_cones;
-	while ($added == 1){
+	my $added = 1;
+	my @nc = @init_cones;
+	my $n = @init_cones;
+	print "$n initial cones.\n";
+	while($added == 1){
 		$added = 0;
-		my @next = ();
-		foreach my $c (@ti){
-			my @is = map(intersection($c, $_), @init_cones);
-			@is = grep($_->DIM == $dim, @is);
-			@is = grep(!included_polyhedra($c, $_), @is);
-			my $keep = @is;
-			if($keep == 0){
+		my @collection = ();
+		foreach my $c (@nc){
+			my @intersections = map(intersection($c, $_), @init_cones);
+			@intersections = grep($_->DIM == $dim, @intersections);
+			@intersections = grep(!included_polyhedra($c, $_), @intersections);
+			my $keep = @intersections;
+			if ($keep == 0){
 				push @refined, $c;
+				@refined = unique(@refined);
 				my $ref = @refined;
-				print "Pushed something. $ref\n"	
-			} else {
-				$added = 1;
-				my $size = @is;
-				while ($size > 0){
-					my $new = pop @is;
-					my $dontadd = 0;
-					foreach my $old (@next, @refined){
-						if (equal_polyhedra($new, $old)){
-							$dontadd = 1;
-							last;
-						}
-					}
-					if ($dontadd == 0){
-						push @next, $new;
-					}
-					$size = @is;
-				}
-				
-				my $add = @next;
-				print "Added something. $add\n";
-			}
+				print "Pushed something: $ref\n";
+				next;
+			}  
+			$added = 1;
+			@intersections = unique(@intersections);
+			@collection = (@collection, @intersections);
 		}
-		@ti = @next;
-		my $a = @ti;
-		print "Ending inner loop. $a\n\n";
+		@collection = unique(@collection);
+		my $collected = @collection;
+		print "Collected $collected new cones.\n";
+		@nc = @collection;
 	}
+	
 	@refined = unique(@refined);
 	my $in = @refined;
 	
@@ -385,11 +372,12 @@ user_function chow_quotient(Polynomial){
 # Checking if a fan is complete by checking if every facet appears with an even factor.
 user_function is_complete(PolyhedralFan<Rational>){
 	my ($f) = @_;
-	my $check = new Set<Cone<Rational>>();
+	my $check = zero_vector($f->AMBIENT_DIM);
 	my $rays = new Matrix<Rational>($f->RAYS);
 	# print $rays;
 	my $mc = $f->MAXIMAL_CONES;
 	# print $mc;
+	
 	foreach my $c (@$mc){
                 my $A = new Cone<Rational>(INPUT_RAYS=>(new Matrix<Rational>(@$rays[@$c])));
 		if($A->DIM < $A->AMBIENT_DIM){
@@ -397,17 +385,11 @@ user_function is_complete(PolyhedralFan<Rational>){
 		}
 		my $F = $A->FACETS;
 		# print $F;
-		foreach my $f (@$F){
-			# print "\n$f\n\n";
-			my $sf = new Set<Cone<Rational>>(new Cone<Rational>(LINEALITY_SPACE=>$f));
-			my $n = $check->size();
-			$check = $check + $sf;
-			if($n == $check->size){
-				$check = $check - $sf;
-			}
-			# print "$check\n";
+		
+		foreach my $facet (@$F){
+			$check = $check + $facet;
 		}
 	}
 	print "$check\n";
-	return ($check->size == 0);
+	return ($check == zero_vector($f->AMBIENT_DIM));
 }
