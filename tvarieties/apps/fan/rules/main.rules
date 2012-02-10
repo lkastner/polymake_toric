@@ -209,6 +209,76 @@ user_function add_ray(PolyhedralFan, Vector){
 	}	
 }
 
+user_function cocoref_new(Matrix) {
+	my($rays) = @_;
+	my $dim = $rays->cols();
+	my $m = $rays->rows();
+	my @init_cones = all_subsets_of_k($dim, 0..($m)-1);
+	@init_cones = map(new Set($_), @init_cones);
+	# print @init_cones;
+	@init_cones = map((new Matrix<Rational>(@$rays[@$_])), @init_cones);
+	@init_cones = grep(rank($_) == $dim, @init_cones);
+	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
+	@init_cones = unique(@init_cones);
+	@init_cones = grep{
+		my $facets = $_->FACETS;
+		my $contained = grep{minimum($facets * $_)>=0} @$rays;
+		$contained == $dim
+	} @init_cones;
+	my @refined = ();
+	my $added = 1;
+	my @nc = @init_cones;
+	my $n = @init_cones;
+	print "$n initial cones.\n";
+	my %init_hash_ic = new HashMap<Set<Int>, Cone<Rational>>();
+	my %init_hash_ci = new HashMap<Cone<Rational>, Set<Int>>();
+	my $i = 0;
+	print "$i\n";
+	foreach my $c (@init_cones){
+		my $si = new Set<Int>($i);
+	#	$init_hash_ic->{$si} = $c;
+	#	$init_hash_ci->{$c} = $si;
+		$i++;
+	}
+	print "Done creating HashMaps\n";
+	
+
+	while($added == 1){
+		$added = 0;
+		my @collection = ();
+		foreach my $c (@nc){
+			my @intersections = map(intersection($c, $_), @init_cones);
+			@intersections = grep($_->DIM == $dim, @intersections);
+			@intersections = grep(!included_polyhedra($c, $_), @intersections);
+			my $keep = @intersections;
+			if ($keep == 0){
+				push @refined, $c;
+				@refined = unique(@refined);
+				my $ref = @refined;
+				print "Pushed something: $ref\n";
+				next;
+			}  
+			$added = 1;
+			@intersections = unique(@intersections);
+			@collection = (@collection, @intersections);
+			print "done.\n";
+		}
+		@collection = unique(@collection);
+		foreach my $r (@refined){
+			@collection = grep(!equal_polyhedra($r, $_), @collection);
+		}
+		my $collected = @collection;
+		print "Collected $collected new cones.\n";
+		@nc = @collection;
+	}
+	
+	@refined = unique(@refined);
+	my $in = @refined;
+	
+	print "Number of resulting cones: $in.\n";
+	return check_fan_objects(@refined);
+}
+
 user_function cocoref_bruteforce(Matrix) {
 	my($rays) = @_;
 	my $dim = $rays->cols();

@@ -42,7 +42,7 @@ application "fan";
 #$htv = new HypersurfaceInTV(EQUATION=>$g, AMBIENT_TV=>$tv);
 $r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
 print $r;
-$col = cocoref_bruteforce($r);
+$col = cocoref_new($r);
 #$htv = new HypersurfaceInTV(EQUATION=>$g, AMBIENT_TV=>cast<ToricVariety>($col1));
 #print $htv->RELEVANT_CONES->MAXIMAL_CONES;
 
