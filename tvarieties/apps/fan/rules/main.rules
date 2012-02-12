@@ -230,48 +230,89 @@ user_function cocoref_new(Matrix) {
 	my @nc = @init_cones;
 	my $n = @init_cones;
 	print "$n initial cones.\n";
-	my %init_hash_ic = new HashMap<Set<Int>, Cone<Rational>>();
-	my %init_hash_ci = new HashMap<Cone<Rational>, Set<Int>>();
+	
 	my $i = 0;
 	print "$i\n";
-	foreach my $c (@init_cones){
-		my $si = new Set<Int>($i);
-	#	$init_hash_ic->{$si} = $c;
-	#	$init_hash_ci->{$c} = $si;
+	@init_cones = map{
+		my @elem = ();
+		push @elem, new Set<Int>($i);
+		push @elem, $_;
 		$i++;
-	}
-	print "Done creating HashMaps\n";
+		[@elem]
+	} @init_cones;
 	
-
+	my @combinations = map($_->[0], @init_cones);
+	my @new_cones = @init_cones;
 	while($added == 1){
 		$added = 0;
-		my @collection = ();
-		foreach my $c (@nc){
-			my @intersections = map(intersection($c, $_), @init_cones);
-			@intersections = grep($_->DIM == $dim, @intersections);
-			@intersections = grep(!included_polyhedra($c, $_), @intersections);
-			my $keep = @intersections;
+		my @collected_cones = ();
+		foreach my $c (@new_cones){
+			my $index = $c->[0];
+			my @intersections = grep((($index + $_ )-($index * $_))->size == 2, @combinations);
+			@intersections = map($_ - $index, @intersections);
+			my @ui = ();
+			foreach my $i (@intersections) {
+				my $identicals = grep($_ == $i, @ui);
+				if($identicals == 0){
+					push @ui, $i;
+				}
+			}
+			@intersections = @ui;
+			my @done = ();
+			my @todo = ();
+			foreach my $i (@intersections) {
+				my $indexset = $index + $i;
+				my $b = grep( $_->[0] == $indexset, @collected_cones );
+				if($b > 0){
+					push @done, $i;
+				} else {
+					push @todo, $i;
+				}
+			}
+			print @done;
+			@todo = map {
+				my $i = $_;
+				my @ic = grep( $_->[0] == $i, @init_cones);
+				my $primitive_cone = @ic->[0]->[1];
+				my @intersect = ();
+				push @intersect, ($index + $i);
+				push @intersect, intersection($primitive_cone, $c->[1]);
+				[@intersect]
+			} @todo;
+			@todo = grep($_->[1]->DIM == $dim, @todo);
+			@todo = grep(!included_polyhedra($c->[1], $_->[1]), @todo);
+			my $keep1 = @done;
+			my $keep2 = @todo;
+			my $keep = $keep1 + $keep2;
 			if ($keep == 0){
-				push @refined, $c;
-				@refined = unique(@refined);
+				my $identicals = grep(equal_polyhedra($_->[1], $c->[1]), @refined);
+				# print "There are $identicals copies of this cone.\n";
+				if ($identicals == 0){
+					push @refined, $c;
+				}
 				my $ref = @refined;
-				print "Pushed something: $ref\n";
+				# print "Pushed something: $ref\n";
 				next;
 			}  
 			$added = 1;
-			@intersections = unique(@intersections);
-			@collection = (@collection, @intersections);
-			print "done.\n";
+			@collected_cones = (@collected_cones, @todo);
+			# print "done.\n";
 		}
-		@collection = unique(@collection);
-		foreach my $r (@refined){
-			@collection = grep(!equal_polyhedra($r, $_), @collection);
-		}
-		my $collected = @collection;
+		my @uniques = ();
+		foreach my $col (@collected_cones){
+			my $identicals = grep($col->[0] == $_->[0], (@uniques, @refined));
+			if($identicals == 0){
+				push @uniques, $col;
+			}
+		}	
+		@new_cones = @uniques;
+		my $collected = @new_cones;
+		@combinations = map($_->[0], @new_cones);
 		print "Collected $collected new cones.\n";
-		@nc = @collection;
 	}
-	
+	my @good_comb = map($_->[0], @refined);
+	print @good_comb;
+	@refined = map($_->[1], @refined);
 	@refined = unique(@refined);
 	my $in = @refined;
 	
@@ -312,13 +353,13 @@ user_function cocoref_bruteforce(Matrix) {
 				push @refined, $c;
 				@refined = unique(@refined);
 				my $ref = @refined;
-				print "Pushed something: $ref\n";
+				# print "Pushed something: $ref\n";
 				next;
 			}  
 			$added = 1;
 			@intersections = unique(@intersections);
 			@collection = (@collection, @intersections);
-			print "done.\n";
+			# print "done.\n";
 		}
 		@collection = unique(@collection);
 		foreach my $r (@refined){
