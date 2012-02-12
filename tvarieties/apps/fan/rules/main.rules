@@ -269,7 +269,6 @@ user_function cocoref_new(Matrix) {
 					push @todo, $i;
 				}
 			}
-			print @done;
 			@todo = map {
 				my $i = $_;
 				my @ic = grep( $_->[0] == $i, @init_cones);
@@ -300,7 +299,7 @@ user_function cocoref_new(Matrix) {
 		}
 		my @uniques = ();
 		foreach my $col (@collected_cones){
-			my $identicals = grep($col->[0] == $_->[0], (@uniques, @refined));
+			my $identicals = grep(equal_polyhedra($col->[1], $_->[1]), (@uniques, @refined));
 			if($identicals == 0){
 				push @uniques, $col;
 			}
