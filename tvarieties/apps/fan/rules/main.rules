@@ -52,7 +52,7 @@ object ToricVariety {
 		$this->AFFINE = ($this->N_MAXIMAL_CONES == 1);
 	}
 
-	rule PROJECTIVE : MAXIMAL_CONES, RAYS {
+	rule PROJECTIVE, GENERATING_POLYTOPE : MAXIMAL_CONES, RAYS {
 		my $t = time();
 		my $gale = transpose(null_space(transpose($this->RAYS)));
 		$gale = ones_vector() | $gale;
@@ -79,6 +79,7 @@ object ToricVariety {
 		}
 		print "facet_interior_check: ",time()-$t,"s\n";# if ($DebugLevel);
 		$t = time();
+		$this->GENERATING_POLYTOPE = $check;
 		$this->PROJECTIVE = 1;
 	}
 	
