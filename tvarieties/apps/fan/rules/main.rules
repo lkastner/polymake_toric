@@ -54,8 +54,11 @@ object ToricVariety {
 
 	rule PROJECTIVE, GENERATING_POLYTOPE : MAXIMAL_CONES, RAYS {
 		my $t = time();
-		my $gale = transpose(null_space(transpose($this->RAYS)));
-		$gale = ones_vector() | $gale;
+		my $rays = new Matrix<Rational>($this->RAYS);
+		$rays = new Matrix<Integer>(map(primitive($_),@$rays));
+		my $gale_inhom = transpose(null_space(transpose($rays)));
+		my $gale = ones_vector() | new Matrix<Rational>($gale_inhom);
+		#print transpose($this->RAYS)*$gale_inhom;
 		my @gale_duals = ();
 		print "preparation: ",time()-$t,"s\n";# if ($DebugLevel);
 		$t = time();
@@ -79,6 +82,20 @@ object ToricVariety {
 		}
 		print "facet_interior_check: ",time()-$t,"s\n";# if ($DebugLevel);
 		$t = time();
+		$rays = transpose($rays);
+		my $snf = smith_normal_form($rays);
+		my @snf = map(dense($_), @$snf);
+		my $section = inv(new Matrix<Rational>($snf[1]));
+		$section = transpose($section->minor(All, [0..($rays->rows-1)]));
+		print $section * transpose(new Matrix<Rational>($rays));
+		my $c = $check->REL_INT_POINT;
+		#print $c;
+		#print $gale_inhom;
+		my $eq = (-$c->slice(1) | transpose(new Matrix<Rational>($gale_inhom)));
+		print $eq;
+		my $ineq = (zero_vector($gale_inhom->cols) | dense(unit_matrix($gale_inhom->cols)));
+		my $p = new Polytope<Rational>(EQUATIONS=>$eq, INEQUALITIES=>new Matrix<Rational>($ineq));
+		#print $p->VERTICES;
 		$this->GENERATING_POLYTOPE = $check;
 		$this->PROJECTIVE = 1;
 	}
