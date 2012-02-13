@@ -38,13 +38,47 @@ object ToricVariety {
 
 	property AFFINE : Bool;
 
+	property GENERATING_POLYTOPE : Polytope<Rational>;
+
 	property PROJECTIVE : Bool;
+	
+	# = override REGULAR;
 
 	property SMOOTH = override SMOOTH_FAN;
 	
 	# Rules:
+	
+	rule AFFINE : N_MAXIMAL_CONES {
+		$this->AFFINE = ($this->N_MAXIMAL_CONES == 1);
+	}
 
-	rule PROJECTIVE : MAXIMAL_CONES {
+	rule PROJECTIVE : MAXIMAL_CONES, RAYS {
+		my $t = time();
+		my $gale = transpose(null_space(transpose($this->RAYS)));
+		$gale = ones_vector() | $gale;
+		my @gale_duals = ();
+		print "preparation: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		foreach my $c (@{$this->MAXIMAL_CONES}){
+			#foreach my $c (@$cones_dim){
+				my $p = new Polytope<Rational>(POINTS=>$gale->minor(~$c, All));
+				push @gale_duals, $p;
+			#}
+		}
+		print "gale_duals: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		my $check = intersection(@gale_duals);
+		print "intersection: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		return $this->PROJECTIVE = 0 if (!$check->FEASIBLE);
+		foreach my $p (@gale_duals) {
+			if ($p->FACETS * transpose($check->VERTICES) == new Matrix($p->N_FACETS,$check->N_VERTICES)) {
+				$this->PROJECTIVE = 0;
+				return;
+			}
+		}
+		print "facet_interior_check: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
 		$this->PROJECTIVE = 1;
 	}
 	
@@ -87,7 +121,8 @@ object HypersurfaceInTV {
 		#print $tvr;
 		foreach my $C (@$tvmc) {
 			#print $C;
-			my $m = new Matrix<Rational>(@$tvr[@$C]);
+			my $m = $tvr->minor($C,All);
+			#my $m = new Matrix<Rational>(@$tvr[@$C]);
 			#print $m;
 			my $A = new Cone<Rational>(INPUT_RAYS=>$m);
 			foreach my $t (@interesting_cones){
@@ -210,6 +245,7 @@ user_function add_ray(PolyhedralFan, Vector){
 }
 
 user_function cocoref_new(Matrix) {
+	stop_here();
 	my($rays) = @_;
 	my $dim = $rays->cols();
 	my $m = $rays->rows();
@@ -218,13 +254,13 @@ user_function cocoref_new(Matrix) {
 	# print @init_cones;
 	@init_cones = map((new Matrix<Rational>(@$rays[@$_])), @init_cones);
 	@init_cones = grep(rank($_) == $dim, @init_cones);
-	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
-	@init_cones = unique(@init_cones);
-	@init_cones = grep{
-		my $facets = $_->FACETS;
+	@init_cones = grep {
+		my $facets = transpose(inv($_));
 		my $contained = grep{minimum($facets * $_)>=0} @$rays;
 		$contained == $dim
 	} @init_cones;
+	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
+	@init_cones = unique(@init_cones);
 	my @refined = ();
 	my $added = 1;
 	my @nc = @init_cones;
@@ -295,7 +331,7 @@ user_function cocoref_new(Matrix) {
 			}  
 			$added = 1;
 			@collected_cones = (@collected_cones, @todo);
-			# print "done.\n";
+			print "done.\n";
 		}
 		my @uniques = ();
 		foreach my $col (@collected_cones){
@@ -358,7 +394,7 @@ user_function cocoref_bruteforce(Matrix) {
 			$added = 1;
 			@intersections = unique(@intersections);
 			@collection = (@collection, @intersections);
-			# print "done.\n";
+			print "done.\n";
 		}
 		@collection = unique(@collection);
 		foreach my $r (@refined){
@@ -449,7 +485,7 @@ user_function chow_quotient(Polynomial){
 	my $R = new Ring(@vars);
 	my $g_tilda = new Polynomial($new_degs,$coeffs,$R); 
 	print "g_tilda: $g_tilda\n";
-	my $ambient_tv = cocoref_bruteforce(new Matrix<Rational>($B));
+	my $ambient_tv = cocoref_new(new Matrix<Rational>($B));
 	return new HypersurfaceInTV(EQUATION=>$g_tilda, AMBIENT_TV=>cast<ToricVariety>($ambient_tv));
 }
 
