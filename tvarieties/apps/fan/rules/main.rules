@@ -258,8 +258,8 @@ user_function add_ray(PolyhedralFan, Vector){
 	for my $f (@$mc) {
 		print "$f\n";
 		my $gens = new Matrix<Rational>(@$oldrays[@$f]);
-		print $gens;	
-	}	
+		print $gens;
+	}
 }
 
 user_function cocoref_new(Matrix) {
