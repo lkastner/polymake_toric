@@ -35,13 +35,65 @@ object ToricVariety {
 
 	property AFFINE : Bool;
 
+	property GENERATING_POLYTOPE : Polytope<Rational>;
+
 	property PROJECTIVE : Bool;
+	
+	# = override REGULAR;
 
 	property SMOOTH = override SMOOTH_FAN;
 	
 	# Rules:
+	
+	rule AFFINE : N_MAXIMAL_CONES {
+		$this->AFFINE = ($this->N_MAXIMAL_CONES == 1);
+	}
 
-	rule PROJECTIVE : MAXIMAL_CONES {
+	rule PROJECTIVE, GENERATING_POLYTOPE : MAXIMAL_CONES, RAYS {
+		my $t = time();
+		my $rays = new Matrix<Rational>($this->RAYS);
+		$rays = new Matrix<Integer>(map(primitive($_),@$rays));
+		my $gale_inhom = transpose(null_space(transpose($rays)));
+		my $gale = ones_vector() | new Matrix<Rational>($gale_inhom);
+		#print transpose($this->RAYS)*$gale_inhom;
+		my @gale_duals = ();
+		print "preparation: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		foreach my $c (@{$this->MAXIMAL_CONES}){
+			#foreach my $c (@$cones_dim){
+				my $p = new Polytope<Rational>(POINTS=>$gale->minor(~$c, All));
+				push @gale_duals, $p;
+			#}
+		}
+		print "gale_duals: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		my $check = intersection(@gale_duals);
+		print "intersection: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		return $this->PROJECTIVE = 0 if (!$check->FEASIBLE);
+		foreach my $p (@gale_duals) {
+			if ($p->FACETS * transpose($check->VERTICES) == new Matrix($p->N_FACETS,$check->N_VERTICES)) {
+				$this->PROJECTIVE = 0;
+				return;
+			}
+		}
+		print "facet_interior_check: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		$rays = transpose($rays);
+		my $snf = smith_normal_form($rays);
+		my @snf = map(dense($_), @$snf);
+		my $section = inv(new Matrix<Rational>($snf[1]));
+		$section = transpose($section->minor(All, [0..($rays->rows-1)]));
+		print $section * transpose(new Matrix<Rational>($rays));
+		my $c = $check->REL_INT_POINT;
+		#print $c;
+		#print $gale_inhom;
+		my $eq = (-$c->slice(1) | transpose(new Matrix<Rational>($gale_inhom)));
+		print $eq;
+		my $ineq = (zero_vector($gale_inhom->cols) | dense(unit_matrix($gale_inhom->cols)));
+		my $p = new Polytope<Rational>(EQUATIONS=>$eq, INEQUALITIES=>new Matrix<Rational>($ineq));
+		#print $p->VERTICES;
+		$this->GENERATING_POLYTOPE = $check;
 		$this->PROJECTIVE = 1;
 	}
 	
@@ -84,7 +136,8 @@ object HypersurfaceInTV {
 		#print $tvr;
 		foreach my $C (@$tvmc) {
 			#print $C;
-			my $m = new Matrix<Rational>(@$tvr[@$C]);
+			my $m = $tvr->minor($C,All);
+			#my $m = new Matrix<Rational>(@$tvr[@$C]);
 			#print $m;
 			my $A = new Cone<Rational>(INPUT_RAYS=>$m);
 			foreach my $t (@interesting_cones){
@@ -207,6 +260,7 @@ user_function add_ray(PolyhedralFan, Vector){
 }
 
 user_function cocoref_new(Matrix) {
+	stop_here();
 	my($rays) = @_;
 	my $dim = $rays->cols();
 	my $m = $rays->rows();
@@ -215,60 +269,100 @@ user_function cocoref_new(Matrix) {
 	# print @init_cones;
 	@init_cones = map((new Matrix<Rational>(@$rays[@$_])), @init_cones);
 	@init_cones = grep(rank($_) == $dim, @init_cones);
-	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
-	@init_cones = unique(@init_cones);
-	@init_cones = grep{
-		my $facets = $_->FACETS;
+	@init_cones = grep {
+		my $facets = transpose(inv($_));
 		my $contained = grep{minimum($facets * $_)>=0} @$rays;
 		$contained == $dim
 	} @init_cones;
+	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
+	@init_cones = unique(@init_cones);
 	my @refined = ();
 	my $added = 1;
 	my @nc = @init_cones;
 	my $n = @init_cones;
 	print "$n initial cones.\n";
-	my %init_hash_ic = new HashMap<Set<Int>, Cone<Rational>>();
-	my %init_hash_ci = new HashMap<Cone<Rational>, Set<Int>>();
+	
 	my $i = 0;
 	print "$i\n";
-	foreach my $c (@init_cones){
-		my $si = new Set<Int>($i);
-	#	$init_hash_ic->{$si} = $c;
-	#	$init_hash_ci->{$c} = $si;
+	@init_cones = map{
+		my @elem = ();
+		push @elem, new Set<Int>($i);
+		push @elem, $_;
 		$i++;
-	}
-	print "Done creating HashMaps\n";
+		[@elem]
+	} @init_cones;
 	
-
+	my @combinations = map($_->[0], @init_cones);
+	my @new_cones = @init_cones;
 	while($added == 1){
 		$added = 0;
-		my @collection = ();
-		foreach my $c (@nc){
-			my @intersections = map(intersection($c, $_), @init_cones);
-			@intersections = grep($_->DIM == $dim, @intersections);
-			@intersections = grep(!included_polyhedra($c, $_), @intersections);
-			my $keep = @intersections;
+		my @collected_cones = ();
+		foreach my $c (@new_cones){
+			my $index = $c->[0];
+			my @intersections = grep((($index + $_ )-($index * $_))->size == 2, @combinations);
+			@intersections = map($_ - $index, @intersections);
+			my @ui = ();
+			foreach my $i (@intersections) {
+				my $identicals = grep($_ == $i, @ui);
+				if($identicals == 0){
+					push @ui, $i;
+				}
+			}
+			@intersections = @ui;
+			my @done = ();
+			my @todo = ();
+			foreach my $i (@intersections) {
+				my $indexset = $index + $i;
+				my $b = grep( $_->[0] == $indexset, @collected_cones );
+				if($b > 0){
+					push @done, $i;
+				} else {
+					push @todo, $i;
+				}
+			}
+			@todo = map {
+				my $i = $_;
+				my @ic = grep( $_->[0] == $i, @init_cones);
+				my $primitive_cone = @ic->[0]->[1];
+				my @intersect = ();
+				push @intersect, ($index + $i);
+				push @intersect, intersection($primitive_cone, $c->[1]);
+				[@intersect]
+			} @todo;
+			@todo = grep($_->[1]->DIM == $dim, @todo);
+			@todo = grep(!included_polyhedra($c->[1], $_->[1]), @todo);
+			my $keep1 = @done;
+			my $keep2 = @todo;
+			my $keep = $keep1 + $keep2;
 			if ($keep == 0){
-				push @refined, $c;
-				@refined = unique(@refined);
+				my $identicals = grep(equal_polyhedra($_->[1], $c->[1]), @refined);
+				# print "There are $identicals copies of this cone.\n";
+				if ($identicals == 0){
+					push @refined, $c;
+				}
 				my $ref = @refined;
-				print "Pushed something: $ref\n";
+				# print "Pushed something: $ref\n";
 				next;
 			}  
 			$added = 1;
-			@intersections = unique(@intersections);
-			@collection = (@collection, @intersections);
+			@collected_cones = (@collected_cones, @todo);
 			print "done.\n";
 		}
-		@collection = unique(@collection);
-		foreach my $r (@refined){
-			@collection = grep(!equal_polyhedra($r, $_), @collection);
-		}
-		my $collected = @collection;
+		my @uniques = ();
+		foreach my $col (@collected_cones){
+			my $identicals = grep(equal_polyhedra($col->[1], $_->[1]), (@uniques, @refined));
+			if($identicals == 0){
+				push @uniques, $col;
+			}
+		}	
+		@new_cones = @uniques;
+		my $collected = @new_cones;
+		@combinations = map($_->[0], @new_cones);
 		print "Collected $collected new cones.\n";
-		@nc = @collection;
 	}
-	
+	my @good_comb = map($_->[0], @refined);
+	print @good_comb;
+	@refined = map($_->[1], @refined);
 	@refined = unique(@refined);
 	my $in = @refined;
 	
@@ -309,7 +403,7 @@ user_function cocoref_bruteforce(Matrix) {
 				push @refined, $c;
 				@refined = unique(@refined);
 				my $ref = @refined;
-				print "Pushed something: $ref\n";
+				# print "Pushed something: $ref\n";
 				next;
 			}  
 			$added = 1;
@@ -406,7 +500,7 @@ user_function chow_quotient(Polynomial){
 	my $R = new Ring(@vars);
 	my $g_tilda = new Polynomial($new_degs,$coeffs,$R); 
 	print "g_tilda: $g_tilda\n";
-	my $ambient_tv = cocoref_bruteforce(new Matrix<Rational>($B));
+	my $ambient_tv = cocoref_new(new Matrix<Rational>($B));
 	return new HypersurfaceInTV(EQUATION=>$g_tilda, AMBIENT_TV=>cast<ToricVariety>($ambient_tv));
 }
 

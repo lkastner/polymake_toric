@@ -7,5 +7,3 @@ property_type Polynomial {
 	user_method coefficients_as_vector() : c++;
 
 }
-
-
