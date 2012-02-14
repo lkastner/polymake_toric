@@ -87,16 +87,21 @@ object ToricVariety {
 		my @snf = map(dense($_), @$snf);
 		my $section = inv(new Matrix<Rational>($snf[1]));
 		$section = transpose($section->minor(All, [0..($rays->rows-1)]));
-		print $section * transpose(new Matrix<Rational>($rays));
+		# print $section * transpose(new Matrix<Rational>($rays));
 		my $c = $check->REL_INT_POINT;
-		#print $c;
-		#print $gale_inhom;
+		# print $c;
+		# print $gale_inhom;
 		my $eq = (-$c->slice(1) | transpose(new Matrix<Rational>($gale_inhom)));
-		print $eq;
-		my $ineq = (zero_vector($gale_inhom->cols) | dense(unit_matrix($gale_inhom->cols)));
+		# print $eq;
+		my $ineq = (zero_vector() | dense(unit_matrix($gale_inhom->rows)));
+		# print $ineq;
 		my $p = new Polytope<Rational>(EQUATIONS=>$eq, INEQUALITIES=>new Matrix<Rational>($ineq));
-		#print $p->VERTICES;
-		$this->GENERATING_POLYTOPE = $check;
+		my $pv = $p->VERTICES;
+		# print $section;
+		$section = (zero_vector() | $section);
+		my $new_vert = $section * transpose($pv);
+		#print $new_vert;
+		$this->GENERATING_POLYTOPE = new Polytope<Rational>(POINTS=>(ones_vector() | transpose($new_vert)));
 		$this->PROJECTIVE = 1;
 	}
 	
