@@ -8,11 +8,11 @@
 
 application "fan";
 
-#$r=new Ring(qw(x y));
-#($x,$y)=$r->variables;
-#$p=1+$x+$y;
-#$htv = new HypersurfaceInTV(EQUATION=>$p, AMBIENT_TV=>cast<ToricVariety>(normal_fan(cube(2))));
-#print $htv->RELEVANT_CONES->MAXIMAL_CONES;
+$r=new Ring(qw(x y));
+($x,$y)=$r->variables;
+$p=1+$x+$y;
+$htv = new HypersurfaceInTV(EQUATION=>$p, AMBIENT_TV=>cast<ToricVariety>(normal_fan(cube(2))));
+print $htv->RELEVANT_CONES->MAXIMAL_CONES;
 
 #$f = normal_fan(cube(3));
 #$t = cast<ToricVariety>($f);
@@ -48,12 +48,12 @@ application "fan";
 #print $htv->RELEVANT_CONES->MAXIMAL_CONES;
 
 # Testing Chow Quotient:
-#$ring = new Ring(qw(a b c d e f g h));
-#($x000, $x001, $x010, $x011, $x100, $x101, $x110, $x111) = $ring->variables;
-#$g = $x000*$x000*$x111*$x111 + $x001*$x001*$x110*$x110 + $x010*$x010*$x101*$x101 + $x011*$x011*$x100*$x100;
-#$g = $g - 2*($x000*$x001*$x110*$x111 + $x000*$x010*$x101*$x111 + $x000*$x100*$x011*$x111 + $x001*$x010*$x101*$x110 + $x001*$x100*$x011*$x110 + $x010*$x100*$x011*$x101);
-#$g = $g + 4*($x000*$x011*$x101*$x110 + $x001*$x010*$x100*$x111);
-#$cq = chow_quotient($g);
+$ring = new Ring(qw(a b c d e f g h));
+($x000, $x001, $x010, $x011, $x100, $x101, $x110, $x111) = $ring->variables;
+$g = $x000*$x000*$x111*$x111 + $x001*$x001*$x110*$x110 + $x010*$x010*$x101*$x101 + $x011*$x011*$x100*$x100;
+$g = $g - 2*($x000*$x001*$x110*$x111 + $x000*$x010*$x101*$x111 + $x000*$x100*$x011*$x111 + $x001*$x010*$x101*$x110 + $x001*$x100*$x011*$x110 + $x010*$x100*$x011*$x101);
+$g = $g + 4*($x000*$x011*$x101*$x110 + $x001*$x010*$x100*$x111);
+$cq = chow_quotient($g);
 
 $htv = load("hyperdet.htv");
 $amb = $htv->AMBIENT_TV;
