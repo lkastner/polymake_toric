@@ -1,3 +1,23 @@
+
+CREDIT Singular
+  blaaaa
+
+# path to the root installation directory of barvinok
+custom $singular_path;
+
+CONFIGURE_BUILD {
+  find_location($singular_path, "/usr", "/usr/local", "/opt", 
+                { prompt => "libsingular root installation directory",
+                  check => sub { !-f "$_[0]/include/libsingular.h" && "$_[0]/include/libsingular.h does not exist"
+                           } })
+    or return;
+
+  return ( SingularPath   => $singular_path );
+}
+
+INCLUDE ideal.rules
+
+
 property_type Polynomial {
 
 	user_method monomials_as_matrix() : c++;
