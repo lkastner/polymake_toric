@@ -1,9 +1,10 @@
-#include "polymake/tvarieties/algebra.h"
+#include "polymake/client.h"
+#include "polymake/common/algebra.h"
 
 #include <libsingular.h>
 
 
-namespace polymake { namespace tvarieties {
+namespace polymake { namespace common {
 
 int singular_initialized = 0;
 
@@ -20,7 +21,7 @@ void init_singular(const std::string& path)
       return;
    }
    
-   std::string p = path+"/lib/libsingular.so";
+   std::string p = path+"/Singular/libsingular.so";
    char* cpath = omStrDup(p.c_str());
    siInit(cpath);
    WerrorS_callback = &singular_error_handler;

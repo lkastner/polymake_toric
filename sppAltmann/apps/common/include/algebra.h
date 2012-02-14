@@ -4,7 +4,7 @@
 #include "polymake/Polynomial.h"
 #include "polymake/internal/shared_object.h"
 
-namespace polymake { namespace tvarieties {
+namespace polymake { namespace common {
 
 class Ideal;
 
@@ -97,7 +97,7 @@ class Divisor{};
 namespace pm {
 
 template <>
-struct spec_object_traits< polymake::tvarieties::Ideal >
+struct spec_object_traits< polymake::common::Ideal >
    : spec_object_traits<is_container> {};
 
 } // end namespace pm

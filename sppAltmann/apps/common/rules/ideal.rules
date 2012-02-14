@@ -1,0 +1,10 @@
+declare property_type Ideal : c++ (include => ["polymake/common/algebra.h"], operators => '+ +=') {
+   
+#   user_method set(Int,*) : void : c++;
+
+   user_method groebner() : non_const : c++;
+
+}
+
+#user_function init_singular(String) : void : c++ (include => ["polymake/common/algebra.h"]);
+

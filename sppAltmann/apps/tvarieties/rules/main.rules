@@ -5,8 +5,6 @@ IMPORT polytope
 
 file_suffix tv
 
-INCLUDE ideal.rules
-
 # Might need some other name.
 declare object Variety {
 	

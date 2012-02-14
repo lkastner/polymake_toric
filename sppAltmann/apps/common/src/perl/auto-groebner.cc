@@ -16,16 +16,9 @@
 ///==== this line controls the automatic file splitting: max.instances=40
 
 #include "polymake/client.h"
-#include "polymake/tvarieties/algebra.h"
-namespace polymake { namespace tvarieties {
+#include "polymake/common/algebra.h"
+namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
-   template <typename T0>
-   FunctionInterface4perl( groebner_f1, T0 ) {
-      perl::Value arg0(stack[0]);
-      WrapperReturn( arg0.get<T0>().groebner() );
-   }; 
-
-   FunctionInstance4perl(groebner_f1, perl::Canned< Ideal >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 
 } }
