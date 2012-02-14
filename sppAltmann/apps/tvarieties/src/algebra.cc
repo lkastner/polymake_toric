@@ -52,6 +52,7 @@ private:
    ideal singIdeal;
    const Ideal* polymakeIdeal; 
 
+	// Initialize a ring for computations in Singular
    void create_singRing() 
    {
       const Ring<>& basering = polymakeIdeal->get_ring();
@@ -66,6 +67,7 @@ private:
       singRing = rDefault(0,nvars,n);
    }
 
+	// Send Polymake ideal to Singular
    void create_singIdeal() 
    {
       int npoly = polymakeIdeal->size();
@@ -76,21 +78,21 @@ private:
 
       rChangeCurrRing(singRing);
 
-      singIdeal = idInit(npoly,1);
+      singIdeal = idInit(npoly,1); // Richtig?
       int j = 0;
       for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(*polymakeIdeal); !mypoly.at_end(); ++mypoly, ++j) {
          poly p = p_ISet(0,singRing);
          
          for(Entire<Polynomial<>::term_hash>::const_iterator term = entire(mypoly->get_terms()); !term.at_end(); ++term)
          {
-            poly monomial = p_Init(singRing);
-            p_SetCoeff(monomial,convert_Rational_to_number(term->second),singRing);
+            poly monomial = p_Init(singRing); // Geht das noch?
+            p_SetCoeff(monomial,convert_Rational_to_number(term->second),singRing); // Geht das SetCoeff so?
             
             for(int k = 0; k<term->first.dim(); k++)
             {
-               p_SetExp(monomial,k+1,term->first[k],singRing);
+               p_SetExp(monomial,k+1,term->first[k]); // Hier war der Ring drinne, muss er wieder rein?
             }
-            p_Setm(monomial,singRing);
+            p_Setm(monomial,singRing); // Ring noetig?
             p = p_Add_q(p,monomial,singRing);
          }
          cout << "poly: " << p_String(p,singRing,singRing) << endl;
@@ -140,6 +142,7 @@ public:
       cout << "SingularWrapper_impl destroyed" << endl;
    }
 
+	// Compute a groebner basis of a Polymake ideal using Singular
    SingularWrapper* groebner() 
    {
       if(singIdeal==NULL) {
