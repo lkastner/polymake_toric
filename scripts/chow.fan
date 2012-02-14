@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?pm chk="4f3b52bb"?>
+<?pm chk="4f387d1b"?>
 
-<object type="fan::ToricVariety&lt;Rational&gt;" ext="0=file:///home/lars/working_copies/spp1489/tvarieties" version="2.11" xmlns="http://www.math.tu-berlin.de/polymake/#3">
+<object type="fan::ToricVariety&lt;Rational&gt;" ext="0=file:///home/lars/working_copies/spp1489/tvarieties" version="2.11.1" xmlns="http://www.math.tu-berlin.de/polymake/#3">
   <credit product="gfan"><![CDATA[
 Copyright by Anders Jensen
 http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html
