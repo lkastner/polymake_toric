@@ -8,11 +8,11 @@
 
 application "fan";
 
-#$r=new Ring(qw(x y));
-#($x,$y)=$r->variables;
-#$p=1+$x+$y;
-#$htv = new HypersurfaceInTV(EQUATION=>$p, AMBIENT_TV=>cast<ToricVariety>(normal_fan(cube(2))));
-#print $htv->RELEVANT_CONES->MAXIMAL_CONES;
+$r=new Ring(qw(x y));
+($x,$y)=$r->variables;
+$p=1+$x+$y;
+$htv = new HypersurfaceInTV(EQUATION=>$p, AMBIENT_TV=>cast<ToricVariety>(normal_fan(cube(2))));
+print $htv->RELEVANT_CONES->MAXIMAL_CONES;
 
 #$f = normal_fan(cube(3));
 #$t = cast<ToricVariety>($f);
@@ -40,10 +40,10 @@ application "fan";
 #print $g;
 #$tv = cast<ToricVariety>(normal_fan(cube(4)));
 #$htv = new HypersurfaceInTV(EQUATION=>$g, AMBIENT_TV=>$tv);
-$r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
-print $r;
-$col = cocoref_new($r);
-$col1 = cocoref_bruteforce($r);
+#$r = new Matrix<Rational>([2,1,1,1],[-1,0,-1,-1],[-1,-1,0,-1],[-1,-1,-1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]);
+#print $r;
+#$col = cocoref_new($r);
+#$col1 = cocoref_bruteforce($r);
 #$htv = new HypersurfaceInTV(EQUATION=>$g, AMBIENT_TV=>cast<ToricVariety>($col1));
 #print $htv->RELEVANT_CONES->MAXIMAL_CONES;
 
