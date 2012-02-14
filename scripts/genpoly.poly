@@ -1,0 +1,6 @@
+application "fan";
+$inp = cross(4);
+print dense($inp->VERTICES);
+$f = normal_fan($inp);
+$p = $f->GENERATING_POLYTOPE;
+print $p->VERTICES;
