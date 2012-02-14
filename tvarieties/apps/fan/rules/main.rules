@@ -67,6 +67,7 @@ object ToricVariety {
 				my $p = new Polytope<Rational>(POINTS=>$gale->minor(~$c, All));
 				push @gale_duals, $p;
 			#}
+			
 		}
 		print "gale_duals: ",time()-$t,"s\n";# if ($DebugLevel);
 		$t = time();
@@ -82,11 +83,22 @@ object ToricVariety {
 		}
 		print "facet_interior_check: ",time()-$t,"s\n";# if ($DebugLevel);
 		$t = time();
-		$rays = transpose($rays);
-		my $snf = smith_normal_form($rays);
-		my @snf = map(dense($_), @$snf);
-		my $section = inv(new Matrix<Rational>($snf[1]));
-		$section = transpose($section->minor(All, [0..($rays->rows-1)]));
+		my @gc = (0);	
+		my $m = $rays->cols;
+		my $i = 1;
+		print $m, "\n";
+		print rank($rays->minor(@gc, All)), "\n";
+		while(rank($rays->minor(@gc, All)) < $m){
+			if(rank($rays->minor(@gc, All)) < rank($rays->minor((@gc, ($i)), All))){
+				push @gc, $i;
+			}
+			$i++;
+		}
+		print @gc,"\n";
+		my $section = new Matrix<Rational>(@$rays[@gc]);
+		print $section;
+		#$section = $section | new Matrix($section->rows, $rays->cols - $section->rows);
+		#print $section;
 		# print $section * transpose(new Matrix<Rational>($rays));
 		my $c = $check->REL_INT_POINT;
 		# print $c;
@@ -97,7 +109,10 @@ object ToricVariety {
 		# print $ineq;
 		my $p = new Polytope<Rational>(EQUATIONS=>$eq, INEQUALITIES=>new Matrix<Rational>($ineq));
 		my $pv = $p->VERTICES;
-		# print $section;
+		print "Using the following section:\n";
+		print $section;
+		print "Checking:\n";
+		print $section * transpose(new Matrix<Rational>($rays));
 		$section = (zero_vector() | $section);
 		my $new_vert = $section * transpose($pv);
 		#print $new_vert;
