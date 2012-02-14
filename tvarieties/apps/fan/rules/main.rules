@@ -105,6 +105,7 @@ object ToricVariety {
 		#$section = $section | new Matrix($section->rows, $rays->cols - $section->rows);
 		#print $section;
 		# print $section * transpose(new Matrix<Rational>($rays));
+		print "Bounded?", $check->BOUNDED, "\n";
 		my $c = $check->REL_INT_POINT;
 		# print $c;
 		# print $gale_inhom;
