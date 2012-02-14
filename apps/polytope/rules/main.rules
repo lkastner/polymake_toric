@@ -1,0 +1,25 @@
+object Polytope {
+
+	property TAILCONE : Polytope;
+
+	rule TAILCONE : FACETS, AFFINE_HULL {
+		my $ineq = $this->FACETS;
+		my $eq = $this->AFFINE_HULL;
+		print $ineq;
+		my $newineq = (new Vector<Rational>($ineq->rows)) | $ineq->minor(All,~[0]);
+		$this->TAILCONE = new Polytope<Rational>(INEQUALITIES=>$newineq);	
+	}
+
+}
+
+sub pairwise_differences {
+	my ($in) = @_;
+	my @out = ();
+	my $c = $in->[0];
+	foreach my $p (@$in) {
+		if($p != $c) {
+			push @out, ($p-$c);
+		}
+	}
+	return new Matrix<Integer>(\@out);
+}

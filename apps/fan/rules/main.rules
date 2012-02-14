@@ -1,0 +1,560 @@
+
+
+CREDIT gfan
+  Gfan is a software package for computing Groebner fans and tropical varieties.
+  Copyright by Anders Jensen
+  http://www.math.tu-berlin.de/~jensen/software/gfan/gfan.html
+
+# path to gfan
+custom $gfan_tropicalhypersurface;
+
+custom $gfan_tropicalbruteforce;
+
+CONFIGURE {
+    find_program($gfan_tropicalhypersurface, "gfan_tropicalhypersurface");
+    find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
+}
+
+
+#######################################
+#######################################
+###
+### Toric Variety
+###
+#######################################
+#######################################
+
+declare object ToricVariety<Scalar=Rational [ typechecks::is_ordered_field(Scalar) ]> : PolyhedralFan<Scalar>; 
+
+object PolyhedralFan<Rational> {
+
+	auto_cast : ToricVariety<Rational>;
+
+}
+
+object ToricVariety {
+
+	# Properties:
+
+	property AFFINE : Bool;
+
+	property GENERATING_POLYTOPE : Polytope<Rational>;
+
+	property PROJECTIVE : Bool;
+	
+	# = override REGULAR;
+
+	property SMOOTH = override SMOOTH_FAN;
+	
+	# Rules:
+	
+	rule AFFINE : N_MAXIMAL_CONES {
+		$this->AFFINE = ($this->N_MAXIMAL_CONES == 1);
+	}
+
+	rule PROJECTIVE, GENERATING_POLYTOPE : MAXIMAL_CONES, RAYS {
+		my $t = time();
+		my $rays = new Matrix<Rational>($this->RAYS);
+		$rays = new Matrix<Integer>(map(primitive($_),@$rays));
+		my $gale_inhom = transpose(null_space(transpose($rays)));
+		my $gale = ones_vector() | new Matrix<Rational>($gale_inhom);
+		#print transpose($this->RAYS)*$gale_inhom;
+		my @gale_duals = ();
+		print "preparation: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		foreach my $c (@{$this->MAXIMAL_CONES}){
+			#foreach my $c (@$cones_dim){
+				my $p = new Polytope<Rational>(POINTS=>$gale->minor(~$c, All));
+				push @gale_duals, $p;
+			#}
+			
+		}
+		print "gale_duals: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		my $check = intersection(@gale_duals);
+		print "intersection: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		return $this->PROJECTIVE = 0 if (!$check->FEASIBLE);
+		foreach my $p (@gale_duals) {
+			if ($p->FACETS * transpose($check->VERTICES) == new Matrix($p->N_FACETS,$check->N_VERTICES)) {
+				$this->PROJECTIVE = 0;
+				return;
+			}
+		}
+		print "facet_interior_check: ",time()-$t,"s\n";# if ($DebugLevel);
+		$t = time();
+		$rays = new Matrix<Rational>($rays);
+		my @gc = (0);	
+		my $m = $rays->cols;
+		my $i = 1;
+		# print $m, "\n";
+		# print rank($rays->minor([@gc], All)), "\n";
+		while(rank($rays->minor([@gc], All)) < $m){
+			if(rank($rays->minor([@gc], All)) < rank($rays->minor([@gc], All) / $rays->[$i])){
+				push @gc, $i;
+			}
+			$i++;
+		}
+		# print @gc,"\n";
+		my $section = inv($rays->minor([@gc],All));
+		my $s = new Matrix<Rational>($rays->cols, $rays->rows);
+		# print $s;
+		$s->minor(All, [@gc]) = $section;
+		# print $s;
+		$section = $s;
+		#$section = $section | new Matrix($section->rows, $rays->cols - $section->rows);
+		#print $section;
+		# print $section * transpose(new Matrix<Rational>($rays));
+		print "Bounded?", $check->BOUNDED, "\n";
+		my $c = $check->REL_INT_POINT;
+		# print $c;
+		# print $gale_inhom;
+		my $eq = (-$c->slice(1) | transpose(new Matrix<Rational>($gale_inhom)));
+		# print $eq;
+		my $ineq = (zero_vector() | dense(unit_matrix($gale_inhom->rows)));
+		# print $ineq;
+		my $p = new Polytope<Rational>(EQUATIONS=>$eq, INEQUALITIES=>new Matrix<Rational>($ineq));
+		my $pv = $p->VERTICES;
+		# print "Using the following section:\n";
+		# print $section;
+		# print "Checking:\n";
+		# print $section * $rays;
+		$section = (zero_vector() | $section);
+		my $new_vert = $section * transpose($pv);
+		#print $new_vert;
+		$this->GENERATING_POLYTOPE = new Polytope<Rational>(POINTS=>(ones_vector() | transpose($new_vert)));
+		$this->PROJECTIVE = 1;
+	}
+	
+}
+
+#######################################
+#######################################
+###
+### Hypersurface in Toric Variety
+###
+#######################################
+#######################################
+
+declare object HypersurfaceInTV;
+
+object HypersurfaceInTV {
+
+	# Properties:
+	
+	property AMBIENT_TV : ToricVariety;
+	
+	property EQUATION : Polynomial;
+	
+	property RELEVANT_CONES : PolyhedralFan;
+
+	property TROPICAL_FAN : PolyhedralFan;
+	
+	
+	# Rules:
+	
+	rule RELEVANT_CONES : TROPICAL_FAN, AMBIENT_TV{
+		my $TV = $this->AMBIENT_TV;
+		my $trop = $this->TROPICAL_FAN;
+		my @interesting_cones = map($trop->cone($_),0..($trop->N_MAXIMAL_CONES-1));
+		# print "bla\n";	
+
+		my @relevant = ();
+		my $tvmc = $TV->MAXIMAL_CONES;
+		my $tvr = new Matrix<Rational>($TV->RAYS);
+		#print $tvr;
+		foreach my $C (@$tvmc) {
+			#print $C;
+			my $m = $tvr->minor($C,All);
+			#my $m = new Matrix<Rational>(@$tvr[@$C]);
+			#print $m;
+			my $A = new Cone<Rational>(INPUT_RAYS=>$m);
+			foreach my $t (@interesting_cones){
+				my $tA = intersection($t, $A);
+				if($tA->CONE_DIM < $t->CONE_DIM){
+					#print "dim too low\n";
+					next;
+				} else {
+					#print "maybe ok\n";
+					my $tar = $tA->RAYS;
+					my $one = ones_vector($tar->rows);
+					my $interior_point = transpose($tar) * $one;
+					my $fac = $A->FACETS;
+					# print "\n\nFacets:\n$fac\n";
+					my @equations = grep($_*$interior_point == 0, @$fac);
+					my $eq_mat = new Matrix<Rational>(@equations);
+					# print "Equations:\n$eq_mat\n";
+					# print "IP: $interior_point\n";
+					my $test = $eq_mat->rows;
+					if($test == 0){
+						# print "ok\n";
+						push @relevant, $C;
+					} else {
+						my $zero = zero_vector<Rational>($test);
+						my @good_rays = grep($eq_mat * $tvr->[$_] == $zero, @$C);
+						# print "good rays: @good_rays\n";
+						push @relevant, new Set<Integer>(@good_rays);
+					}
+					last;
+				}
+			}
+			#print "la\n";	
+		}
+		$this->RELEVANT_CONES = check_fan($tvr, new Array< Set<Integer>>(@relevant));
+	}
+
+
+	rule TROPICAL_FAN : EQUATION {
+		$this->TROPICAL_FAN = gfan_tropicalhypersurface($this->EQUATION);
+	}
+
+	
+
+}
+
+# This program preprocesses the input for gfan and then reads in the gfan output.
+# It should be checked whether gfan_groebnerbla can really be left out.
+sub gfan_tropicalbruteforce {
+	my ($coefficients, $exponents) = @_;
+	my $tempfile=new Tempfile;
+	#my $tempfile="test";
+	
+	# Homogenizing polynomial and preparing to write to file:	
+	my $nvars = $exponents->cols();
+	my @vars = ( "t" , map { "x$_" } (1..$nvars) );
+	my $one = ones_vector<Int>($nvars);
+	my $degrees = $exponents*$one;
+	my $homog = new Matrix<Int>[[map{maximum($degrees)-$degrees->[$_]} (0..($exponents->rows()-1))]];
+	print $homog;
+	my $newexp = transpose($homog)|$exponents;
+	my $R = new Ring(@vars);
+	my $p = new Polynomial($newexp,$coefficients,$R); 
+	
+	# Writing data to file:
+	open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
+	print $input "Q[";
+	print $input join(",",$R->variables);
+	print $input "]{\n";
+	print $input $p;
+	print $input "\n}";
+	print $tempfile;
+	close $input;
+	
+	# Accessing gfan:
+	system "$gfan_tropicalbruteforce --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
+	
+	my $gfan_out= User::load("$tempfile.poly");
+	return $gfan_out;
+}
+
+# This program preprocesses the input for gfan and then reads in the gfan output.
+# It should be checked whether gfan_groebnerbla can really be left out.
+sub gfan_tropicalhypersurface {
+	my ($g) = @_;
+	my $tempfile=new Tempfile;
+	#my $tempfile="test";
+	
+	# Homogenizing polynomial and preparing to write to file:	
+	my $R = $g->get_ring;
+	
+	# Writing data to file:
+	open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
+	print $input "Q[";
+	print $input join(",",$R->variables);
+	print $input "]{\n";
+	print $input $g;
+	print $input "\n}";
+	print $tempfile;
+	close $input;
+	
+	# print "$gfan_tropicalhypersurface\nlala\n$gfan_tropicalbruteforce\nlala\n";
+	# Accessing gfan:
+	system "$gfan_tropicalhypersurface --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
+	
+	my $gfan_out= User::load("$tempfile.poly");
+	return check_fan(-$gfan_out->RAYS, $gfan_out->MAXIMAL_CONES);
+}
+
+user_function add_ray(PolyhedralFan, Vector){
+	my($fan, $ray) = @_;
+	my $oldrays = $fan->RAYS;
+	my $newrays = $oldrays / $ray;
+	print $newrays;
+	my $mc = $fan->MAXIMAL_CONES;
+	for my $f (@$mc) {
+		print "$f\n";
+		my $gens = new Matrix<Rational>(@$oldrays[@$f]);
+		print $gens;
+	}
+}
+
+user_function cocoref_new(Matrix) {
+	stop_here();
+	my($rays) = @_;
+	my $dim = $rays->cols();
+	my $m = $rays->rows();
+	my @init_cones = all_subsets_of_k($dim, 0..($m)-1);
+	@init_cones = map(new Set($_), @init_cones);
+	# print @init_cones;
+	@init_cones = map((new Matrix<Rational>(@$rays[@$_])), @init_cones);
+	@init_cones = grep(rank($_) == $dim, @init_cones);
+	@init_cones = grep {
+		my $facets = transpose(inv($_));
+		my $contained = grep{minimum($facets * $_)>=0} @$rays;
+		$contained == $dim
+	} @init_cones;
+	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
+	@init_cones = unique(@init_cones);
+	my @refined = ();
+	my $added = 1;
+	my @nc = @init_cones;
+	my $n = @init_cones;
+	print "$n initial cones.\n";
+	
+	my $i = 0;
+	@init_cones = map{
+		my @elem = ();
+		push @elem, new Set<Int>($i);
+		push @elem, $_;
+		$i++;
+		[@elem]
+	} @init_cones;
+	
+	my @combinations = map($_->[0], @init_cones);
+	my @new_cones = @init_cones;
+	while($added == 1){
+		$added = 0;
+		my @collected_cones = ();
+		foreach my $c (@new_cones){
+			my $index = $c->[0];
+			my @intersections = grep((($index + $_ )-($index * $_))->size == 2, @combinations);
+			@intersections = map($_ - $index, @intersections);
+			my @ui = ();
+			foreach my $i (@intersections) {
+				my $identicals = grep($_ == $i, @ui);
+				if($identicals == 0){
+					push @ui, $i;
+				}
+			}
+			@intersections = @ui;
+			my @done = ();
+			my @todo = ();
+			foreach my $i (@intersections) {
+				my $indexset = $index + $i;
+				my $b = grep( $_->[0] == $indexset, @collected_cones );
+				if($b > 0){
+					push @done, $i;
+				} else {
+					push @todo, $i;
+				}
+			}
+			#print @todo,"\n";
+			@todo = map {
+				my $i = $_;
+				my @ic = grep( $_->[0] == $i, @init_cones);
+				my $primitive_cone = @ic->[0]->[1];
+				my @intersect = ();
+				push @intersect, ($index + $i);
+				push @intersect, intersection($primitive_cone, $c->[1]);
+				[@intersect]
+			} @todo;
+			@todo = grep($_->[1]->DIM == $dim, @todo);
+			@todo = grep(!included_polyhedra($c->[1], $_->[1]), @todo);
+			my $keep1 = @done;
+			my $keep2 = @todo;
+			my $keep = $keep1 + $keep2;
+			if ($keep == 0){
+				my $identicals = grep(equal_polyhedra($_->[1], $c->[1]), @refined);
+				# print "There are $identicals copies of this cone.\n";
+				if ($identicals == 0){
+					push @refined, $c;
+				}
+				my $ref = @refined;
+				# print "Pushed something: $ref\n";
+				next;
+			}  
+			$added = 1;
+			@collected_cones = (@collected_cones, @todo);
+			# print "done.\n";
+		}
+		my @uniques = ();
+		foreach my $col (@collected_cones){
+			my $identicals = grep(equal_polyhedra($col->[1], $_->[1]), (@uniques, @refined));
+			if($identicals == 0){
+				push @uniques, $col;
+			}
+		}	
+		@new_cones = @uniques;
+		my $collected = @new_cones;
+		@combinations = map($_->[0], @new_cones);
+		print "Collected $collected new cones.\n";
+	}
+	my @good_comb = map($_->[0], @refined);
+	@refined = map($_->[1], @refined);
+	@refined = unique(@refined);
+	my $in = @refined;
+	
+	print "Number of resulting cones: $in.\n";
+	return check_fan_objects(@refined);
+}
+
+user_function cocoref_bruteforce(Matrix) {
+	my($rays) = @_;
+	my $dim = $rays->cols();
+	my $m = $rays->rows();
+	my @init_cones = all_subsets_of_k($dim, 0..($m)-1);
+	@init_cones = map(new Set($_), @init_cones);
+	# print @init_cones;
+	@init_cones = map((new Matrix<Rational>(@$rays[@$_])), @init_cones);
+	@init_cones = grep(rank($_) == $dim, @init_cones);
+	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
+	@init_cones = unique(@init_cones);
+	@init_cones = grep{
+		my $facets = $_->FACETS;
+		my $contained = grep{minimum($facets * $_)>=0} @$rays;
+		$contained == $dim
+	} @init_cones;
+	my @refined = ();
+	my $added = 1;
+	my @nc = @init_cones;
+	my $n = @init_cones;
+	print "$n initial cones.\n";
+	while($added == 1){
+		$added = 0;
+		my @collection = ();
+		foreach my $c (@nc){
+			my @intersections = map(intersection($c, $_), @init_cones);
+			@intersections = grep($_->DIM == $dim, @intersections);
+			@intersections = grep(!included_polyhedra($c, $_), @intersections);
+			my $keep = @intersections;
+			if ($keep == 0){
+				push @refined, $c;
+				@refined = unique(@refined);
+				my $ref = @refined;
+				# print "Pushed something: $ref\n";
+				next;
+			}  
+			$added = 1;
+			@intersections = unique(@intersections);
+			@collection = (@collection, @intersections);
+			print "done.\n";
+		}
+		@collection = unique(@collection);
+		foreach my $r (@refined){
+			@collection = grep(!equal_polyhedra($r, $_), @collection);
+		}
+		my $collected = @collection;
+		print "Collected $collected new cones.\n";
+		@nc = @collection;
+	}
+	
+	@refined = unique(@refined);
+	my $in = @refined;
+	
+	print "Number of resulting cones: $in.\n";
+	return check_fan_objects(@refined);
+}
+
+sub unique {
+	my (@cones) = @_;
+	my @result = ();
+	my $n = @cones;
+	while($n>0){
+		my $c = pop @cones;
+		@cones = grep(!equal_polyhedra($c, $_), @cones);
+		push @result, $c;
+		$n = @cones;
+	}
+	return @result;
+}
+
+sub homogenize { 
+	my ($in) = @_;
+	
+}
+
+
+user_function chow_quotient(Polynomial){
+	my ($g) = @_;
+	print "Defining Polynomial:\n$g\n\n";
+	my $degs = dense($g->monomials_as_matrix);
+	print "Exponents:\n$degs\n";
+	my $coeffs = $g->coefficients_as_vector;
+	print "Coefficients:\n$coeffs\n\n";
+	my @r = @$degs;
+	my $c = $r[0];
+	#print $c;
+	my @diffmatrows  = map($_-$c, @r);
+	my $diffmat = new Matrix<Integer>(@diffmatrows);
+	print "Pairwise differences:\n$diffmat\n";
+	my $D = null_space($diffmat);
+	print "D:\n$D\n";
+	my $B = transpose(null_space($D));
+	print "B:\n$B\n";
+	# Test for exactness:
+	# print $D*$B;
+	my $deg_g = $D*$c;
+	# Test for homogenoucity:
+	# print "degree of g:\n$deg_g\n\n";
+	# print $D*transpose(-$degs);
+	my $dm1 = new Polytope<Rational>(EQUATIONS=>($deg_g | $D));
+	my $a = $dm1->DIM;
+	# Checking whether dimension is correct:
+	# print "Dim:\n$a\n";
+	my $zero = zero_vector($B->cols);
+	my @fm = map(((ones_vector(1) | (-1)*(new Vector<Rational>($_)))/($zero | transpose(new Matrix<Rational>($B)))), @$degs);
+	@fm = map((new Polytope<Rational>(POINTS=>$_)), @fm);
+	my $good_points = $dm1;
+	foreach my $P (@fm){
+		$good_points = intersection($good_points, $P);
+	}
+	my $good_vert = $good_points->VERTICES->[0];
+	# print $good_vert;
+	my $par_vert = (cube($B->cols,0)->VERTICES)*($good_vert / ($zero |transpose(new Matrix<Rational>($B))));
+	# print $par_vert;
+	my $lat = (new Polytope<Rational>(POINTS=>$par_vert))->VERTICES;
+	# print "\nOk lattice points:\n";
+	my $p = -$lat->[0]->slice(1);
+	# print "P: $p\n";
+	my $test = new Matrix<Rational>(map($_-$p,@$degs));
+	# print $test;
+	# print $D*transpose($test);
+	my @preim = map((new Polytope<Rational>(EQUATIONS=>(($p-$_) | new Matrix<Rational>($B))))->VERTICES, @$degs);
+	# print @preim;
+	my $new_degs = new Matrix<Int>(map($_->[0]->slice(1), @preim));
+	# Building ring for output equation:
+	my $nvars = $new_degs->cols;
+	my @vars = ( map { "x$_" } (1..$nvars) );
+	my $R = new Ring(@vars);
+	my $g_tilda = new Polynomial($new_degs,$coeffs,$R); 
+	print "g_tilda: $g_tilda\n";
+	my $ambient_tv = cocoref_new(new Matrix<Rational>($B));
+	return new HypersurfaceInTV(EQUATION=>$g_tilda, AMBIENT_TV=>cast<ToricVariety>($ambient_tv));
+}
+
+# Checking if a fan is complete by checking if every facet appears with an even factor.
+user_function is_complete(PolyhedralFan<Rational>){
+	my ($f) = @_;
+	my $check = (1 == 1);
+	my $mc = $f->MAXIMAL_CONES;
+	my $fanrays = new Matrix<Rational>($f->RAYS);
+	my @init_cones = map((new Matrix<Rational>(@$fanrays[@$_])), @$mc);
+	@init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
+	my @collection = ();
+	foreach my $c (@init_cones){
+		my $rays = $c->RAYS;
+                my $frc = $c->RAYS_IN_FACETS;
+		#print $frc;
+		#print $rays;
+		my @facet_cones = map((new Matrix<Rational>(@$rays[@$_])), @$frc);
+		@facet_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @facet_cones);
+		@collection = (@collection, @facet_cones);
+	}
+	foreach my $facet (@collection){
+		my $ref = grep(equal_polyhedra($facet, $_), @collection);
+		print "$ref\n";
+		$check = $check && ($ref == 2);
+	}
+	print "$check\n";
+	return $check;
+}
