@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?pm chk="4f3a314e"?>
+<?pm chk="4f3a8d77"?>
 
 <object type="fan::PolyhedralFan&lt;Rational&gt;" version="2.11.1" xmlns="http://www.math.tu-berlin.de/polymake/#3">
   <property name="LINEALITY_SPACE">
@@ -109,4 +109,18 @@
       <v>0 4 11 18</v>
     </m>
   </property>
+  <property name="LINEALITY_DIM" value="0" />
+  <property name="INTERSECTION_COMPLEX">
+    <object>
+      <property name="PURE" value="false" />
+      <property name="DIM" value="4" />
+      <property name="CLOSED_PSEUDO_MANIFOLD" value="false" />
+    </object>
+  </property>
+  <property name="MAXIMAL_CONES_COMBINATORIAL_DIMS">
+    <v>3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</v>
+  </property>
+  <property name="COMBINATORIAL_DIM" value="3" />
+  <property name="PURE" value="true" />
+  <property name="FAN_DIM" value="4" />
 </object>
