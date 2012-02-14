@@ -100,7 +100,7 @@ object ToricVariety {
 		my $s = new Matrix<Rational>($rays->cols, $rays->rows);
 		# print $s;
 		$s->minor(All, [@gc]) = $section;
-		print $s;
+		# print $s;
 		$section = $s;
 		#$section = $section | new Matrix($section->rows, $rays->cols - $section->rows);
 		#print $section;
@@ -311,7 +311,6 @@ user_function cocoref_new(Matrix) {
 	print "$n initial cones.\n";
 	
 	my $i = 0;
-	print "$i\n";
 	@init_cones = map{
 		my @elem = ();
 		push @elem, new Set<Int>($i);
@@ -348,6 +347,7 @@ user_function cocoref_new(Matrix) {
 					push @todo, $i;
 				}
 			}
+			#print @todo,"\n";
 			@todo = map {
 				my $i = $_;
 				my @ic = grep( $_->[0] == $i, @init_cones);
@@ -374,7 +374,7 @@ user_function cocoref_new(Matrix) {
 			}  
 			$added = 1;
 			@collected_cones = (@collected_cones, @todo);
-			print "done.\n";
+			# print "done.\n";
 		}
 		my @uniques = ();
 		foreach my $col (@collected_cones){
@@ -389,7 +389,6 @@ user_function cocoref_new(Matrix) {
 		print "Collected $collected new cones.\n";
 	}
 	my @good_comb = map($_->[0], @refined);
-	print @good_comb;
 	@refined = map($_->[1], @refined);
 	@refined = unique(@refined);
 	my $in = @refined;
