@@ -80,20 +80,25 @@ object ToricVariety {
 		}
 		print "facet_interior_check: ",time()-$t,"s\n";# if ($DebugLevel);
 		$t = time();
+		$rays = new Matrix<Rational>($rays);
 		my @gc = (0);	
 		my $m = $rays->cols;
 		my $i = 1;
 		print $m, "\n";
-		print rank($rays->minor(@gc, All)), "\n";
-		while(rank($rays->minor(@gc, All)) < $m){
-			if(rank($rays->minor(@gc, All)) < rank($rays->minor((@gc, ($i)), All))){
+		print rank($rays->minor([@gc], All)), "\n";
+		while(rank($rays->minor([@gc], All)) < $m){
+			if(rank($rays->minor([@gc], All)) < rank($rays->minor([@gc], All) / $rays->[$i])){
 				push @gc, $i;
 			}
 			$i++;
 		}
 		print @gc,"\n";
-		my $section = new Matrix<Rational>(@$rays[@gc]);
-		print $section;
+		my $section = inv($rays->minor([@gc],All));
+		my $s = new Matrix<Rational>($rays->cols, $rays->rows);
+		print $s;
+		$s->minor(All, [@gc]) = $section;
+		print $s;
+		$section = $s;
 		#$section = $section | new Matrix($section->rows, $rays->cols - $section->rows);
 		#print $section;
 		# print $section * transpose(new Matrix<Rational>($rays));
@@ -109,7 +114,7 @@ object ToricVariety {
 		print "Using the following section:\n";
 		print $section;
 		print "Checking:\n";
-		print $section * transpose(new Matrix<Rational>($rays));
+		print $section * $rays;
 		$section = (zero_vector() | $section);
 		my $new_vert = $section * transpose($pv);
 		#print $new_vert;
