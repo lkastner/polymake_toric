@@ -84,24 +84,25 @@ object ToricVariety {
 		my @gc = (0);	
 		my $m = $rays->cols;
 		my $i = 1;
-		print $m, "\n";
-		print rank($rays->minor([@gc], All)), "\n";
+		# print $m, "\n";
+		# print rank($rays->minor([@gc], All)), "\n";
 		while(rank($rays->minor([@gc], All)) < $m){
 			if(rank($rays->minor([@gc], All)) < rank($rays->minor([@gc], All) / $rays->[$i])){
 				push @gc, $i;
 			}
 			$i++;
 		}
-		print @gc,"\n";
+		# print @gc,"\n";
 		my $section = inv($rays->minor([@gc],All));
 		my $s = new Matrix<Rational>($rays->cols, $rays->rows);
-		print $s;
+		# print $s;
 		$s->minor(All, [@gc]) = $section;
-		print $s;
+		# print $s;
 		$section = $s;
 		#$section = $section | new Matrix($section->rows, $rays->cols - $section->rows);
 		#print $section;
 		# print $section * transpose(new Matrix<Rational>($rays));
+		print "Bounded?", $check->BOUNDED, "\n";
 		my $c = $check->REL_INT_POINT;
 		# print $c;
 		# print $gale_inhom;
@@ -111,10 +112,10 @@ object ToricVariety {
 		# print $ineq;
 		my $p = new Polytope<Rational>(EQUATIONS=>$eq, INEQUALITIES=>new Matrix<Rational>($ineq));
 		my $pv = $p->VERTICES;
-		print "Using the following section:\n";
-		print $section;
-		print "Checking:\n";
-		print $section * $rays;
+		# print "Using the following section:\n";
+		# print $section;
+		# print "Checking:\n";
+		# print $section * $rays;
 		$section = (zero_vector() | $section);
 		my $new_vert = $section * transpose($pv);
 		#print $new_vert;
@@ -308,7 +309,6 @@ user_function cocoref_new(Matrix) {
 	print "$n initial cones.\n";
 	
 	my $i = 0;
-	print "$i\n";
 	@init_cones = map{
 		my @elem = ();
 		push @elem, new Set<Int>($i);
@@ -345,6 +345,7 @@ user_function cocoref_new(Matrix) {
 					push @todo, $i;
 				}
 			}
+			#print @todo,"\n";
 			@todo = map {
 				my $i = $_;
 				my @ic = grep( $_->[0] == $i, @init_cones);
@@ -371,7 +372,7 @@ user_function cocoref_new(Matrix) {
 			}  
 			$added = 1;
 			@collected_cones = (@collected_cones, @todo);
-			print "done.\n";
+			# print "done.\n";
 		}
 		my @uniques = ();
 		foreach my $col (@collected_cones){
@@ -386,7 +387,6 @@ user_function cocoref_new(Matrix) {
 		print "Collected $collected new cones.\n";
 	}
 	my @good_comb = map($_->[0], @refined);
-	print @good_comb;
 	@refined = map($_->[1], @refined);
 	@refined = unique(@refined);
 	my $in = @refined;
