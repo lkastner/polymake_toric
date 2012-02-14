@@ -1,18 +1,5 @@
 
 
-CREDIT gfan
-
-# path to gfan
-custom $gfan_tropicalhypersurface;
-
-custom $gfan_tropicalbruteforce;
-
-CONFIGURE {
-    find_program($gfan_tropicalhypersurface, "gfan_tropicalhypersurface");
-    find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
-}
-
-
 #######################################
 #######################################
 ###
@@ -29,102 +16,6 @@ object PolyhedralFan<Rational> {
 
 }
 
-object ToricVariety {
-
-	# Properties:
-
-	property AFFINE : Bool;
-
-	property GENERATING_POLYTOPE : Polytope<Rational>;
-
-	property PROJECTIVE : Bool;
-	
-	# = override REGULAR;
-
-	property SMOOTH = override SMOOTH_FAN;
-	
-	# Rules:
-	
-	rule AFFINE : N_MAXIMAL_CONES {
-		$this->AFFINE = ($this->N_MAXIMAL_CONES == 1);
-	}
-
-	rule PROJECTIVE, GENERATING_POLYTOPE : MAXIMAL_CONES, RAYS {
-		my $t = time();
-		my $rays = new Matrix<Rational>($this->RAYS);
-		$rays = new Matrix<Integer>(map(primitive($_),@$rays));
-		my $gale_inhom = transpose(null_space(transpose($rays)));
-		my $gale = ones_vector() | new Matrix<Rational>($gale_inhom);
-		#print transpose($this->RAYS)*$gale_inhom;
-		my @gale_duals = ();
-		print "preparation: ",time()-$t,"s\n";# if ($DebugLevel);
-		$t = time();
-		foreach my $c (@{$this->MAXIMAL_CONES}){
-			#foreach my $c (@$cones_dim){
-				my $p = new Polytope<Rational>(POINTS=>$gale->minor(~$c, All));
-				push @gale_duals, $p;
-			#}
-			
-		}
-		print "gale_duals: ",time()-$t,"s\n";# if ($DebugLevel);
-		$t = time();
-		my $check = intersection(@gale_duals);
-		print "intersection: ",time()-$t,"s\n";# if ($DebugLevel);
-		$t = time();
-		return $this->PROJECTIVE = 0 if (!$check->FEASIBLE);
-		foreach my $p (@gale_duals) {
-			if ($p->FACETS * transpose($check->VERTICES) == new Matrix($p->N_FACETS,$check->N_VERTICES)) {
-				$this->PROJECTIVE = 0;
-				return;
-			}
-		}
-		print "facet_interior_check: ",time()-$t,"s\n";# if ($DebugLevel);
-		$t = time();
-		$rays = new Matrix<Rational>($rays);
-		my @gc = (0);	
-		my $m = $rays->cols;
-		my $i = 1;
-		# print $m, "\n";
-		# print rank($rays->minor([@gc], All)), "\n";
-		while(rank($rays->minor([@gc], All)) < $m){
-			if(rank($rays->minor([@gc], All)) < rank($rays->minor([@gc], All) / $rays->[$i])){
-				push @gc, $i;
-			}
-			$i++;
-		}
-		# print @gc,"\n";
-		my $section = inv($rays->minor([@gc],All));
-		my $s = new Matrix<Rational>($rays->cols, $rays->rows);
-		# print $s;
-		$s->minor(All, [@gc]) = $section;
-		# print $s;
-		$section = $s;
-		#$section = $section | new Matrix($section->rows, $rays->cols - $section->rows);
-		#print $section;
-		# print $section * transpose(new Matrix<Rational>($rays));
-		print "Bounded?", $check->BOUNDED, "\n";
-		my $c = $check->REL_INT_POINT;
-		# print $c;
-		# print $gale_inhom;
-		my $eq = (-$c->slice(1) | transpose(new Matrix<Rational>($gale_inhom)));
-		# print $eq;
-		my $ineq = (zero_vector() | dense(unit_matrix($gale_inhom->rows)));
-		# print $ineq;
-		my $p = new Polytope<Rational>(EQUATIONS=>$eq, INEQUALITIES=>new Matrix<Rational>($ineq));
-		my $pv = $p->VERTICES;
-		# print "Using the following section:\n";
-		# print $section;
-		# print "Checking:\n";
-		# print $section * $rays;
-		$section = (zero_vector() | $section);
-		my $new_vert = $section * transpose($pv);
-		#print $new_vert;
-		$this->GENERATING_POLYTOPE = new Polytope<Rational>(POINTS=>(ones_vector() | transpose($new_vert)));
-		$this->PROJECTIVE = 1;
-	}
-	
-}
-
 #######################################
 #######################################
 ###
@@ -134,6 +25,10 @@ object ToricVariety {
 #######################################
 
 declare object HypersurfaceInTV;
+
+INCLUDE
+	toric_variety_properties.rules
+	gfan_hyp_brut.rules
 
 object HypersurfaceInTV {
 
@@ -207,69 +102,6 @@ object HypersurfaceInTV {
 
 	
 
-}
-
-# This program preprocesses the input for gfan and then reads in the gfan output.
-# It should be checked whether gfan_groebnerbla can really be left out.
-sub gfan_tropicalbruteforce {
-	my ($coefficients, $exponents) = @_;
-	my $tempfile=new Tempfile;
-	#my $tempfile="test";
-	
-	# Homogenizing polynomial and preparing to write to file:	
-	my $nvars = $exponents->cols();
-	my @vars = ( "t" , map { "x$_" } (1..$nvars) );
-	my $one = ones_vector<Int>($nvars);
-	my $degrees = $exponents*$one;
-	my $homog = new Matrix<Int>[[map{maximum($degrees)-$degrees->[$_]} (0..($exponents->rows()-1))]];
-	print $homog;
-	my $newexp = transpose($homog)|$exponents;
-	my $R = new Ring(@vars);
-	my $p = new Polynomial($newexp,$coefficients,$R); 
-	
-	# Writing data to file:
-	open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
-	print $input "Q[";
-	print $input join(",",$R->variables);
-	print $input "]{\n";
-	print $input $p;
-	print $input "\n}";
-	print $tempfile;
-	close $input;
-	
-	# Accessing gfan:
-	system "$gfan_tropicalbruteforce --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
-	
-	my $gfan_out= User::load("$tempfile.poly");
-	return $gfan_out;
-}
-
-# This program preprocesses the input for gfan and then reads in the gfan output.
-# It should be checked whether gfan_groebnerbla can really be left out.
-sub gfan_tropicalhypersurface {
-	my ($g) = @_;
-	my $tempfile=new Tempfile;
-	#my $tempfile="test";
-	
-	# Homogenizing polynomial and preparing to write to file:	
-	my $R = $g->get_ring;
-	
-	# Writing data to file:
-	open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
-	print $input "Q[";
-	print $input join(",",$R->variables);
-	print $input "]{\n";
-	print $input $g;
-	print $input "\n}";
-	print $tempfile;
-	close $input;
-	
-	# print "$gfan_tropicalhypersurface\nlala\n$gfan_tropicalbruteforce\nlala\n";
-	# Accessing gfan:
-	system "$gfan_tropicalhypersurface --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
-	
-	my $gfan_out= User::load("$tempfile.poly");
-	return check_fan(-$gfan_out->RAYS, $gfan_out->MAXIMAL_CONES);
 }
 
 user_function add_ray(PolyhedralFan, Vector){
@@ -463,11 +295,6 @@ sub unique {
 		$n = @cones;
 	}
 	return @result;
-}
-
-sub homogenize { 
-	my ($in) = @_;
-	
 }
 
 

@@ -8,6 +8,7 @@
 
 application "fan";
 
+# Some small examples and code to test basic methods.
 #$r=new Ring(qw(x y));
 #($x,$y)=$r->variables;
 #$p=1+$x+$y;
@@ -55,6 +56,7 @@ application "fan";
 #$g = $g + 4*($x000*$x011*$x101*$x110 + $x001*$x010*$x100*$x111);
 #$cq = chow_quotient($g);
 
+# Specific computation for the hyperdeterminant.
 $htv = load("hyperdet.htv");
 $amb = $htv->AMBIENT_TV;
 $rel = $htv->RELEVANT_CONES;
@@ -79,4 +81,10 @@ print $cs;
 foreach my $t (@$cs){
 	my @cont = grep(incl((new Set<Int>($t)), $_) == -1, @ambmc);
 	print @cont, "\n\n";
+}
+@big_cones = grep($_->size == 5, @ambmc);
+print @big_cones, "\n\n";
+foreach my $bc (@big_cones){
+	my @neigh = grep(($bc * $_)->size >0, @ambmc);
+	print @neigh, "\n\n";
 }
