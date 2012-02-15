@@ -1,4 +1,4 @@
-declare property_type SingularIdeal;
+declare property_type SingularIdeal : c++ (include => ["polymake/common/singular.h"]) ;
 
 declare object Ideal;
 
@@ -78,7 +78,7 @@ object Ideal {
 
 	rule STANDARD : SINGULAR_IDEAL, RING {
 		$this->SINGULAR_IDEAL->std($this->RING);
-		$this->STANDARD = $this->SINGULAR_IDEAL->polynomials();
+		$this->STANDARD = $this->SINGULAR_IDEAL->polynomials($this->RING);
 	}
 
 }
