@@ -6,6 +6,8 @@
 
 namespace polymake { namespace common {
 
+using namespace singular;
+
 class Ideal;
 
 class SingularWrapper {

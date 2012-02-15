@@ -8,6 +8,8 @@
 
 namespace polymake { namespace common {
 
+namespace singular {
+
 int singular_initialized = 0;
 
 Map<id_type, ring> singular_ring_map;
@@ -231,9 +233,11 @@ SingularWrapper* SingularWrapper::create(const Ideal* J)
    return new SingularWrapper_impl(J);
 }
 
+}
+
 UserFunction4perl("# @category Other"
                   "# @param String path Path to the singular directory",
-                  &init_singular, "init_singular($)");
+                  &singular::init_singular, "init_singular($)");
 
 } }
 
