@@ -1,5 +1,5 @@
 #include "polymake/client.h"
-#include "polymake/common/algebra.h"
+#include "polymake/common/singular.h"
 #include "polymake/ListMatrix.h"
 #include "polymake/Map.h"
 #include "polymake/Ring.h"
@@ -151,7 +151,7 @@ public:
    }
 
 	// Compute a groebner basis of a Polymake ideal using Singular
-   void groebner(Ring<> r) 
+   void std(const Ring<> r) 
    {
 		ring singRing = check_ring(r); 
       rChangeCurrRing(singRing);
@@ -168,7 +168,7 @@ public:
       // create polymake ideal maybe with singRing and singIdeal
    }
 
-   Array<Polynomial<> > polynomials(const Ring<>& r)
+   Array<Polynomial<> > polynomials(const Ring<> r) const
    {
 		ring singRing = check_ring(r); 
       rChangeCurrRing(singRing);
