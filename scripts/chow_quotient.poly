@@ -78,13 +78,21 @@ $ambmc = $amb->MAXIMAL_CONES;
 @ambmc = @$ambmc;
 $cs = (new Set<Int>([0..($amb->RAYS->rows-1)]))-$s;
 print $cs;
+@non_bad = grep(($cs * $_)->size == 0, @ambmc);
+print @non_bad;
 foreach my $t (@$cs){
 	my @cont = grep(incl((new Set<Int>($t)), $_) == -1, @ambmc);
+	my $nc = new Set<Int>($cont[0]);
+	map($nc += (new Set<Int>($_)), @cont);
+	$nc -= $cs;
+	$nc -= new Set<Int>($t);
+	print $nc;
+	push @non_bad, $nc;
 	print @cont, "\n\n";
 }
-@big_cones = grep($_->size == 5, @ambmc);
-print @big_cones, "\n\n";
-foreach my $bc (@big_cones){
-	my @neigh = grep(($bc * $_)->size >0, @ambmc);
-	print @neigh, "\n\n";
-}
+#@big_cones = grep($_->size == 5, @ambmc);
+#print @big_cones, "\n\n";
+#foreach my $bc (@big_cones){
+#	my @neigh = grep(($bc * $_)->size >0, @ambmc);
+#	print @neigh, "\n\n";
+#}
