@@ -2,6 +2,7 @@
 #include "polymake/common/algebra.h"
 #include "polymake/ListMatrix.h"
 #include "polymake/Map.h"
+#include "polymake/Ring.h"
 
 #include <libsingular.h>
 
@@ -12,7 +13,7 @@ namespace singular {
 
 int singular_initialized = 0;
 
-Map<id_type, ring> singular_ring_map;
+Map<Ring<>::id_type, ring> singular_ring_map;
 
 void singular_error_handler(const char* error)
 {
@@ -36,8 +37,8 @@ void init_singular(const std::string& path)
    singular_initialized = 1;
 }
 
-ring check_ring(Ring r){
-	id_type id = r.id();
+ring check_ring(Ring<> r){
+	Ring<>::id_type id = r.id();
 	if(!singular_ring_map.exists(id)){
       int nvars = r.n_vars();
       if(nvars == 0) 
@@ -88,21 +89,6 @@ private:
    ideal singIdeal;
    const Ideal* polymakeIdeal; 
 
-	// Initialize a ring for computations in Singular
-   void create_singRing() 
-   {
-      const Ring<>& basering = polymakeIdeal->get_ring();
-      int nvars = basering.n_vars();
-      if(nvars == 0) 
-         throw std::runtime_error("Given ring is not a polynomial ring.");
-      char **n=(char**)omalloc(nvars*sizeof(char*));
-      for(int i=0; i<nvars; i++)
-      {
-         n[i] = omStrDup(basering.names()[i].c_str());
-      }
-      singRing = rDefault(0,nvars,n);
-   }
-
 	// Send Polymake ideal to Singular
    void create_singIdeal() 
    {
@@ -147,19 +133,17 @@ public:
       if (!singular_initialized)
          throw std::runtime_error("singular not yet initialized, call init_singular(Path)");
       cout << "creating SingularWrapper_impl from Ideal" << endl;
-      singRing=NULL;
       singIdeal=NULL;
       polymakeIdeal = J;
       create_singIdeal();
       cout << "DONE CREATING singular object" << endl;
    }
 
-   SingularWrapper_impl(ring r, ideal i)
+   SingularWrapper_impl(ideal i)
    {
       if (!singular_initialized)
          throw std::runtime_error("singular not yet initialized, call init_singular(Path)");
       cout << "creating SingularWrapper_impl from singular stuff" << endl;
-      singRing=r;
       singIdeal=i;
    }
 
@@ -187,7 +171,7 @@ public:
       res = kStd(singIdeal,NULL,testHomog,NULL);
       cout << "DONE COMPUTING std basis" << endl;
 
-      return new SingularWrapper_impl(singRing,res);
+      return new SingularWrapper_impl(res);
 //      throw std::runtime_error("created singIdeal");
       // check if singIdeal exists
       // set singulardefaultring
@@ -195,9 +179,9 @@ public:
       // create polymake ideal maybe with singRing and singIdeal
    }
 
-   Array<Polynomial<> > polynomials(const Ring<>& ring)
+   Array<Polynomial<> > polynomials(const Ring<>& r)
    {
-		ring singRing = check_ring(ring); 
+		ring singRing = check_ring(r); 
       rChangeCurrRing(singRing);
 
       int numgen = IDELEMS(singIdeal);
@@ -219,7 +203,7 @@ public:
 					exponents /= monomial;
 					pIter(p);
 				}
-				polys.push_back(Polynomial<>(exponents, coefficients, ring));
+				polys.push_back(Polynomial<>(exponents, coefficients, r));
 			}
             cout << p_String(singIdeal->m[j],singRing,singRing)<<endl;
       }

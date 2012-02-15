@@ -8,6 +8,6 @@ $i = new Ideal($p1,$p2);
 print $i;
 print $i->[0];
 $j = $i->groebner();
-foreach my $x (@$i) {
+foreach my $x (@$j) {
    print "generator: ",$x,"\n";
 }
