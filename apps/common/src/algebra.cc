@@ -1,5 +1,6 @@
 #include "polymake/client.h"
 #include "polymake/common/algebra.h"
+#include "polymake/ListMatrix.h"
 
 #include <libsingular.h>
 
@@ -172,8 +173,24 @@ public:
       Array<Polynomial<> > polys = Array<Polynomial<> >(numgen);
 
       int j = 0;
-      for(Entire<Array<Polynomial<> > >::const_iterator mypoly = entire(polys); !mypoly.at_end(); ++mypoly, ++j) {
-         if(singIdeal->m[j] != NULL)
+		int n = rVar(singRing);
+      for(Entire<Array<Polynomial<> > >::iterator mypoly = entire(polys); !mypoly.at_end(); ++mypoly, ++j) {
+         if(singIdeal->m[j] != NULL){
+				ListMatrix<Vector<int> > exponents(0,n);
+				poly p = singIdeal->m[j];
+				std::vector<Rational> coefficients;
+				while(p != NULL){
+					number c = pGetCoeff(p);
+					coefficients.push_back(convert_number_to_Rational(&c, &singRing));
+					Vector<int> monomial(n);
+					for(int i = 1; i<=n; i++){
+						monomial[i] = pGetExp(p, i);
+					}
+					exponents /= monomial;
+					pIter(p);
+				}
+				polys[j] = Polynomial<>(exponents, coefficients, ring);
+			}
             cout << p_String(singIdeal->m[j],singRing,singRing)<<endl;
       }
       return polys;
