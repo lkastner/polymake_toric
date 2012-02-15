@@ -17,4 +17,4 @@ CONFIGURE_BUILD {
 
 declare property_type SingularIdeal : c++ (include => ["polymake/common/singular.h"]) {
 
-
+}

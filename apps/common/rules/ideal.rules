@@ -22,9 +22,13 @@ object Ideal {
 
 	property RADICAL : Ideal;
 
+	property RING : Ring;
+
 	property SINGULAR_IDEAL : SingularIdeal;
 
 	property STANDARD : Array<Polynomial>;
+
+	property ZERO : Bool;
 
 	user_method HOMOGENIZE {
 		my ($this, $var) = @_;
@@ -48,6 +52,33 @@ object Ideal {
 
 	rule PRIMARY : RADICAL.PRIME {
 		$this->PRIMARY = $this->RADICAL->PRIME;
+	}
+
+	rule ZERO : GENERATORS {
+		if($this->GENERATORS->size != 0){
+			foreach my $p (@{$this->GENERATORS}){
+				if(!$p->trivial){
+					$this->ZERO = 0;
+					return;
+				}
+			}
+		} 
+		$this->ZERO = 1;
+	}
+
+	rule RING : GENERATORS {
+		$this->RING = $this->GENERATORS->[0]->get_ring;
+	}
+	precondition : !ZERO;
+
+	rule SINGULAR_IDEAL : GENERATORS	{
+		$this->SINGULAR_IDEAL = new SingularIdeal($this->GENERATORS);
+	}
+	precondition : !ZERO;
+
+	rule STANDARD : SINGULAR_IDEAL, RING {
+		$this->SINGULAR_IDEAL->std($this->RING);
+		$this->STANDARD = $this->SINGULAR_IDEAL->polynomials();
 	}
 
 }
