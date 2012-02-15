@@ -95,6 +95,7 @@ $p = load("cool.poly");
 $minkp = new Matrix<Rational>($p->MINKOWSKI_SUMMAND_CONE->EQUATIONS);
 $eqs = new Matrix<Rational>($p->GRAPH->EDGE_DIRECTIONS);
 $count = 0;
+@factors = ();
 foreach my $e (@$eqs){
 	my $factor = new Rational(1);
    my $test = primitive(eliminate_denominators($e));
@@ -106,4 +107,17 @@ foreach my $e (@$eqs){
 	}
 	print $e, " ", $test, " factor: ", $factor, "\n";
 	$minkp->col($count) *= $factor;
+	push @factors, $factor;
+	$count++;
 }
+$eqs = primitive(eliminate_denominators($eqs));
+$eq = new Matrix<Rational>(zero_vector($minkp->rows) | $minkp);
+$ineq = new Matrix<Rational>(-ones_vector($minkp->cols) | dense(unit_matrix($minkp->cols)));
+$newMink = new Polytope<Rational>(EQUATIONS=>$eq, INEQUALITIES=>$ineq);
+$q = new Vector<Rational>($newMink->VERTICES->[0]->slice(1));
+$i = 0;
+foreach my $f (@factors){
+	$q->[$i] *= $f;
+	$i++;
+}
+$ms = $p->MINKOWSKI_SUMMAND_POINT($q);

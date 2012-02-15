@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?pm chk="4f3c039e"?>
+
+<object type="polytope::LatticePolytope" version="2.11.1" xmlns="http://www.math.tu-berlin.de/polymake/#3">
+  <credit product="lrslib"><![CDATA[
+Copyright by David Avis.
+http://cgm.cs.mcgill.ca/~avis/lrs.html
+]]></credit>
+  <credit product="cddlib"><![CDATA[
+Copyright by Komei Fukuda.
+http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+]]></credit>
+  <property name="POINTS">
+    <m>
+      <v>1 0 0 0 0</v>
+      <v>1 -1 1 1 1</v>
+      <v>1 0 0 1 0</v>
+      <v>1 1 1 2 1</v>
+      <v>1 0 1 1 1</v>
+      <v>1 -1 1 3 2</v>
+      <v>1 0 1 2 2</v>
+      <v>1 -1 0 1 1</v>
+      <v>1 -1 0 2 2</v>
+      <v>1 -1 -1 2 1</v>
+      <v>1 0 0 3 2</v>
+      <v>1 0 0 2 2</v>
+      <v>1 -1 1 3 3</v>
+      <v>1 1 -1 1 0</v>
+      <v>1 0 -1 3 1</v>
+      <v>1 1 0 3 1</v>
+      <v>1 0 -1 2 0</v>
+      <v>1 1 0 2 0</v>
+      <v>1 0 -2 2 0</v>
+      <v>1 -1 -1 3 1</v>
+      <v>1 1 1 3 1</v>
+      <v>1 2 0 2 0</v>
+    </m>
+  </property>
+  <property name="FEASIBLE" value="true" />
+  <property name="POINTED" value="true" />
+  <property name="CONE_AMBIENT_DIM" value="5" />
+  <property name="N_POINTS" value="22" />
+  <property name="BOUNDED" value="true" />
+  <property name="CONE_DIM" value="5" />
+  <property name="FULL_DIM" value="true" />
+  <property name="LINEALITY_DIM" value="0" />
+  <property name="LINEALITY_SPACE">
+    <m />
+  </property>
+  <property name="COMBINATORIAL_DIM" value="4" />
+  <property name="VERTICES">
+    <m>
+      <v>1 0 0 0 0</v>
+      <v>1 -1 1 1 1</v>
+      <v>1 0 0 1 0</v>
+      <v>1 1 1 2 1</v>
+      <v>1 0 1 1 1</v>
+      <v>1 -1 1 3 2</v>
+      <v>1 0 1 2 2</v>
+      <v>1 -1 0 1 1</v>
+      <v>1 -1 0 2 2</v>
+      <v>1 -1 -1 2 1</v>
+      <v>1 0 0 3 2</v>
+      <v>1 0 0 2 2</v>
+      <v>1 -1 1 3 3</v>
+      <v>1 1 -1 1 0</v>
+      <v>1 0 -1 3 1</v>
+      <v>1 1 0 3 1</v>
+      <v>1 0 -1 2 0</v>
+      <v>1 1 0 2 0</v>
+      <v>1 0 -2 2 0</v>
+      <v>1 -1 -1 3 1</v>
+      <v>1 1 1 3 1</v>
+      <v>1 2 0 2 0</v>
+    </m>
+  </property>
+  <property name="LATTICE" value="true" />
+  <property name="N_VERTICES" value="22" />
+  <property name="FACETS">
+    <m>
+      <v>1 0 -1 0 0</v>
+      <v>1 1 -1 -1 2</v>
+      <v>3 0 0 -1 0</v>
+      <v>0 0 1 1 -1</v>
+      <v>1 1 0 0 0</v>
+      <v>0 1 0 0 1</v>
+      <v>2 0 1 0 -1</v>
+      <v>0 0 0 1 -1</v>
+      <v>0 -1 0 1 -1</v>
+      <v>0 0 0 0 1</v>
+      <v>2 -1 1 0 -1</v>
+      <v>2 0 0 -1 1</v>
+      <v>0 0 -1 0 1</v>
+      <v>2 -1 0 0 -1</v>
+    </m>
+  </property>
+  <property name="AFFINE_HULL">
+    <m />
+  </property>
+  <property name="CENTERED" value="false" />
+  <property name="GORENSTEIN" value="true" />
+  <property name="GORENSTEIN_INDEX" value="1" />
+  <property name="GORENSTEIN_VECTOR">
+    <v>1 0 0 2 1</v>
+  </property>
+  <property name="VERTICES_IN_FACETS">
+    <m cols="22">
+      <v>1 3 4 5 6 12 20</v>
+      <v>1 2 5 16 17 19 20</v>
+      <v>5 10 12 14 15 19 20</v>
+      <v>0 7 8 9 11 13 18</v>
+      <v>1 5 7 8 9 12 19</v>
+      <v>0 1 2 7 9 16 18 19</v>
+      <v>8 9 10 11 12 14 18 19</v>
+      <v>0 1 4 6 7 8 11 12</v>
+      <v>0 3 4 6 11 13 21</v>
+      <v>0 2 13 16 17 18 21</v>
+      <v>10 11 13 14 15 18 21</v>
+      <v>14 15 16 17 18 19 20 21</v>
+      <v>0 1 2 3 4 17 20 21</v>
+      <v>3 6 10 11 12 15 20 21</v>
+    </m>
+  </property>
+  <property name="GRAPH">
+    <object>
+      <property name="ADJACENCY">
+        <m>
+          <v>1 2 4 7 11 13 18 21</v>
+          <v>0 2 4 5 7 12 19 20</v>
+          <v>0 1 16 17</v>
+          <v>4 6 20 21</v>
+          <v>0 1 3 6</v>
+          <v>1 12 19 20</v>
+          <v>3 4 11 12</v>
+          <v>0 1 8 9</v>
+          <v>7 9 11 12</v>
+          <v>7 8 18 19</v>
+          <v>11 12 14 15</v>
+          <v>0 6 8 10 12 13 18 21</v>
+          <v>1 5 6 8 10 11 19 20</v>
+          <v>0 11 18 21</v>
+          <v>10 15 18 19</v>
+          <v>10 14 20 21</v>
+          <v>2 17 18 19</v>
+          <v>2 16 20 21</v>
+          <v>0 9 11 13 14 16 19 21</v>
+          <v>1 5 9 12 14 16 18 20</v>
+          <v>1 3 5 12 15 17 19 21</v>
+          <v>0 3 11 13 15 17 18 20</v>
+        </m>
+      </property>
+      <property name="EDGE_DIRECTIONS">
+        <m>
+          <v>0 1 -1 -1 -1</v>
+          <v>0 0 0 -1 0</v>
+          <v>0 -1 1 0 1</v>
+          <v>0 0 -1 -1 -1</v>
+          <v>0 -1 0 0 0</v>
+          <v>0 1 0 1 0</v>
+          <v>0 0 0 -2 -1</v>
+          <v>0 1 0 0 -1</v>
+          <v>0 0 0 -1 -1</v>
+          <v>0 1 0 -1 -1</v>
+          <v>0 0 1 0 0</v>
+          <v>0 0 0 -1 -1</v>
+          <v>0 0 1 -1 0</v>
+          <v>0 0 1 0 1</v>
+          <v>0 0 0 -2 -2</v>
+          <v>0 0 1 0 0</v>
+          <v>0 -1 0 0 0</v>
+          <v>0 0 0 1 0</v>
+          <v>0 0 0 -2 -2</v>
+          <v>0 0 0 0 -1</v>
+          <v>0 1 0 -1 -1</v>
+          <v>0 0 -1 -1 -1</v>
+          <v>0 1 -1 0 -1</v>
+          <v>0 1 -1 -1 -1</v>
+          <v>0 -1 1 -1 0</v>
+          <v>0 -1 1 1 2</v>
+          <v>0 0 1 0 1</v>
+          <v>0 -1 0 0 1</v>
+          <v>0 -1 -1 0 0</v>
+          <v>0 0 1 -1 0</v>
+          <v>0 -1 0 -1 0</v>
+          <v>0 -1 -1 0 0</v>
+          <v>0 0 2 -2 0</v>
+          <v>0 -1 1 0 1</v>
+          <v>0 0 2 0 2</v>
+          <v>0 1 1 -1 0</v>
+          <v>0 0 1 1 1</v>
+          <v>0 0 1 0 0</v>
+          <v>0 0 2 -2 0</v>
+          <v>0 0 2 0 1</v>
+          <v>0 0 0 -1 0</v>
+          <v>0 0 2 0 2</v>
+          <v>0 1 0 0 0</v>
+          <v>0 1 0 -1 -1</v>
+          <v>0 1 -1 -1 -1</v>
+          <v>0 -2 0 -2 0</v>
+          <v>0 0 0 -1 0</v>
+          <v>0 -2 0 0 1</v>
+          <v>0 -2 0 0 2</v>
+          <v>0 0 -1 0 0</v>
+          <v>0 0 -1 -1 -1</v>
+          <v>0 -2 -2 0 0</v>
+          <v>0 -2 0 -2 0</v>
+          <v>0 -1 1 0 1</v>
+          <v>0 -2 0 0 2</v>
+          <v>0 -1 -1 -1 0</v>
+          <v>0 -1 0 1 1</v>
+          <v>0 -1 0 0 0</v>
+          <v>0 -2 -2 0 0</v>
+          <v>0 -1 1 1 1</v>
+        </m>
+      </property>
+    </object>
+  </property>
+  <property name="SIMPLE" value="false" />
+  <property name="FAR_FACE">
+    <v />
+  </property>
+  <property name="SMOOTH" value="false" />
+</object>
