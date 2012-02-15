@@ -31,10 +31,24 @@ void init_singular(const std::string& path)
    singular_initialized = 1;
 }
 
-Rational convert_number_to_Rational(number x, ring ring)
+Rational convert_number_to_Rational(number n, ring ring)
 {
-   Rational r((nlGetNumerator(x,ring))->z,(nlGetDenom(x,ring))->z);
-   return r;
+   if(rField_is_Q(ring)){
+		if(SR_HDL(n) & SR_INT){
+			long l = SR_TO_INT(n);
+			return Rational(l, 1);
+		} else {
+			switch(n->s){
+				case 0:
+					return Rational(n->z, n->n);
+				case 1:
+					return Rational(n->z, n->n);
+				case 3:
+					return Rational(n->z);
+			}
+		}
+	}
+  	throw std::runtime_error("blaaaa");
 }
 
 number convert_Rational_to_number(const Rational& r)
@@ -184,7 +198,7 @@ public:
 					coefficients.push_back(convert_number_to_Rational(c, singRing));
 					Vector<int> monomial(n);
 					for(int i = 1; i<=n; i++){
-						monomial[i] = pGetExp(p, i);
+						monomial[i-1] = pGetExp(p, i);
 					}
 					exponents /= monomial;
 					pIter(p);
