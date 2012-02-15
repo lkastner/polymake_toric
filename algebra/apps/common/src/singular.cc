@@ -82,7 +82,7 @@ number convert_Rational_to_number(const Rational& r)
    return nlInit2gmp(num,denom);
 }
 
-class SingularIdeal_impl : public SingularIdeal {
+class SingularIdeal_impl : public SingularIdeal_wrap {
 private:
    ideal singIdeal;
 
@@ -193,15 +193,15 @@ public:
 					pIter(p);
 				}
 				polys.push_back(Polynomial<>(exponents, coefficients, r));
+            cout << "converted: " << p_String(singIdeal->m[j],singRing,singRing)<<endl;
 			}
-            cout << p_String(singIdeal->m[j],singRing,singRing)<<endl;
       }
       return Array<Polynomial<> >(polys);
    }
 
 };
 
-SingularIdeal* SingularIdeal::create(const Array<Polynomial<> > gens) 
+SingularIdeal_wrap* SingularIdeal_wrap::create(const Array<Polynomial<> > gens) 
 {
    return new SingularIdeal_impl(gens);
 }
