@@ -6,9 +6,9 @@
 
 namespace polymake { namespace common {
 
-using namespace singular;
-
 class Ideal;
+
+namespace singular {
 
 class SingularWrapper {
 public:
@@ -21,6 +21,10 @@ public:
    static SingularWrapper* create(const Ideal* J);
 
 };
+
+}
+
+using namespace singular;
 
 class Ideal : public Array<Polynomial<> > {
 private:
