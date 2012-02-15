@@ -6,64 +6,19 @@
 
 namespace polymake { namespace common {
 
-class Ideal;
-
-namespace singular {
-
 class SingularIdeal {
 public:
    virtual ~SingularIdeal() {cout << "SingularIdeal destroyed" << endl; }
 
-   virtual SingularIdeal* groebner() = 0;
+   virtual void std(const Ring<> r) = 0;
 
-   virtual Array<Polynomial<> > polynomials(const Ring<>& ring) = 0;
+   virtual Array<Polynomial<> > polynomials(const Ring<> r) const = 0;
    
-   static SingularIdeal* create(const Ideal* J);
+   static SingularIdeal* create(const Array<Polynomial<> > gens);
 
 };
 
-}
-
-using namespace singular;
-
-class Ideal : public Array<Polynomial<> > {
-private:
-   SingularIdeal* singObj;
-
-public:
-   Ideal() : Array<Polynomial<> >() 
-   {
-      singObj=NULL;
-   }
-
-   Ideal(Array<Polynomial<> > polys, SingularIdeal* wrap) : 
-      Array<Polynomial<> >(polys) 
-   {
-      singObj=wrap;
-   }
-
-   ~Ideal()
-   {
-      cout << "destroying Ideal" << endl;
-      //if(singObj!=NULL)
-         //delete singObj;
-   }
-
- /*  void set(int i, const Polynomial<> & p) {
-      Array<Polynomial<> >::operator[](i)=p;
-   }
-*/
-   const Ring<> get_ring() const {
-      if(this->empty()) {
-         Ring<> r = Ring<>();
-         return r;  
-      } else {
-         const Polynomial<>& poly = this->front();
-         return poly.get_ring();
-      }
-//      return (this->empty() ? Ring<>() : (*this)[0].get_ring());
-   }
-
+/*
    Ideal& operator+=(const Ideal& I) {
       if(this->get_ring() != I.get_ring()) throw std::runtime_error("Ideals of different rings.");
       append(I.size(),I.begin());
@@ -89,22 +44,9 @@ public:
    }
 
 };
-
-
-// possibly do the following here:
-
-class PrimeDivisor{};
-class Divisor{};
+*/
 
 
 } }
-
-namespace pm {
-
-template <>
-struct spec_object_traits< polymake::common::Ideal >
-   : spec_object_traits<is_container> {};
-
-} // end namespace pm
 
 
