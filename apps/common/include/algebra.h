@@ -16,7 +16,6 @@ public:
 
    virtual Array<Polynomial<> > polynomials(const Ring<>& ring) = 0;
    
-
    static SingularWrapper* create(const Ideal* J);
 
 };

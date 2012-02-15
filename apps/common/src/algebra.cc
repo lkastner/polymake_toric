@@ -1,6 +1,7 @@
 #include "polymake/client.h"
 #include "polymake/common/algebra.h"
 #include "polymake/ListMatrix.h"
+#include "polymake/Map.h"
 
 #include <libsingular.h>
 
@@ -8,6 +9,8 @@
 namespace polymake { namespace common {
 
 int singular_initialized = 0;
+
+Map<id_type, ring> singular_ring_map;
 
 void singular_error_handler(const char* error)
 {
@@ -31,6 +34,22 @@ void init_singular(const std::string& path)
    singular_initialized = 1;
 }
 
+ring check_ring(Ring r){
+	id_type id = r.id();
+	if(!singular_ring_map.exists(id)){
+      int nvars = r.n_vars();
+      if(nvars == 0) 
+         throw std::runtime_error("Given ring is not a polynomial ring.");
+      char **n=(char**)omalloc(nvars*sizeof(char*));
+      for(int i=0; i<nvars; i++)
+      {
+         n[i] = omStrDup(r.names()[i].c_str());
+      }
+      singular_ring_map[id] = rDefault(0,nvars,n);
+	}
+	return singular_ring_map[id];
+}
+
 Rational convert_number_to_Rational(number n, ring ring)
 {
    if(rField_is_Q(ring)){
@@ -48,7 +67,7 @@ Rational convert_number_to_Rational(number n, ring ring)
 			}
 		}
 	}
-  	throw std::runtime_error("blaaaa");
+  	throw std::runtime_error("I can has number? :P");
 }
 
 number convert_Rational_to_number(const Rational& r)
@@ -64,7 +83,6 @@ number convert_Rational_to_number(const Rational& r)
 
 class SingularWrapper_impl : public SingularWrapper {
 private:
-   ring singRing;
    ideal singIdeal;
    const Ideal* polymakeIdeal; 
 
@@ -89,9 +107,7 @@ private:
       int npoly = polymakeIdeal->size();
       if(!npoly)
          throw std::runtime_error("Ideal has no generators.");
-      if(singRing == NULL)
-         create_singRing();
-
+		ring singRing = check_ring(polymakeIdeal->get_ring());
       rChangeCurrRing(singRing);
 
       singIdeal = idInit(npoly,1); // Richtig?
@@ -121,7 +137,6 @@ public:
       if (!singular_initialized)
          throw std::runtime_error("singular not yet initialized, call init_singular(Path)");
       cout << "creating empty SingularWrapper_impl" << endl;
-      singRing=NULL;
       singIdeal=NULL;
    }
    
@@ -133,7 +148,6 @@ public:
       singRing=NULL;
       singIdeal=NULL;
       polymakeIdeal = J;
-      create_singRing();
       create_singIdeal();
       cout << "DONE CREATING singular object" << endl;
    }
@@ -164,7 +178,7 @@ public:
       if(singIdeal==NULL) {
          create_singIdeal();
       }
-      
+		ring singRing = check_ring(polymakeIdeal->get_ring()); 
       rChangeCurrRing(singRing);
 
       ideal res;
@@ -181,14 +195,14 @@ public:
 
    Array<Polynomial<> > polynomials(const Ring<>& ring)
    {
+		ring singRing = check_ring(ring); 
       rChangeCurrRing(singRing);
 
       int numgen = IDELEMS(singIdeal);
-      Array<Polynomial<> > polys = Array<Polynomial<> >(numgen);
+      std::vector<Polynomial<> > polys;
 
-      int j = 0;
 		int n = rVar(singRing);
-      for(Entire<Array<Polynomial<> > >::iterator mypoly = entire(polys); !mypoly.at_end(); ++mypoly, ++j) {
+      for(int j = 0; j<numgen; j++) {
          if(singIdeal->m[j] != NULL){
 				ListMatrix<Vector<int> > exponents(0,n);
 				poly p = singIdeal->m[j];
@@ -203,11 +217,11 @@ public:
 					exponents /= monomial;
 					pIter(p);
 				}
-				polys[j] = Polynomial<>(exponents, coefficients, ring);
+				polys.push_back(Polynomial<>(exponents, coefficients, ring));
 			}
             cout << p_String(singIdeal->m[j],singRing,singRing)<<endl;
       }
-      return polys;
+      return Array<Polynomial<> >(polys);
    }
 
 };
@@ -220,5 +234,7 @@ SingularWrapper* SingularWrapper::create(const Ideal* J)
 UserFunction4perl("# @category Other"
                   "# @param String path Path to the singular directory",
                   &init_singular, "init_singular($)");
+
 } }
+
 
