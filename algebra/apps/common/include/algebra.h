@@ -10,15 +10,15 @@ class Ideal;
 
 namespace singular {
 
-class SingularWrapper {
+class SingularIdeal {
 public:
-   virtual ~SingularWrapper() {cout << "SingularWrapper destroyed" << endl; }
+   virtual ~SingularIdeal() {cout << "SingularIdeal destroyed" << endl; }
 
-   virtual SingularWrapper* groebner() = 0;
+   virtual SingularIdeal* groebner() = 0;
 
    virtual Array<Polynomial<> > polynomials(const Ring<>& ring) = 0;
    
-   static SingularWrapper* create(const Ideal* J);
+   static SingularIdeal* create(const Ideal* J);
 
 };
 
@@ -28,7 +28,7 @@ using namespace singular;
 
 class Ideal : public Array<Polynomial<> > {
 private:
-   SingularWrapper* singObj;
+   SingularIdeal* singObj;
 
 public:
    Ideal() : Array<Polynomial<> >() 
@@ -36,7 +36,7 @@ public:
       singObj=NULL;
    }
 
-   Ideal(Array<Polynomial<> > polys, SingularWrapper* wrap) : 
+   Ideal(Array<Polynomial<> > polys, SingularIdeal* wrap) : 
       Array<Polynomial<> >(polys) 
    {
       singObj=wrap;
@@ -81,9 +81,9 @@ public:
    {
       if(singObj == NULL) {
          //Ideal* writable = const_cast<Ideal*>(this);
-         singObj = SingularWrapper::create(this);
+         singObj = SingularIdeal::create(this);
       }
-      SingularWrapper* basis = singObj->groebner();
+      SingularIdeal* basis = singObj->groebner();
       return Ideal(basis->polynomials(this->get_ring()),basis);
 
    }
