@@ -6,17 +6,37 @@
 
 namespace polymake { namespace common {
 
-class SingularIdeal {
+class SingularIdeal_wrap {
 public:
-   virtual ~SingularIdeal() {cout << "SingularIdeal destroyed" << endl; }
+   virtual ~SingularIdeal_wrap() {cout << "SingularIdeal destroyed" << endl; }
 
    virtual void std(const Ring<> r) = 0;
 
    virtual Array<Polynomial<> > polynomials(const Ring<> r) const = 0;
    
-   static SingularIdeal* create(const Array<Polynomial<> > gens);
+   static SingularIdeal_wrap* create(const Array<Polynomial<> > gens);
 
 };
+
+class SingularIdeal {
+private:
+   SingularIdeal_wrap* singIdeal;
+
+public:
+   SingularIdeal(const Array<Polynomial<> > gens) {
+      singIdeal = SingularIdeal_wrap::create(gens);
+   }
+
+   void std(const Ring<> r) const  {
+      singIdeal->std(r);
+   }
+
+   Array<Polynomial<> > polynomials(const Ring<> r) const {
+      return singIdeal->polynomials(r);
+   }
+};
+
+
 
 /*
    Ideal& operator+=(const Ideal& I) {
