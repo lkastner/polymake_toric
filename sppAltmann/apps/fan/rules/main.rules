@@ -80,11 +80,11 @@ object HypersurfaceInTV {
 					# We choose the rays of A that satisfy the same equations.
 					# Collecting them yields a face of A which is intersected in the relative interior.
 					my $zero = zero_vector<Rational>($test);
-					my @good_rays = grep(($eq_mat * $tvr->[$_] == $zero)&&(minimum($fac * $tvr->[$_]) >= 0), @$C);
+					my @good_rays = grep(($eq_mat * $tvr->[$_] == $zero), @$C);
 					push @relevant, new Set<Integer>(@good_rays);
 				}
 			}
-			#print "la\n";	
+			print "done\n";	
 		}
 		$this->RELEVANT_CONES = check_fan($tvr, new Array< Set<Integer>>(@relevant));
 	}
