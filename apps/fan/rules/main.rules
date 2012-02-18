@@ -63,6 +63,8 @@ object HypersurfaceInTV {
 			foreach my $t (@interesting_cones){
 				# We will check, if A is intersected in its relative interior.
 				my $tA = intersection($t, $A);
+            # FIXME does this make sense ? (rel_int_point will be undef and cause problems otherwise ...)
+				next if($tA->DIM == 0);
 				# Choose an arbitrary point of the relative interior of the intersection.
 				my $interior_point = $tA->REL_INT_POINT;
 				my $fac = $A->FACETS;
@@ -78,7 +80,7 @@ object HypersurfaceInTV {
 					# We choose the rays of A that satisfy the same equations.
 					# Collecting them yields a face of A which is intersected in the relative interior.
 					my $zero = zero_vector<Rational>($test);
-					my @good_rays = grep(($eq_mat * $tvr->[$_] == $zero)&&(minimum($fac * $tvr[$_]) >= 0), @$C);
+					my @good_rays = grep(($eq_mat * $tvr->[$_] == $zero)&&(minimum($fac * $tvr->[$_]) >= 0), @$C);
 					push @relevant, new Set<Integer>(@good_rays);
 				}
 			}
