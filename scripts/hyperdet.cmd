@@ -47,7 +47,7 @@ foreach my $t (@$cs){
 	print @cont, "\n\n";
 	
 }
-$f = new PolyhedralFan<Rational>(INPUT_RAYS=>$amb->RAYS, MAXIMAL_CONE=>\@non_bad);
+$f = new PolyhedralFan<Rational>(INPUT_RAYS=>$amb->RAYS, MAXIMAL_CONES=>\@non_bad);
 #$p = load("cool.poly");
 #$minkp = new Matrix<Rational>($p->MINKOWSKI_SUMMAND_CONE->EQUATIONS);
 #$eqs = new Matrix<Rational>($p->GRAPH->EDGE_DIRECTIONS);

@@ -16,18 +16,18 @@
 ///==== this line controls the automatic file splitting: max.instances=40
 
 #include "polymake/client.h"
-#include "polymake/polytope/lattice_tools.h"
+#include "polymake/linalg.h"
 #include "polymake/Matrix.h"
-#include "polymake/Rational.h"
+#include "polymake/Integer.h"
 #include "polymake/IncidenceMatrix.h"
-namespace polymake { namespace polytope {
+namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0>
-   FunctionInterface4perl( primitive_X, T0 ) {
+   FunctionInterface4perl( null_space_X, T0 ) {
       perl::Value arg0(stack[0]);
-      WrapperReturn( primitive(arg0.get<T0>()) );
+      WrapperReturn( null_space(arg0.get<T0>()) );
    };
 
-   FunctionInstance4perl(primitive_X, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void> >);
+   FunctionInstance4perl(null_space_X, perl::Canned< const Matrix< Integer > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
