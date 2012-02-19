@@ -47,7 +47,7 @@ foreach my $t (@$cs){
 	print @cont, "\n\n";
 	
 }
-$f = new PolyhedralFan<Rational>(INPUT_RAYS=>$amb->RAYS, MAXIMAL_CONES=>\@non_bad);
+$f = new PolyhedralFan<Rational>(INPUT_RAYS=>$amb->RAYS, INPUT_CONES=>\@non_bad);
 $namb = cast<ToricVariety>($f);
 $neqn = $htv->EQUATION;
 $nhtv = new HypersurfaceInTV(EQUATION=>$neqn, AMBIENT_TV=>$namb);
