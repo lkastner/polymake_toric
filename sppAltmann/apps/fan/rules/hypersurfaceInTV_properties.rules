@@ -308,6 +308,7 @@ user_function chow_quotient(Polynomial){
 	my $g_tilda = new Polynomial($new_degs,$coeffs,$R); 
 	print "g_tilda: $g_tilda\n";
 	my $ambient_tv = cast<ToricVariety>(cocoref_new(new Matrix<Rational>($B)));
-	$ambient_tv->HYPERSURFACE->[0] = $g_tilda;
+	my $hs = $ambient_tv->add("HYPERSURFACE", EQUATION=>$g_tilda);
+	print "Equation: ",$hs->EQUATION,"\n";
 	return $ambient_tv;
 }
