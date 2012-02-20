@@ -1,13 +1,13 @@
 application "fan";
 
 # Testing Chow Quotient:
-#$ring = new Ring(qw(a b c d e f g h));
-#($x000, $x001, $x010, $x011, $x100, $x101, $x110, $x111) = $ring->variables;
-#$g = $x000*$x000*$x111*$x111 + $x001*$x001*$x110*$x110 + $x010*$x010*$x101*$x101 + $x011*$x011*$x100*$x100;
-#$g = $g - 2*($x000*$x001*$x110*$x111 + $x000*$x010*$x101*$x111 + $x000*$x100*$x011*$x111 + $x001*$x010*$x101*$x110 + $x001*$x100*$x011*$x110 + $x010*$x100*$x011*$x101);
-#$g = $g + 4*($x000*$x011*$x101*$x110 + $x001*$x010*$x100*$x111);
-#$htv = chow_quotient($g);
-$htv = load("hyperdet.htv");
+$ring = new Ring(qw(a b c d e f g h));
+($x000, $x001, $x010, $x011, $x100, $x101, $x110, $x111) = $ring->variables;
+$g = $x000*$x000*$x111*$x111 + $x001*$x001*$x110*$x110 + $x010*$x010*$x101*$x101 + $x011*$x011*$x100*$x100;
+$g = $g - 2*($x000*$x001*$x110*$x111 + $x000*$x010*$x101*$x111 + $x000*$x100*$x011*$x111 + $x001*$x010*$x101*$x110 + $x001*$x100*$x011*$x110 + $x010*$x100*$x011*$x101);
+$g = $g + 4*($x000*$x011*$x101*$x110 + $x001*$x010*$x100*$x111);
+$htv = chow_quotient($g);
+#$htv = load("hyperdet.htv");
 
 $amb = $htv->AMBIENT_TV;
 $rel = $htv->RELEVANT_CONES;
