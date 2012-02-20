@@ -1,13 +1,13 @@
 application "fan";
 
 # Testing Chow Quotient:
-$ring = new Ring(qw(a b c d e f g h));
-($x000, $x001, $x010, $x011, $x100, $x101, $x110, $x111) = $ring->variables;
-$g = $x000*$x000*$x111*$x111 + $x001*$x001*$x110*$x110 + $x010*$x010*$x101*$x101 + $x011*$x011*$x100*$x100;
-$g = $g - 2*($x000*$x001*$x110*$x111 + $x000*$x010*$x101*$x111 + $x000*$x100*$x011*$x111 + $x001*$x010*$x101*$x110 + $x001*$x100*$x011*$x110 + $x010*$x100*$x011*$x101);
-$g = $g + 4*($x000*$x011*$x101*$x110 + $x001*$x010*$x100*$x111);
-$htv = chow_quotient($g);
-$htv = load("hyperdet.htv");
+#$ring = new Ring(qw(a b c d e f g h));
+#($x000, $x001, $x010, $x011, $x100, $x101, $x110, $x111) = $ring->variables;
+#$g = $x000*$x000*$x111*$x111 + $x001*$x001*$x110*$x110 + $x010*$x010*$x101*$x101 + $x011*$x011*$x100*$x100;
+#$g = $g - 2*($x000*$x001*$x110*$x111 + $x000*$x010*$x101*$x111 + $x000*$x100*$x011*$x111 + $x001*$x010*$x101*$x110 + $x001*$x100*$x011*$x110 + $x010*$x100*$x011*$x101);
+#$g = $g + 4*($x000*$x011*$x101*$x110 + $x001*$x010*$x100*$x111);
+#$htv = chow_quotient($g);
+$htv = load("hyperdet.tv");
 
 $amb = $htv;
 $rel = $htv->HYPERSURFACE->[0]->RELEVANT_CONES;
@@ -48,10 +48,9 @@ foreach my $t (@$cs){
 	
 }
 $f = new PolyhedralFan<Rational>(INPUT_RAYS=>$amb->RAYS, INPUT_CONES=>\@non_bad);
-$namb = cast<ToricVariety>($f);
-$neqn = $htv->EQUATION;
-$nhtv = new HypersurfaceInTV(EQUATION=>$neqn, AMBIENT_TV=>$namb);
-print $nhtv->RELEVANT_CONES->N_MAXIMAL_CONES;
+$nhtv = cast<ToricVariety>($f);
+$hs = $nhtv->add("HYPERSURFACE", EQUATION=>$htv->HYPERSURFACE->[0]->EQUATION);
+print $nhtv->HYPERSURFACE->[0]->RELEVANT_CONES->N_MAXIMAL_CONES;
 #$p = load("cool.poly");
 #$minkp = new Matrix<Rational>($p->MINKOWSKI_SUMMAND_CONE->EQUATIONS);
 #$eqs = new Matrix<Rational>($p->GRAPH->EDGE_DIRECTIONS);
