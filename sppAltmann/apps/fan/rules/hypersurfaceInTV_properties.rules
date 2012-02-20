@@ -1,0 +1,73 @@
+
+object HypersurfaceInTV {
+
+	# Properties:
+	
+	property EQUATION : Polynomial;
+	
+	property RELEVANT_CONES : PolyhedralFan;
+
+	property TROPICAL_FAN : PolyhedralFan;
+	
+	# Rules:
+	
+	rule TROPICAL_FAN : EQUATION {
+		$this->TROPICAL_FAN = gfan_tropicalhypersurface($this->EQUATION);
+	}
+	
+}
+
+object ToricVariety {
+
+
+	# Introducing property for having multiple hypersurfaces in a toric variety.
+
+	property HYPERSURFACE : HypersurfaceInTV : multiple;
+
+	# Rules:
+	
+	rule HYPERSURFACE.RELEVANT_CONES : HYPERSURFACE.TROPICAL_FAN, RAYS, MAXIMAL_CONES{
+		# The idea of this method comes from the Sturmfels Maclagan book about tropical varieties.
+		# For any subvariety of the torus one can compute which cones are really necessary for covering
+		# the closure of this subvariety in the toric variety by intersecting the tropical variety
+		# with the fan of the ambient toric variety.
+		my $trop = $this->HYPERSURFACE->TROPICAL_FAN;
+		my @interesting_cones = map($trop->cone($_),0..($trop->N_MAXIMAL_CONES-1));
+		my @relevant = ();
+		my $tvmc = $this->MAXIMAL_CONES;
+		my $tvr = new Matrix<Rational>($this->RAYS);
+		foreach my $C (@$tvmc) {
+			#print $C;
+			my $m = $tvr->minor($C,All);
+			my $A = new Cone<Rational>(INPUT_RAYS=>$m);
+			foreach my $t (@interesting_cones){
+				# We will check, if A is intersected in its relative interior.
+				my $tA = intersection($t, $A);
+            # FIXME does this make sense ? (rel_int_point will be undef and cause problems otherwise ...)
+				next if($tA->DIM == 0);
+				# Choose an arbitrary point of the relative interior of the intersection.
+				my $interior_point = $tA->REL_INT_POINT;
+				my $fac = $A->FACETS;
+				# We check on how many facets the relative interior point of the intersection lies.
+				my @equations = grep($_*$interior_point == 0, @$fac);
+				my $eq_mat = new Matrix<Rational>(@equations);
+				my $test = $eq_mat->rows;
+				if($test == 0){
+					# If the point is on zero facets, it must be in the relative interior.
+					push @relevant, $C;
+				} else {
+					# Else the point is in a subcone of A.
+					# We choose the rays of A that satisfy the same equations.
+					# Collecting them yields a face of A which is intersected in the relative interior.
+					my $zero = zero_vector<Rational>($test);
+					my @good_rays = grep(($eq_mat * $tvr->[$_] == $zero), @$C);
+					push @relevant, new Set<Integer>(@good_rays);
+				}
+			}
+			print "done\n";	
+		}
+		$this->HYPERSURFACE->RELEVANT_CONES = check_fan($tvr, new Array< Set<Integer>>(@relevant));
+	}
+
+
+}
