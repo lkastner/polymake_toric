@@ -43,7 +43,7 @@ object Polytope<Rational> {
 			$q->[$i] *= $f;
 			$i++;
 		}
-		$this->NICE_MINKOWSKI_SUMMAND = $this->MINKOWSKI_SUMMAND_POINT($q);
+		$this->NICE_MINKOWSKI_SUMMAND = $this->MINKOWSKI_SUMMAND_POINT(primitive(eliminate_denominators($q)));
 	
 	}
 
