@@ -87,7 +87,7 @@ user_function equal_fans(PolyhedralFan<Rational>, PolyhedralFan<Rational>){
 		$i++;
 	}
 	foreach my $r (@{$g->RAYS}){
-		if (!$map{$r})
+		if (!exists($map->{$r}))
 		{print "la\n";
 		return (0 == 1);}
 	}
