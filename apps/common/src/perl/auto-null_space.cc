@@ -29,5 +29,6 @@ namespace polymake { namespace common {
    };
 
    FunctionInstance4perl(null_space_X, perl::Canned< const Matrix< Integer > >);
+   FunctionInstance4perl(null_space_X, perl::Canned< const pm::Transposed<pm::Matrix<pm::Integer> > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

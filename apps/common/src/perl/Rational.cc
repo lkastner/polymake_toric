@@ -20,5 +20,6 @@
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    OperatorInstance4perl(Binary__ge, perl::Canned< const Rational >, int);
+   OperatorInstance4perl(BinaryAssign_mul, perl::Canned< Rational >, perl::Canned< const Rational >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

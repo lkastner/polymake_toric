@@ -22,6 +22,8 @@
 #include "polymake/Rational.h"
 #include "polymake/Vector.h"
 #include "polymake/linalg.h"
+#include "polymake/Array.h"
+#include "polymake/Graph.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0, typename T1>
@@ -39,5 +41,13 @@ namespace polymake { namespace common {
    OperatorInstance4perl(Binary_mul, perl::Canned< const Wary< pm::Transposed<pm::Matrix<pm::Rational> > > >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void> >);
    FunctionInstance4perl(new_X, Matrix< Rational >, perl::Canned< const pm::MatrixMinor<pm::Matrix<pm::Rational>&, pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> const&, pm::all_selector const&> >);
    OperatorInstance4perl(Binary_mul, perl::Canned< const Wary< Matrix< Rational > > >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void> >);
+   FunctionInstance4perl(new_X, Matrix< Rational >, perl::Canned< const pm::MatrixMinor<pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::Matrix<pm::Rational> const&> const&, pm::Complement<pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&>, int, pm::operations::cmp> const&, pm::all_selector const&> >);
+   OperatorInstance4perl(Binary_div, perl::Canned< const Wary< pm::MatrixMinor<pm::Matrix<pm::Rational>&, pm::Array<int, void> const&, pm::all_selector const&> > >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void> >);
+   OperatorInstance4perl(assign, pm::MatrixMinor<pm::Matrix<pm::Rational>&, pm::all_selector const&, pm::Array<int, void> const&>, perl::Canned< const Matrix< Rational > >);
+   FunctionInstance4perl(new_X, Matrix< Rational >, perl::Canned< const pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::Matrix<pm::Rational> const&> >);
+   FunctionInstance4perl(new_X, Matrix< Rational >, perl::Canned< const pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::Transposed<pm::Matrix<pm::Rational> > const&> >);
+   OperatorInstance4perl(Binary_mul, perl::Canned< const Wary< pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::Matrix<pm::Rational> const&> > >, perl::Canned< const pm::Transposed<pm::Matrix<pm::Rational> > >);
+   FunctionInstance4perl(new_X, Matrix< Rational >, perl::Canned< const pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::Transposed<pm::Matrix<pm::Rational> > const&> >);
+   FunctionInstance4perl(new_X, Matrix< Rational >, perl::Canned< const EdgeMap< Undirected, Vector< Rational > > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
