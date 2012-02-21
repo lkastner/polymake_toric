@@ -3,11 +3,17 @@
 object TDivisor {
 
 	property COEFFICIENTS : Vector<Rational>;
+
 	property PRINCIPAL : Bool;
+	
 	property CARTIER : Bool;
+	
 	property Q_CARTIER : Bool;
+	
 	property AMPLE : Bool;
+	
 	property SEMIAMPLE : Bool;
+	
 	property INTEGRAL : Bool;
 
 
@@ -30,7 +36,8 @@ object ToricVariety {
 		my $c = $this->DIVISOR->COEFFICIENTS;
 		my $eq = -$c | $this->RAYS;
 		my $bla = new Polytope<Rational>(EQUATIONS => $eq);
-		$bla->LATTICE_POINTS 
+		my $sol = grep($_->[0]==1, @{$bla->LATTICE_POINTS});
+		return ($sol > 0);
 	}
 
 
