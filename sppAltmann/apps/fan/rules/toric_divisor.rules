@@ -1,0 +1,37 @@
+
+
+object TDivisor {
+
+	property COEFFICIENTS : Vector<Rational>;
+	property PRINCIPAL : Bool;
+	property CARTIER : Bool;
+	property Q_CARTIER : Bool;
+	property AMPLE : Bool;
+	property SEMIAMPLE : Bool;
+	property INTEGRAL : Bool;
+
+
+	rule INTEGRAL : COEFFICIENTS {
+		return (eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS == 0);
+	}
+
+
+
+
+}
+
+
+object ToricVariety {
+
+	property DIVISOR : TDIVISOR : multiple;
+
+	
+	rule DIVISOR.PRINCIPAL : RAYS, DIVISOR.COEFFICIENTS {
+		my $c = $this->DIVISOR->COEFFICIENTS;
+		my $eq = -$c | $this->RAYS;
+		my $bla = new Polytope<Rational>(EQUATIONS => $eq);
+		$bla->LATTICE_POINTS 
+	}
+
+
+}
