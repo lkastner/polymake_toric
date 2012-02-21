@@ -37,13 +37,15 @@ object Polytope<Rational> {
 				last;
 			}
 		}
+		$q = primitive(eliminate_denominators($q));
+		$q = new Vector<Rational>($q);
 		#print $q,"\n";
 		my $i = 0;
 		foreach my $f (@factors){
 			$q->[$i] *= $f;
 			$i++;
 		}
-		$this->NICE_MINKOWSKI_SUMMAND = $this->MINKOWSKI_SUMMAND_POINT(primitive(eliminate_denominators($q)));
+		$this->NICE_MINKOWSKI_SUMMAND = $this->MINKOWSKI_SUMMAND_POINT($q);
 	
 	}
 

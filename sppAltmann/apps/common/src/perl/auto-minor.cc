@@ -19,6 +19,8 @@
 #include "polymake/Matrix.h"
 #include "polymake/Rational.h"
 #include "polymake/IncidenceMatrix.h"
+#include "polymake/linalg.h"
+#include "polymake/Array.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0, typename T1, typename T2>
@@ -28,5 +30,7 @@ namespace polymake { namespace common {
    };
 
    FunctionInstance4perl(minor_X_X_f5, perl::Canned< Wary< Matrix< Rational > > >, perl::Canned< const pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> >, perl::Enum<pm::all_selector>);
+   FunctionInstance4perl(minor_X_X_f5, perl::Canned< const Wary< pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::Matrix<pm::Rational> const&> > >, perl::Canned< const pm::Complement<pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&>, int, pm::operations::cmp> >, perl::Enum<pm::all_selector>);
+   FunctionInstance4perl(minor_X_X_f5, perl::Canned< Wary< Matrix< Rational > > >, perl::TryCanned< const Array< int > >, perl::Enum<pm::all_selector>);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

@@ -3,14 +3,24 @@ object HypersurfaceInTV {
 
 	# Properties:
 	
+	property CALABI_YAU : Bool;
+
 	property EQUATION : Polynomial;
 	
+	property NEWTON_POLYTOPE : Polytope;
+
 	property RELEVANT_CONES : PolyhedralFan;
+
+	property SMOOTH : Bool;
 
 	property TROPICAL_FAN : PolyhedralFan;
 	
 	# Rules:
-	
+
+	rule NEWTON_POLYTOPE : EQUATION {
+		$this->NEWTON_POLYTOPE = newton($this->EQUATION);
+	}
+
 	rule TROPICAL_FAN : EQUATION {
 		$this->TROPICAL_FAN = gfan_tropicalhypersurface($this->EQUATION);
 	}
