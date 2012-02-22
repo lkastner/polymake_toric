@@ -1,0 +1,15 @@
+INCLUDE ideal.rules
+	singular.rules
+
+
+property_type Polynomial {
+
+	user_method monomials_as_matrix() : c++;
+
+	user_method get_ring() : c++;
+	
+	user_method trivial() : c++;
+
+	user_method coefficients_as_vector() : c++;
+
+}
