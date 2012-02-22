@@ -1,9 +1,0 @@
-init_singular("/home/lars/working_copies/Sources");
-$r=new Ring(qw(x y z));
-($x,$y,$z)=$r->variables;
-$p1=3*$x*$y + 2*$z + 1;
-$p2=2*$x + 1/2;
-print $p1," , ",$p2,"\n";
-$i = new Ideal(GENERATORS=>[$p1,$p2]);
-print $i->STANDARD->[0];
-print $i->STANDARD->[1];

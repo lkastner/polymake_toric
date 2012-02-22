@@ -1,9 +1,0 @@
-git remote add -f algebra kagura:/git/public/repositories/polymake_algebra
-git merge -s ours --no-commit algebra/master
-git read-tree --prefix=algebra/ -u algebra/master
-git commit -m"Subtree algebra merged in algebra."
-
-git remote add -f toric kagura:/git/public/repositories/polymake_toric
-git merge -s ours --no-commit toric/master
-git read-tree --prefix=sppAltmann/ -u toric/master
-git commit -m"Subtree toric merged in sppAltmann."

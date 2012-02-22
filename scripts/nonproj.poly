@@ -1,5 +1,0 @@
-use application "fan";
-my $r = new Matrix<Rational>([1,0,0],[0,1,0],[0,0,1],[2,1,1],[1,2,1],[1,1,2],[-1,-1,-1]);
-my $mc = new Array<Set<Int>>([0,1,6],[0,2,6],[1,2,6],[3,4,5],[0,1,3],[1,3,4],[1,2,4],[2,4,5],[0,2,5],[0,3,5]);
-my $f = check_fan($r, $mc);
-print $f->PROJECTIVE;
