@@ -1,0 +1,26 @@
+
+CREDIT Singular
+  blaaaa
+
+# path to the root installation directory of libsingular
+custom $singular_path;
+
+CONFIGURE_BUILD {
+  find_location($singular_path, "/usr", "/usr/local", "/opt", 
+                { prompt => "libsingular root installation directory",
+                  check => sub { !-f "$_[0]/include/libsingular.h" && "$_[0]/include/libsingular.h does not exist"
+                           } })
+    or return;
+
+  return ( SingularPath   => $singular_path );
+}
+
+property_type SingularIdeal {
+
+	method construct(Array<Polynomial>) : c++;
+	
+	method std(Ring) : void : c++ ;
+
+	method polynomials(Ring) : c++;
+
+}

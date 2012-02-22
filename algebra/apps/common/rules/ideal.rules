@@ -1,0 +1,85 @@
+declare property_type SingularIdeal : c++ (include => ["polymake/common/singular.h"]) ;
+
+declare object Ideal;
+
+object Ideal {
+
+	property DEPTH : Int;
+
+	property DIM : Int;
+	
+	property GENERATORS : Array<Polynomial>;
+	
+	property HILBERT_POLYNOMIAL : Polynomial;
+
+	property HOMOGENEOUS : Bool;
+
+	property PRIME : Bool;
+
+	property PRIMARY : Bool;
+
+	property PRIMARY_DECOMPOSITION : Ideal : multiple;
+
+	property RADICAL : Ideal;
+
+	property RING : Ring;
+
+	property SINGULAR_IDEAL : SingularIdeal;
+
+	property STANDARD : Array<Polynomial>;
+
+	property ZERO : Bool;
+
+	user_method HOMOGENIZE {
+		my ($this, $var) = @_;
+
+		my $i = new Ideal();
+
+		return $i;
+	}
+
+	user_method CONTAINS {
+		my ($this, $poly) = @_;
+
+		return 1;
+	}
+
+	rule PRIMARY : {
+		$this->PRIMARY = 1;
+	}
+	precondition : PRIME;
+
+
+	rule PRIMARY : RADICAL.PRIME {
+		$this->PRIMARY = $this->RADICAL->PRIME;
+	}
+
+	rule ZERO : GENERATORS {
+		if($this->GENERATORS->size != 0){
+			foreach my $p (@{$this->GENERATORS}){
+				if(!$p->trivial){
+					$this->ZERO = 0;
+					return;
+				}
+			}
+		} 
+		$this->ZERO = 1;
+	}
+
+	rule RING : GENERATORS {
+		$this->RING = $this->GENERATORS->[0]->get_ring;
+	}
+	precondition : !ZERO;
+
+	rule SINGULAR_IDEAL : GENERATORS	{
+		$this->SINGULAR_IDEAL = new SingularIdeal($this->GENERATORS);
+	}
+	precondition : !ZERO;
+
+	rule STANDARD : SINGULAR_IDEAL, RING {
+		$this->SINGULAR_IDEAL->std($this->RING);
+		$this->STANDARD = $this->SINGULAR_IDEAL->polynomials($this->RING);
+	}
+
+}
+
