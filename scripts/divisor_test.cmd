@@ -13,4 +13,8 @@ print $D3->INTEGRAL;
 print $D->PRINCIPAL;
 print $D2->PRINCIPAL;
 print $D3->PRINCIPAL;
-
+$g = normal_fan(cube(4));
+$x = $g->RAYS->col(0);
+$s = cast<ToricVariety>($g);
+$D4 = $s->add("DIVISOR",COEFFICIENTS=>$x);
+print $D4->PRINCIPAL;
