@@ -16,6 +16,8 @@ object TDivisor {
 	
 	property INTEGRAL : Bool;
 
+	property SECTION_POLYTOPE : Polytope<Rational>;
+
 
 	rule INTEGRAL : COEFFICIENTS {		
 		$this->INTEGRAL = (eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS == zero_vector($this->COEFFICIENTS->dim));
@@ -39,6 +41,13 @@ object ToricVariety {
 		$bla->VERTICES;
 		my $sol = grep($_->[0]==1, @{$bla->LATTICE_POINTS});
 		$this->DIVISOR->PRINCIPAL=($sol > 0);
+	}
+
+	rule DIVISOR.SECTION_POLYTOPE : RAYS, DIVISOR.COEFFICIENTS {
+		my $a = $this->DIVISOR->COEFFICIENTS;
+		my $v = $this->RAYS;		
+		my $ineq = $a | $v;
+		$this->DIVISOR->SECTION_POLYTOPE = new Polytope<Rational>(INEQUALITIES => $ineq);
 	}
 
 

@@ -18,3 +18,8 @@ $x = $g->RAYS->col(0);
 $s = cast<ToricVariety>($g);
 $D4 = $s->add("DIVISOR",COEFFICIENTS=>$x);
 print $D4->PRINCIPAL;
+$h = normal_fan(simplex(2));
+$P2 = cast<ToricVariety>($h);
+$y = new Vector(1,1,1);
+$D5 = $P2->add("DIVISOR",COEFFICIENTS=>$y);
+print $D5->SECTION_POLYTOPE->VERTICES;
