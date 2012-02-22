@@ -6,4 +6,4 @@ git commit -m"Subtree algebra merged in algebra."
 git remote add -f toric kagura:/git/public/repositories/polymake_toric
 git merge -s ours --no-commit toric/master
 git read-tree --prefix=sppAltmann/ -u toric/master
-git commit -m"Subtree toric merged in toric."
+git commit -m"Subtree toric merged in sppAltmann."
