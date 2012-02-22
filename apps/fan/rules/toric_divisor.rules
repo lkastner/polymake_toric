@@ -1,4 +1,4 @@
-
+declare object TDivisor;
 
 object TDivisor {
 
@@ -17,8 +17,9 @@ object TDivisor {
 	property INTEGRAL : Bool;
 
 
-	rule INTEGRAL : COEFFICIENTS {
-		return (eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS == 0);
+	rule INTEGRAL : COEFFICIENTS {		
+		print eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS;
+		return (eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS == zero_vector($this->COEFFICIENTS->dim));
 	}
 
 
@@ -29,7 +30,7 @@ object TDivisor {
 
 object ToricVariety {
 
-	property DIVISOR : TDIVISOR : multiple;
+	property DIVISOR : TDivisor : multiple;
 
 	
 	rule DIVISOR.PRINCIPAL : RAYS, DIVISOR.COEFFICIENTS {
