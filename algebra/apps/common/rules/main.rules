@@ -1,6 +1,8 @@
-INCLUDE ideal.rules
-	singular.rules
+declare object Ideal;
 
+INCLUDE
+   ideal.rules
+   singular.rules
 
 property_type Polynomial {
 

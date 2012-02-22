@@ -1,10 +1,10 @@
 
 ifdef SingularPath
-   ExtraCXXFLAGS+=-I${SingularPath}/include
-   LDFLAGS+=-L${SingularPath}/lib -Wl,-rpath,${SingularPath}/lib
-   LIBS+=-lsingular
+  singular$O : ExtraCXXFLAGS = -I${SingularPath}/include
+  LDFLAGS += -L${SingularPath}/lib -Wl,-rpath,${SingularPath}/lib
+  LIBS += -lsingular
 else
-# FIXME disable compilation
-# singular$O : 
+  SharedModules := NONE
+#  IgnoredModules := singular FIXME: change to this when supported
 endif
 

@@ -15,7 +15,8 @@ CONFIGURE_BUILD {
   return ( SingularPath   => $singular_path );
 }
 
-property_type SingularIdeal {
+declare property_type SingularIdeal : c++ (include => ["polymake/common/singular.h"]) {
+#property_type SingularIdeal {
 
 	method construct(Array<Polynomial>) : c++;
 	
@@ -24,3 +25,19 @@ property_type SingularIdeal {
 	method polynomials(Ring) : c++;
 
 }
+
+object Ideal {
+
+	property SINGULAR_IDEAL : SingularIdeal;
+
+	rule SINGULAR_IDEAL : GENERATORS	{
+		$this->SINGULAR_IDEAL = new SingularIdeal($this->GENERATORS);
+	}
+	precondition : !ZERO;
+
+	rule STANDARD : SINGULAR_IDEAL, RING {
+		$this->SINGULAR_IDEAL->std($this->RING);
+		$this->STANDARD = $this->SINGULAR_IDEAL->polynomials($this->RING);
+	}
+}
+
