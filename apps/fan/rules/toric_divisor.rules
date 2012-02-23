@@ -18,10 +18,17 @@ object TDivisor {
 
 	property SECTION_POLYTOPE : Polytope<Rational>;
 
+	property CARTIER_DATA : Map<Set<Int>,Vector>;
+
 
 	rule INTEGRAL : COEFFICIENTS {		
 		$this->INTEGRAL = (eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS == zero_vector($this->COEFFICIENTS->dim));
 	}
+	
+	#rule CARTIER :  {
+	#	$this->CARTIER = 1;
+	#}
+	#precondition : PRINCIPAL;
 
 
 
@@ -50,5 +57,23 @@ object ToricVariety {
 		$this->DIVISOR->SECTION_POLYTOPE = new Polytope<Rational>(INEQUALITIES => $ineq);
 	}
 
+	rule DIVISOR.CARTIER, DIVISOR.CARTIER_DATA : RAYS, DIVISOR.COEFFICIENTS, MAXIMAL_CONES {
+		my $maxcones = $this->MAXIMAL_CONES;
+		my $map = new Map<Set<Int>,Vector>;
+		my $rays = $this->RAYS;
+		my $a = $this->DIVISOR->COEFFICIENTS;
+		foreach my $s (@$maxcones){
+			my $eq = $a->slice($s) | $rays->minor($s,All);
+			my $bla = new Polytope<Rational>(EQUATIONS => $eq);
+			$bla->VERTICES;
+			if ($bla->N_LATTICE_POINTS == 0){
+				$this->DIVISOR->CARTIER = 0;
+				return;			
+			}
+			$map->{$s} = $bla->LATTICE_POINTS->row(0);
+		}
+		$this->DIVISOR->CARTIER = 1;
+		$this->DIVISOR->CARTIER_DATA = $map;
+	}
 
 }
