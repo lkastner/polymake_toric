@@ -89,7 +89,7 @@ user_function equal_fans(PolyhedralFan<Rational>, PolyhedralFan<Rational>){
 	}
 	foreach my $r (@{$g->RAYS}){
 		if (!exists($map->{$r}))
-		{print "la\n";
+		{#print "la\n";
 		return (0 == 1);}
 	}
 	my $mf = $f->MAXIMAL_CONES;

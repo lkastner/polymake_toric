@@ -1,7 +1,8 @@
 declare object TDivisor;
 
 object TDivisor {
-
+		
+	#Take care of labeling of the Rays.
 	property COEFFICIENTS : Vector<Rational>;
 
 	property PRINCIPAL : Bool;
@@ -56,6 +57,7 @@ object ToricVariety {
 		my $a = $this->DIVISOR->COEFFICIENTS;
 		my $v = $this->RAYS;		
 		my $ineq = $a | $v;
+		#print $ineq;
 		$this->DIVISOR->SECTION_POLYTOPE = new Polytope<Rational>(INEQUALITIES => $ineq);
 	}
 
@@ -81,14 +83,19 @@ object ToricVariety {
 	rule DIVISOR.BASEPOINT_FREE : DIVISOR.CARTIER_DATA, MAXIMAL_CONES, DIVISOR.SECTION_POLYTOPE {
 		my $maxcones = $this->MAXIMAL_CONES;
 		my $P = $this->DIVISOR->SECTION_POLYTOPE;
-		my $map = $this->DIVISOR->CARTIER_DATA
+		my $map = $this->DIVISOR->CARTIER_DATA;
 		foreach my $s (@$maxcones){
-			$this->DIVISOR->NEF &= $P->contains($map->{$s});
+			if (!$P->contains($map->{$s})){
+				$this->DIVISOR->BASEPOINT_FREE = 0;
+				return;
+			}
+			
 		}
+		$this->DIVISOR->BASEPOINT_FREE = 1;
 	
 	}
 	precondition : DIVISOR.CARTIER;
 	precondition : PURE;
-	precondition : DIM == AMBIENT_DIM;
+	precondition : FULL_DIM;
 
 }
