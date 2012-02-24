@@ -11,6 +11,7 @@ object HypersurfaceInTV {
 
 	property RELEVANT_CONES : PolyhedralFan;
 
+	#todo: From the Batyrev article.
 	property REGULAR : Bool;
 
 	property TROPICAL_FAN : PolyhedralFan;
