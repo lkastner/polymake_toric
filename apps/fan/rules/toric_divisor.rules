@@ -9,6 +9,8 @@ object TDivisor {
 	property CARTIER : Bool;
 	
 	property Q_CARTIER : Bool;
+
+	property BASEPOINT_FREE : Bool;
 	
 	property AMPLE : Bool;
 	
@@ -25,10 +27,10 @@ object TDivisor {
 		$this->INTEGRAL = (eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS == zero_vector($this->COEFFICIENTS->dim));
 	}
 	
-	#rule CARTIER :  {
-	#	$this->CARTIER = 1;
-	#}
-	#precondition : PRINCIPAL;
+	rule CARTIER :  {
+		$this->CARTIER = 1;
+	}
+	precondition : PRINCIPAL;
 
 
 
@@ -75,5 +77,18 @@ object ToricVariety {
 		$this->DIVISOR->CARTIER = 1;
 		$this->DIVISOR->CARTIER_DATA = $map;
 	}
+
+	rule DIVISOR.BASEPOINT_FREE : DIVISOR.CARTIER_DATA, MAXIMAL_CONES, DIVISOR.SECTION_POLYTOPE {
+		my $maxcones = $this->MAXIMAL_CONES;
+		my $P = $this->DIVISOR->SECTION_POLYTOPE;
+		my $map = $this->DIVISOR->CARTIER_DATA
+		foreach my $s (@$maxcones){
+			$this->DIVISOR->NEF &= $P->contains($map->{$s});
+		}
+	
+	}
+	precondition : DIVISOR.CARTIER;
+	precondition : PURE;
+	precondition : DIM == AMBIENT_DIM;
 
 }
