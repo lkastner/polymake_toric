@@ -14,6 +14,8 @@ object HypersurfaceInTV {
 	#todo: From the Batyrev article.
 	property REGULAR : Bool;
 
+	property LOCAL_EQUATIONS : Map<Set<Int>, Polynomial>;
+
 	property TROPICAL_FAN : PolyhedralFan;
 	
 	# Rules:
@@ -80,7 +82,16 @@ object ToricVariety {
 		$this->HYPERSURFACE->RELEVANT_CONES = check_fan($tvr, new Array< Set<Integer>>(@relevant));
 	}
 
-
+	rule HYPERSURFACE.LOCAL_EQUATIONS : CONES, RAYS, HYPERSURFACE.NEWTON_POLYTOPE{
+		$newton = $this->HYPERSURFACE->NEWTON_POLYTOPE;
+		$cones = $this->CONES;
+		$rays = $this->RAYS;
+		foreach my $d (@$cones){
+			foreach my $c (@$d){
+				
+			}
+		}
+	}
 }
 
 user_function cocoref_new(Matrix) {
