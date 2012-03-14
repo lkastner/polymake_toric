@@ -75,7 +75,11 @@ object ToricVariety {
 		# For any subvariety of the torus one can compute which cones are really necessary for covering
 		# the closure of this subvariety in the toric variety by intersecting the tropical variety
 		# with the fan of the ambient toric variety.
-		my $trop = $this->HYPERSURFACE->TROPICAL_FAN;
+		#
+      # Currently this is very slow. Maybe it can be sped up be the following:
+      # For each maximal cone in the tropical variety, compute every cone that is intersected non-trivially,
+      # then compute the relevant parts.
+      my $trop = $this->HYPERSURFACE->TROPICAL_FAN;
 		my @interesting_cones = map($trop->cone($_),0..($trop->N_MAXIMAL_CONES-1));
 		my @relevant = ();
 		my $tvmc = $this->MAXIMAL_CONES;
