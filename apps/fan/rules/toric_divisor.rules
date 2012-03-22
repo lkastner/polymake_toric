@@ -23,28 +23,6 @@ object ToricVariety {
 
    object TDivisor {
          
-      #Take care of labeling of the Rays.
-      property COEFFICIENTS : Vector<Rational>;
-
-      property PRINCIPAL : Bool;
-      
-      property CARTIER : Bool;
-      
-      property Q_CARTIER : Bool;
-
-      property BASEPOINT_FREE : Bool;
-      
-      property AMPLE : Bool;
-      
-      property SEMIAMPLE : Bool;
-      
-      property INTEGRAL : Bool;
-
-      property SECTION_POLYTOPE : Polytope<Rational>;
-
-      property CARTIER_DATA : Map<Set<Int>,Vector>;
-
-
       rule INTEGRAL : COEFFICIENTS {		
          $this->INTEGRAL = (eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS == zero_vector($this->COEFFICIENTS->dim));
       }
@@ -56,15 +34,7 @@ object ToricVariety {
 
 
    }
-
-}
-
-object ToricVariety {
-
-	property DIVISOR : TDivisor : multiple;
-
-	
-	rule DIVISOR.PRINCIPAL : RAYS, DIVISOR.COEFFICIENTS {
+     rule DIVISOR.PRINCIPAL : RAYS, DIVISOR.COEFFICIENTS {
 		my $c = $this->DIVISOR->COEFFICIENTS;
 		my $eq = -$c | $this->RAYS;
 		my $bla = new Polytope<Rational>(EQUATIONS => $eq);
@@ -118,4 +88,10 @@ object ToricVariety {
 	precondition : PURE;
 	precondition : FULL_DIM;
 
+}
+
+
+
+	
+	
 }
