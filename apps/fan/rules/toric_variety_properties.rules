@@ -19,6 +19,8 @@
 
 object ToricVariety {
 
+
+
    # @category Basic properties
    # Evaluates true if the toric variety is affine, i.e. the fan consists of a single
    # cone.
@@ -27,7 +29,12 @@ object ToricVariety {
   # @category Toric Varieties
   # a toric variety is [[DEGENERATE]] if the fan is not [[FULL_DIM]]
   property DEGENERATE : Bool;  	
-  
+
+  # @category Toric Varieties
+  # The cone of effective divisors in the rational class group
+  # A class of divisors D is effective if the corresponding polytope P_D is non-empty
+  property EFFECTIVE_CONE : Cone<Rational>;
+    
   # @category Toric Varieties
   # a toric variety is [[FANO]] if the anticanonical divisor is [[AMPLE]]
   # true if the toric variety is a Fano variety
@@ -38,6 +45,17 @@ object ToricVariety {
    # This does not necessarily exist. For determining existence and computation we use
    # Shepards theorem.
    property GENERATING_POLYTOPE : Polytope<Rational>;
+   
+  # @category Toric Varieties
+  # The dual of the [[NEF_CONE]]
+  property MORI_CONE : Cone<Rational>;   
+
+  # @category Toric Varieties
+  # The cone of nef divisors in the rational class group
+  # this is the closure of the cone of ample divisors, where
+  # a divisor of the variety is ample if the fan coincides with the normal fan of P_D
+  # equivalently, a divisor is nef if the inequalities it defines are tight on P_D
+  property NEF_CONE : Cone<Rational>;
 
   # @category Toric Varieties
   # the number of maximal torus orbits. Equals the number of rays of the fan
