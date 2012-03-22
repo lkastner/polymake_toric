@@ -17,46 +17,47 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
-declare object TDivisor;
+object ToricVariety {
 
-object TDivisor {
-		
-	#Take care of labeling of the Rays.
-	property COEFFICIENTS : Vector<Rational>;
+   declare object TDivisor;
 
-	property PRINCIPAL : Bool;
-	
-	property CARTIER : Bool;
-	
-	property Q_CARTIER : Bool;
+   object TDivisor {
+         
+      #Take care of labeling of the Rays.
+      property COEFFICIENTS : Vector<Rational>;
 
-	property BASEPOINT_FREE : Bool;
-	
-	property AMPLE : Bool;
-	
-	property SEMIAMPLE : Bool;
-	
-	property INTEGRAL : Bool;
+      property PRINCIPAL : Bool;
+      
+      property CARTIER : Bool;
+      
+      property Q_CARTIER : Bool;
 
-	property SECTION_POLYTOPE : Polytope<Rational>;
+      property BASEPOINT_FREE : Bool;
+      
+      property AMPLE : Bool;
+      
+      property SEMIAMPLE : Bool;
+      
+      property INTEGRAL : Bool;
 
-	property CARTIER_DATA : Map<Set<Int>,Vector>;
+      property SECTION_POLYTOPE : Polytope<Rational>;
 
-
-	rule INTEGRAL : COEFFICIENTS {		
-		$this->INTEGRAL = (eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS == zero_vector($this->COEFFICIENTS->dim));
-	}
-	
-	rule CARTIER :  {
-		$this->CARTIER = 1;
-	}
-	precondition : PRINCIPAL;
+      property CARTIER_DATA : Map<Set<Int>,Vector>;
 
 
+      rule INTEGRAL : COEFFICIENTS {		
+         $this->INTEGRAL = (eliminate_denominators($this->COEFFICIENTS) - $this->COEFFICIENTS == zero_vector($this->COEFFICIENTS->dim));
+      }
+      
+      rule CARTIER :  {
+         $this->CARTIER = 1;
+      }
+      precondition : PRINCIPAL;
 
+
+   }
 
 }
-
 
 object ToricVariety {
 
