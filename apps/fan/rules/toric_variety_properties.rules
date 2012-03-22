@@ -69,6 +69,28 @@ object ToricVariety {
    # Evaluates to true if the corresponding fan is the normal fan of some polytope.
    property PROJECTIVE = override REGULAR;
 
+  	# @category Toric Varieties
+  	# The class group Cl(X) of Weil divisors on the toric variety 
+  	# defined by the fan is a finitely generated abelian group of rank [[N_RAYS]]-[[DIM]]. 
+  	# It usually contains torsion.
+  	# The rational divisor class group is the tensor product of Cl(X) with Q over Z. 
+  	# This group is torsion free and corresponds to the Picard group if the variety is non-singular.
+  	declare object RationalDivisorClassGroup {
+
+    	# @category Divisor classes
+    	# maps a divisor on the variety onto its representation in the class group
+    	property PROJECTION : Matrix<Integer>;
+
+    	# @category Divisor classes
+    	# lifts a divisor in the class group onto a divisor on the fan
+    	property LIFTING : Matrix<Integer>;
+
+  	}
+
+  	# @category Toric Varieties
+  	# the torsion free part of the class group
+  	property RATIONAL_DIVISOR_CLASS_GROUP : RationalDivisorClassGroup;
+
    property SMOOTH = override SMOOTH_FAN;
    
     
