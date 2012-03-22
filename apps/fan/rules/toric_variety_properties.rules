@@ -24,20 +24,35 @@ object ToricVariety {
    # cone.
    property AFFINE : Bool;
 
+  # @category Toric Varieties
+  # a toric variety is [[DEGENERATE]] if the fan is not [[FULL_DIM]]
+  property DEGENERATE : Bool;  	
+  
+  # @category Toric Varieties
+  # a toric variety is [[FANO]] if the anticanonical divisor is [[AMPLE]]
+  # true if the toric variety is a Fano variety
+  property FANO : Bool;
+
    # @category Basic properties
    # Polytope such that the fan of the toric variety is the normal fan of this polytope.
    # This does not necessarily exist. For determining existence and computation we use
    # Shepards theorem.
    property GENERATING_POLYTOPE : Polytope<Rational>;
 
+  # @category Toric Varieties
+  # the number of maximal torus orbits. Equals the number of rays of the fan
+  property N_MAXIMAL_TORUS_ORBITS : Int;
+
+   # @category Toric Varieties
+  	# a toric variety is an [[ORBIFOLD]] if the fan is [[SIMPLICIAL]]
+  	property ORBIFOLD : Bool;
+  	
    # @category Basic properties
    # Evaluates to true if the corresponding fan is the normal fan of some polytope.
-   property PROJECTIVE : Bool;
-
-   # = override REGULAR;
+   property PROJECTIVE = override REGULAR;
 
    property SMOOTH = override SMOOTH_FAN;
-
-
+   
+    
 }
 
