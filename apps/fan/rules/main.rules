@@ -45,7 +45,8 @@ object PolyhedralFan<Rational> {
 declare object HypersurfaceInTV;
 
 INCLUDE
-	toric_variety_properties.rules
+	toric_divisor_properties.rules
+   toric_variety_properties.rules
 	gfan_hyp_brut.rules
 	hypersurfaceInTV_properties.rules
 	toric_divisor.rules
