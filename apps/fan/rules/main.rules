@@ -28,11 +28,11 @@
 
 declare object ToricVariety : PolyhedralFan<Rational>; 
 
-object PolyhedralFan<Rational> {
-
-	auto_cast : ToricVariety<Rational>;
-
-}
+#object PolyhedralFan<Rational> {
+#
+#	auto_cast : ToricVariety<Rational>;
+#
+#}
 
 #######################################
 #######################################

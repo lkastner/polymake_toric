@@ -19,6 +19,12 @@
 
 object ToricVariety {
 
+   method construct(PolyhedralFan<Rational>) {
+      my $fan = $_[1];
+      my $result = new ToricVariety();
+      $fan->copy_contents($result);
+      return $result;
+   }
    
    rule AFFINE : N_MAXIMAL_CONES{
       $this->AFFINE = ($this->N_MAXIMAL_CONES == 1);
