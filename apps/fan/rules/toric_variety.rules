@@ -127,5 +127,12 @@ object ToricVariety {
       $this->PROJECTIVE = 1;
    }
 
+  # dualize a cone
+  rule MORI_CONE.RAYS, MORI_CONE.LINEALITY_SPACE : NEF_CONE.FACETS, NEF_CONE.LINEAR_SPAN {
+    $this->MORI_CONE->RAYS = $this->NEF_CONE->FACETS;
+    $this->MORI_CONE->LINEALITY_SPACE =  $this->NEF_CONE->LINEAR_SPAN;
+  }
+  precondition : COMPLETE; 
+
 }
 

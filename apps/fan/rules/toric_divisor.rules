@@ -103,8 +103,85 @@ object ToricVariety {
   }
   weight 1.10;
 	
+	
+	# computes whether a toric divisor is [[EFFECTIVE]]
+  	# algorithm: check whether the divisor is in the effective cone of the variety    
+  	rule DIVISOR.EFFECTIVE : DIVISOR.COEFFICIENTS, EFFECTIVE_CONE.FACETS, EFFECTIVE_CONE.LINEAR_SPAN, RATIONAL_DIVISOR_CLASS_GROUP.PROJECTION {
+    	my $f = $this->EFFECTIVE_CONE->FACETS;
+    	my $l = $this->EFFECTIVE_CONE->LINEAR_SPAN;
+    	my $pd = $this->DIVISOR->COEFFICIENTS * $this->RATIONAL_DIVISOR_CLASS_GROUP->PROJECTION;
+    	my $v = $f*$pd;
+    
+    foreach (@{$v}) { if ( $_ < 0 ) { $this->DIVISOR->EFFECTIVE = 0; return; } }
+    if ( $l->rows ) { 
+      my $w = $l*$pd;
+      foreach (@{$w}) { if ( $_ != 0 ) { $this->DIVISOR->EFFECTIVE = 0; return; } }
+    }
+    $this->DIVISOR->EFFECTIVE = 1;
+  }
+    weight 1.10;
+    
+  # [[AMPLE]] implies [[NEF]]
+  rule DIVISOR.NEF : {
+    $this->DIVISOR->NEF = 1;
+  }
+    weight 0.10;
+  precondition : DIVISOR.AMPLE;
+  
+  # [[AMPLE]] implies [[COMPLETE]] and [[CARTIER]]
+  rule DIVISOR.AMPLE : {
+    $this->DIVISOR->AMPLE = 0;
+  }
+    weight 0.10;
+  precondition : DIVISOR.CARTIER, COMPLETE {
+    !$this->DIVISOR.CARTIER | !$this->COMPLETE;
+  }
+      
+      # [[AMPLE]] implies [[CARTIER]]
+      rule DIVISOR.CARTIER : {
+	$this->DIVISOR->CARTIER = 1;
+      }
+	weight 0.10;
+  precondition : DIVISOR.AMPLE;
+  
+  # [[CARTIER]] implies [[Q_CARTIER]]
+  rule DIVISOR.CARTIER : {
+    $this->DIVISOR->CARTIER = 0;
+  }
+    weight 0.10;
+  precondition : !DIVISOR.Q_CARTIER;
+ 
+
 }
 
+
+# ---------------------
+# user functions
+# ---------------------
+
+
+# @category Toric Varieties
+# return the polytope P_D defined by the divisor D
+# first argument is the fan, second the Vector defining the divisor
+user_function polytope_of_divisor {
+  my ($f,$d)=@_;
+
+  my $m = primitive($f->RAYS);
+  my $q=new polytope::Polytope<Rational>(INEQUALITIES=>$d|$m);
+  return $q;
+}
+
+# @category Toric Varieties
+# return the polytope defined by an element of the nef or effective cone
+# first argument is the fan, second the Vector defining the divisor class
+user_function polytope_of_divisor_class {
+  my ($f,$d)=@_;
+
+  my $m = primitive($f->RAYS);
+  my $ld = $d*$f->RATIONAL_DIVISOR_CLASS_GROUP->LIFTING;
+  my $q=new polytope::Polytope<Rational>(INEQUALITIES=>$ld|$m);
+  return $q;
+}
 
 
 	

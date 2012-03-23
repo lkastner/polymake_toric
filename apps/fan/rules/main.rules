@@ -51,6 +51,7 @@ INCLUDE
 	hypersurfaceInTV_properties.rules
 	toric_variety.rules
 	toric_divisor.rules
+	standard_constructions.rules
 
 user_function add_ray(PolyhedralFan, Vector){
 	my($fan, $ray) = @_;
