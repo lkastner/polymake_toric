@@ -30,15 +30,22 @@ object ToricVariety {
       $this->AFFINE = ($this->N_MAXIMAL_CONES == 1);
    }
    
-   # the number of maximal torus orbits 
-	# the correspond to the rays of the fan
-	rule N_MAXIMAL_TORUS_ORBITS : N_RAYS {
-  		$this->N_MAXIMAL_TORUS_ORBITS = $this->N_RAYS;
+	rule DEGENERATE : LINEALITY_DIM {
+  		$this->DEGENERATE(temporary) = $this->LINEALITY_DIM > 0; 
 	}
 	weight 0.10;
 	
-	rule DEGENERATE : LINEALITY_DIM {
-  		$this->DEGENERATE(temporary) = $this->LINEALITY_DIM > 0; 
+	rule FANO : N_MAXIMAL_TORUS_ORBITS {
+		my $f = new PolyhedralFan($this);
+    	my $t = new ToricVariety($f);
+    	my $AK = $t->add("DIVISOR", COEFFICIENTS=>ones_vector($this->N_MAXIMAL_TORUS_ORBITS));
+    	$this->FANO = $AK->AMPLE;
+	}
+	
+	# the number of maximal torus orbits 
+	# the correspond to the rays of the fan
+	rule N_MAXIMAL_TORUS_ORBITS : N_RAYS {
+  		$this->N_MAXIMAL_TORUS_ORBITS = $this->N_RAYS;
 	}
 	weight 0.10;
 	

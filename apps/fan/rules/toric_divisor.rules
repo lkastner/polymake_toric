@@ -86,6 +86,23 @@ object ToricVariety {
 	precondition : PURE;
 	precondition : FULL_DIM;
 
+  # computes whether a toric divisor is [[NEF]]
+  # algorithm: check whether the divisor is in the nef cone of the variety
+  rule DIVISOR.NEF : DIVISOR.COEFFICIENTS, NEF_CONE.FACETS, NEF_CONE.LINEAR_SPAN, RATIONAL_DIVISOR_CLASS_GROUP.PROJECTION {
+    my $f = $this->NEF_CONE->FACETS;
+    my $l = $this->NEF_CONE->LINEAR_SPAN;
+    my $pd = $this->DIVISOR->COEFFICIENTS * $this->RATIONAL_DIVISOR_CLASS_GROUP->PROJECTION;
+    my $v = $f*$pd;
+    
+    foreach (@{$v}) { if ( $_ < 0 ) { $this->DIVISOR->NEF = 0; return; } }
+    if ( $l->rows ) { 
+      my $w = $l*$pd;
+      foreach (@{$w}) { if ( $_ != 0 ) { $this->DIVISOR->NEF = 0; return; } }
+    }
+    $this->DIVISOR->NEF = 1;
+  }
+  weight 1.10;
+	
 }
 
 
