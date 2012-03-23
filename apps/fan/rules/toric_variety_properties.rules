@@ -25,11 +25,6 @@ object ToricVariety {
    # Evaluates true if the toric variety is affine, i.e. the fan consists of a single
    # cone.
    property AFFINE : Bool;
-   
-      # @category Basic properties
-   # Evaluates true if the toric variety is affine, i.e. the fan consists of a single
-   # cone.
-   property ANTICANONICAL_DIVISOR : TDivisor;
 
   # @category Toric Varieties
   # a toric variety is [[DEGENERATE]] if the fan is not [[FULL_DIM]]
