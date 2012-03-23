@@ -49,6 +49,7 @@ INCLUDE
    toric_variety_properties.rules
 	gfan_hyp_brut.rules
 	hypersurfaceInTV_properties.rules
+	toric_variety.rules
 	toric_divisor.rules
 
 user_function add_ray(PolyhedralFan, Vector){

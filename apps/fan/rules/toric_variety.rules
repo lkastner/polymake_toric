@@ -29,6 +29,21 @@ object ToricVariety {
    rule AFFINE : N_MAXIMAL_CONES{
       $this->AFFINE = ($this->N_MAXIMAL_CONES == 1);
    }
+   
+   # the number of maximal torus orbits 
+	# the correspond to the rays of the fan
+	rule N_MAXIMAL_TORUS_ORBITS : N_RAYS {
+  		$this->N_MAXIMAL_TORUS_ORBITS = $this->N_RAYS;
+	}
+	
+	rule ORBIFOLD : SIMPLICIAL {
+  		$this->ORBIFOLD(temporary) = $this->SIMPLICIAL; 
+	}
+	weight 0.10;
+
+	rule PROJECTIVE : RAYS, MAXIMAL_CONES {
+	  $this->PROJECTIVE = polytopal($this);
+	}
 
    rule PROJECTIVE, GENERATING_POLYTOPE : MAXIMAL_CONES, RAYS {
       my $t = time();
