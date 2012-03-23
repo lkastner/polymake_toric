@@ -35,6 +35,12 @@ object ToricVariety {
 	rule N_MAXIMAL_TORUS_ORBITS : N_RAYS {
   		$this->N_MAXIMAL_TORUS_ORBITS = $this->N_RAYS;
 	}
+	weight 0.10;
+	
+	rule DEGENERATE : LINEALITY_DIM {
+  		$this->DEGENERATE(temporary) = $this->LINEALITY_DIM > 0; 
+	}
+	weight 0.10;
 	
 	rule ORBIFOLD : SIMPLICIAL {
   		$this->ORBIFOLD(temporary) = $this->SIMPLICIAL; 
