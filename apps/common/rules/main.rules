@@ -1,0 +1,1 @@
+user_function hermite_normal_form(Matrix; $=0): c++ (include => "polymake/common/Hermite_normal_form.h]");
