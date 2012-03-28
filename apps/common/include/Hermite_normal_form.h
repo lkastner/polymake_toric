@@ -128,108 +128,44 @@ int hermite_normal_form_steps(Matrix& M, CompanionLogger& Logger
 
    // These are working variables in the following loops,
    // but they shouldn't be created and destroyed all over the time
-   E pivot_elem=one_value<E>(),
-              g=one_value<E>();
    SparseMatrix2x2<E> U;
 
-   int r=0, c=0, skipped=0;
-   const int R=M.rows();
-   while (r<R) {
-      bool can_reduce=true, can_eliminate=false;
-      typename Matrix::row_type::iterator e=M.row(r).begin();
-      if (e.at_end()  ||  M.row(r).size()==1 && M.col(e.index()).size()==1) {
-         ++r; ++skipped; continue;
-      }
-      skipped=0;
-      g=gcd(M.row(r));
-      do {
-         if (abs_equal(g, *e)) {
-            can_reduce=false;
-            if (is_one(g) || g == gcd(M.col(e.index()))) {
-               can_eliminate=true;
-               c=e.index();
-               pivot_elem=*e;
-               break;
-            }
-         }
-         ++e;
-      } while (!e.at_end());
+   const int m = M.rows();
+   const int n = M.cols();
+   int current_row = 0;
+   int start_col = 0;
 
-      if (can_reduce) {
-         e=M.row(r).begin();
-         pivot_elem=*e;
-         c=e.index();
-         for (++e; !e.at_end(); ++e) {
-            ExtGCD<E> x = ext_gcd(pivot_elem, *e);
-            if (!is_zero(x.q)) {
-               if (!is_zero(x.p)) {
-                  U.i=c;                    U.j=e.index();
-                  U.a_ii = -x.k2;           std::swap(U.a_ij, x.p);
-                  std::swap(U.a_ji, x.k1);  std::swap(U.a_jj, x.q);
-                  M.multiply_from_right(U);
-                  Logger.from_right(U);
-               }
-               pivot_elem=*e;
-               c=e.index();
-               if (g==x.g) break;
-            }
-         }
-         can_eliminate= is_one(g) || g==gcd(M.col(c));
-
-#if POLYMAKE_DEBUG
-         stat.gather(M);
-         if (do_dump) cout << "hermite_normal_form(reducing " << line_name << " " << r << " to " << g << " ):\n" << std::setw(6) << M;
-#endif
+   while ( current_row < m){
+      typename Matrix::row_type::iterator e = M.row(current_row).begin(); // FIXME: Start at start_col;
+      if(*e == 0){
+         do{++e} while((*e == 0) && !e.at_end());
+         // FIXME: Switch the right column to front.
       }
 
-      if (can_eliminate) {
-         if (!Logger_dummy) {
-            U.i=r;  U.a_ii=one_value<E>();  U.a_jj=one_value<E>();  U.a_ij=zero_value<E>();
+      if((*e == 0) && e.at_end()){ 
+         ++current_row; continue;
+      }
+      
+      for(typename Matrix::row_type::iterator wt = M.row(current_row).begin(); !wt.at_end()){
+         if(*wt!=0){
+            U_i = current_row;
+            U_j = e.index();
+            egcd = ext_gcd(*e, *wt); // FIXME: What is this?
+            U.a_ii = egcd.p;
+            U.a_ji = egcd.q;
+            U.a_ij = egcd.k2;
+            U.a_jj = -egcd.k1;
+            
+            M.multiply_from_right(U);
+            Logger.from_right(U);
          }
-         int next_r=-1;
-         for (typename Matrix::col_type::iterator e=M.col(c).begin(); !e.at_end(); ) {
-            if ((U.j=e.index()) == r) { ++e; continue; }
-            if (next_r<0) next_r=U.j;
-            if (abs_equal(pivot_elem, *e)) {
-               if (pm::sign(pivot_elem)==pm::sign(*e)) {
-                  if (!Logger_dummy) U.a_ji=-one_value<E>();
-                  ++e;
-                  M.row(U.j) -= M.row(r);
-               } else {
-                  if (!Logger_dummy) U.a_ji=one_value<E>();
-                  ++e;
-                  M.row(U.j) += M.row(r);
-               }
-            } else {
-               U.a_ji=-div_exact(*e,pivot_elem);
-               ++e;
-               M.row(U.j) += M.row(r) * U.a_ji;
-            }
-            Logger.from_left(U);
-         }
-         if (!Logger_dummy) {
-            U.i=c; U.a_ji=zero_value<E>();
-         }
-         for (typename Matrix::row_type::iterator e=M.row(r).begin(); !e.at_end(); ) {
-            if ((U.j=e.index())==c) { ++e; continue; }
-            if (!Logger_dummy) {
-               U.a_ij=-div_exact(*e,pivot_elem);
-               Logger.from_right(U);
-            }
-            M.row(r).erase(e++);
-         }
-
-#if POLYMAKE_DEBUG
-         stat.gather(M);
-         if (do_dump) cout << "hermite_normal_form(eliminating " << line_name << " " << r << " [" << c << "] ):\n" << std::setw(6) << M;
-#endif
-         if (next_r>=0) r=next_r;
-         else ++r;
-      } else {
-         ++r;
+      }
+      ++start_col;
+      if(start_col == n){
+         break;
       }
    }
-   return skipped;
+   return start_col;
 }
 
 template <typename E, typename CompanionLogger, bool strict_diagonal>
