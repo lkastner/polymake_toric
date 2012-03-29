@@ -115,9 +115,11 @@ int hermite_normal_form_steps(Matrix& M, CompanionLogger& Logger
    const int n = M.cols();
    int current_row = 0;
    int start_col = 0;
+   bool did_something = false;
 
-   while ( current_row < m){
+   while ( (current_row < m) && (start_col < n-1)){
       typename Matrix::row_type::iterator e = M.row(current_row).begin(); // FIXME: Start at start_col;
+      do{++e;} while(e.index()<start_col);
       if(*e == 0){
          do{++e;} while((*e == 0) && !e.at_end());
          // FIXME: Switch the right column to front.
@@ -128,7 +130,7 @@ int hermite_normal_form_steps(Matrix& M, CompanionLogger& Logger
       }
       
       for(typename Matrix::row_type::iterator wt = M.row(current_row).begin(); !wt.at_end(); ++wt) {
-         if(*wt!=0){
+         if((*wt!=0) && (wt.index() > start_col)){
             U.i = current_row;
             U.j = wt.index();
             ExtGCD<E> egcd = ext_gcd(*e, *wt); // FIXME: What is this?
@@ -138,13 +140,21 @@ int hermite_normal_form_steps(Matrix& M, CompanionLogger& Logger
             U.a_jj = -egcd.k1;
             
             M.multiply_from_right(U);
+            cout << pm::Matrix<E>(M) << endl;
+            cout << U.i<<": "<<U.a_ii <<" " << U.a_ij<<endl<<U.j <<": " <<U.a_ji<<" " << U.a_jj << endl;
+            cout << "--------------" << endl;
             Logger.from_right(U);
+            did_something = true;
+            break;
          }
       }
-      ++start_col;
-      if(start_col == n){
-         break;
+      if(did_something){
+         did_something = false;
+         continue;
       }
+      ++current_row;
+      cout << "CR: " << current_row << endl;
+      ++start_col;
    }
    return start_col;
 }
@@ -163,13 +173,11 @@ int hermite_normal_form(SparseMatrix<E>& M,
    stat.gather(M);
    cout << "hermite_normal_form(initial statistics):\n" << stat;
 
-   while (hermite_normal_form_steps(M, Logger , stat, do_dump, "row") < M.rows() &&
-          hermite_normal_form_steps(T(M), transpose_logger(Logger) , stat, do_dump, "col") < M.cols()) ;
+   hermite_normal_form_steps(M, Logger , stat, do_dump, "row");
 
    cout << "hermite_normal_form(final statistics):\n" << stat << endl;
 #else
-   while (hermite_normal_form_steps(M, Logger) < M.rows() &&
-          hermite_normal_form_steps(T(M), transpose_logger(Logger)) < M.cols()) ;
+   hermite_normal_form_steps(M, Logger);
 #endif
    int rank=0;
 /*   Array<int> r_perm(strict_diagonal ? M.rows() : 0),
