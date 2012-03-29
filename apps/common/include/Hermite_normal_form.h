@@ -33,7 +33,7 @@ template <typename Matrix>
 perl::ListReturn hermite_normal_form(const Matrix& M){
    typedef typename Matrix::element_type E;
    SparseMatrix2x2<E> U;
-   SparseMatrix<E> R;
+   SparseMatrix<E> R, S;
    pm::Matrix<E> N(M);
    
    const int rows = M.rows();
@@ -63,7 +63,7 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
          }
       }
       if(!nonzero){
-         cout << "Continueing" << endl;
+         // cout << "Continueing" << endl;
          current_row++;
          continue;
       }
@@ -78,14 +78,22 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
             U.a_jj = -egcd.k1;
             R.multiply_from_right(U);
             N.multiply_from_right(U);
-            cout << pm::Matrix<E>(N) << endl;
-            cout << U.i<<": "<<U.a_ii <<" " << U.a_ij<<endl<<U.j <<": " <<U.a_ji<<" " << U.a_jj << endl;
+            // cout << pm::Matrix<E>(N) << endl;
+            // cout << U.i<<": "<<U.a_ii <<" " << U.a_ij<<endl<<U.j <<": " <<U.a_ji<<" " << U.a_jj << endl;
          }
       }
-      cout << "BLA" << endl;
+      if(N(i,current_col)<0){
+         S = unit_matrix<E>(cols);
+         S(current_col,current_col) = -1;
+
+         R = R*S;
+         N = N*S;
+      }
+      current_col++;
    }
 
-   cout << "BLA" << endl;
+   
+
    perl::ListReturn result;
    result << R << N;
    return result;
@@ -94,160 +102,3 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
 
 }
 }
-/*
-namespace pm {
-
-
-template <typename Matrix, typename CompanionLogger>
-int hermite_normal_form_steps(Matrix& M, CompanionLogger& Logger
-#if POLYMAKE_DEBUG
-                            , pm::SparseMatrixStatistics<typename Matrix::element_type>& stat,
-                            bool do_dump, const char *line_name
-#endif
-                            )
-{
-   const bool Logger_dummy=pm::derived_from<CompanionLogger, dummy_companion_logger>::value;
-   typedef typename Matrix::element_type E;
-
-   // These are working variables in the following loops,
-   // but they shouldn't be created and destroyed all over the time
-   SparseMatrix2x2<E> U;
-
-   const int m = M.rows();
-   const int n = M.cols();
-   int current_row = 0;
-   int start_col = 0;
-   bool did_something = false;
-
-   while ( (current_row < m) && (start_col < n-1)){
-      typename Matrix::row_type::iterator e = M.row(current_row).begin(); // FIXME: Start at start_col;
-      do{++e;} while(e.index()<start_col);
-      if(*e == 0){
-         do{++e;} while((*e == 0) && !e.at_end());
-         // FIXME: Switch the right column to front.
-      }
-
-      if((*e == 0) && e.at_end()){ 
-         ++current_row; continue;
-      }
-      
-      for(typename Matrix::row_type::iterator wt = M.row(current_row).begin(); !wt.at_end(); ++wt) {
-         if((*wt!=0) && (wt.index() > start_col)){
-            U.i = current_row;
-            U.j = wt.index();
-            ExtGCD<E> egcd = ext_gcd(*e, *wt); // FIXME: What is this?
-            U.a_ii = egcd.p;
-            U.a_ji = egcd.q;
-            U.a_ij = egcd.k2;
-            U.a_jj = -egcd.k1;
-            
-            M.multiply_from_right(U);
-            cout << pm::Matrix<E>(M) << endl;
-            cout << U.i<<": "<<U.a_ii <<" " << U.a_ij<<endl<<U.j <<": " <<U.a_ji<<" " << U.a_jj << endl;
-            cout << "--------------" << endl;
-            Logger.from_right(U);
-            did_something = true;
-            break;
-         }
-      }
-      if(did_something){
-         did_something = false;
-         continue;
-      }
-      ++current_row;
-      cout << "CR: " << current_row << endl;
-      ++start_col;
-   }
-   return start_col;
-}
-
-template <typename E, typename CompanionLogger>
-int hermite_normal_form(SparseMatrix<E>& M,
-                      const CompanionLogger& Logger)
-{
-   const bool Logger_dummy=pm::derived_from<CompanionLogger, dummy_companion_logger>::value;
-
-#if POLYMAKE_DEBUG
-   const bool do_dump=getenv("SMITH_DUMP");
-   if (do_dump) cout << "hermite_normal_form(initial):\n" << std::setw(6) << M;
-
-   pm::SparseMatrixStatistics<E> stat;
-   stat.gather(M);
-   cout << "hermite_normal_form(initial statistics):\n" << stat;
-
-   hermite_normal_form_steps(M, Logger , stat, do_dump, "row");
-
-   cout << "hermite_normal_form(final statistics):\n" << stat << endl;
-#else
-   hermite_normal_form_steps(M, Logger);
-#endif
-   int rank=0;
-   Array<int> r_perm(strict_diagonal ? M.rows() : 0),
-              c_perm(strict_diagonal ? M.cols() : 0);
-   Array<int>::iterator rp=r_perm.begin(), rpe=r_perm.end(),
-                        cp=c_perm.begin(), cpe=c_perm.end();
-
-
-   return rank;
-}
-
-
-/// Compute the compact respresentation of the Hermite normal form, without companion matrices.
-/// Input matrix M is corrupted during the computations.
-/// @param[out] torsion list of diagonal elements of HNF not equal 1 with multiplicities.
-/// @return rank of M.
-template <typename E> inline
-int hermite_normal_form_only(SparseMatrix<E>& M )
-{
-   int rank=hermite_normal_form(M, dummy_companion_logger());
-   return rank;
-}
-
-/// Complete result of computation of Hermite normal form.
-template <typename E>
-class HermiteNormalForm :
-   public GenericStruct<HermiteNormalForm<E> > {
-public:
-   typedef SparseMatrix<E> matrix_type;
-
-   DeclSTRUCT( DeclTemplFIELD(form, matrix_type)                // input matrix converted to the normal form
-               DeclTemplFIELD(right_companion, matrix_type)     // form = left_companion * input * right_companion (inverted call)
-               DeclTemplFIELD(rank, int) );                     // rank of form
-};
-
-/// Compute the Hermite normal form and companion matrices.
-/// @param inverse_companions if true: result.form = result.left_companion * M * result.right_companion
-///                           if false: M = result.left_companion * result.form * result.right_companion
-template <typename Matrix, typename E> inline
-HermiteNormalForm<E>
-hermite_normal_form(const GenericMatrix<Matrix, E>& M,
-                  typename enable_if<bool, std::numeric_limits<E>::is_integer>::type inverse_companions=false)
-{
-   HermiteNormalForm<E> res;
-   res.form=M;
-   res.right_companion=unit_matrix<E>(M.cols());
-   if (inverse_companions)
-      res.rank=hermite_normal_form(res.form, HNF_companion_logger<E, false>(&res.right_companion));
-   else
-      res.rank=hermite_normal_form(res.form, HNF_companion_logger<E, true>(&res.right_companion));
-   return res;
-}
-
-}
-
-namespace polymake { namespace common {
-
-using pm::HermiteNormalForm;
-using pm::hermite_normal_form;
-using pm::hermite_normal_form_only;
-
-}
-}
-*/
-#endif // POLYMAKE_SMITH_NORMAL_FORM_H
-
-// Local Variables:
-// mode:C++
-// c-basic-offset:3
-// indent-tabs-mode:nil
-// End:
