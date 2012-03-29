@@ -71,7 +71,7 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
          if(N(i,j) != 0){
             U.i = i;
             U.j = j;
-            ExtGCD<E> egcd = ext_gcd(N(i,current_col), N(i,j)); // FIXME: What is this?
+            ExtGCD<E> egcd = ext_gcd(N(i,current_col), N(i,j));
             U.a_ii = egcd.p;
             U.a_ji = egcd.q;
             U.a_ij = egcd.k2;
@@ -83,6 +83,7 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
          }
       }
       cout << "BLA" << endl;
+      current_col++;
    }
 
    cout << "BLA" << endl;
