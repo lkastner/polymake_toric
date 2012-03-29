@@ -18,6 +18,7 @@
 #ifndef POLYMAKE_HERMITE_NORMAL_FORM_H
 #define POLYMAKE_HERMITE_NORMAL_FORM_H
 
+#include "polymake/client.h"
 #include "polymake/SparseMatrix.h"
 #include "polymake/Bitset.h"
 #include "polymake/Array.h"
@@ -26,7 +27,7 @@
 #include "polymake/list"
 #include "polymake/GenericStruct.h"
 
-namespace pm { namespace common {
+namespace pm {
 
 class dummy_companion_logger {
 public:
@@ -118,7 +119,7 @@ int hermite_normal_form_steps(Matrix& M, CompanionLogger& Logger
    while ( current_row < m){
       typename Matrix::row_type::iterator e = M.row(current_row).begin(); // FIXME: Start at start_col;
       if(*e == 0){
-         do{++e} while((*e == 0) && !e.at_end());
+         do{++e;} while((*e == 0) && !e.at_end());
          // FIXME: Switch the right column to front.
       }
 
@@ -126,11 +127,11 @@ int hermite_normal_form_steps(Matrix& M, CompanionLogger& Logger
          ++current_row; continue;
       }
       
-      for(typename Matrix::row_type::iterator wt = M.row(current_row).begin(); !wt.at_end()){
+      for(typename Matrix::row_type::iterator wt = M.row(current_row).begin(); !wt.at_end(); ++wt) {
          if(*wt!=0){
-            U_i = current_row;
-            U_j = e.index();
-            egcd = ext_gcd(*e, *wt); // FIXME: What is this?
+            U.i = current_row;
+            U.j = wt.index();
+            ExtGCD<E> egcd = ext_gcd(*e, *wt); // FIXME: What is this?
             U.a_ii = egcd.p;
             U.a_ji = egcd.q;
             U.a_ij = egcd.k2;
@@ -171,11 +172,11 @@ int hermite_normal_form(SparseMatrix<E>& M,
           hermite_normal_form_steps(T(M), transpose_logger(Logger)) < M.cols()) ;
 #endif
    int rank=0;
-   Array<int> r_perm(strict_diagonal ? M.rows() : 0),
+/*   Array<int> r_perm(strict_diagonal ? M.rows() : 0),
               c_perm(strict_diagonal ? M.cols() : 0);
    Array<int>::iterator rp=r_perm.begin(), rpe=r_perm.end(),
                         cp=c_perm.begin(), cpe=c_perm.end();
-
+*/
 
    return rank;
 }
@@ -188,7 +189,7 @@ int hermite_normal_form(SparseMatrix<E>& M,
 template <typename E> inline
 int hermite_normal_form_only(SparseMatrix<E>& M )
 {
-   int rank=hermite_normal_form(M, dummy_companion_logger(), False());
+   int rank=hermite_normal_form(M, dummy_companion_logger());
    return rank;
 }
 
@@ -216,14 +217,14 @@ hermite_normal_form(const GenericMatrix<Matrix, E>& M,
    res.form=M;
    res.right_companion=unit_matrix<E>(M.cols());
    if (inverse_companions)
-      res.rank=hermite_normal_form(res.form, HNF_companion_logger<E, false>(&res.right_companion), True());
+      res.rank=hermite_normal_form(res.form, HNF_companion_logger<E, false>(&res.right_companion));
    else
-      res.rank=hermite_normal_form(res.form, HNF_companion_logger<E, true>(&res.right_companion), True());
+      res.rank=hermite_normal_form(res.form, HNF_companion_logger<E, true>(&res.right_companion));
    return res;
 }
 
 }
-}
+
 namespace polymake { namespace common {
 
 using pm::HermiteNormalForm;
