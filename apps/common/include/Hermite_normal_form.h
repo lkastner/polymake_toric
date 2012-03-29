@@ -27,74 +27,76 @@
 #include "polymake/list"
 #include "polymake/GenericStruct.h"
 
-namespace pm {
+namespace polymake { namespace common {
 
-class dummy_companion_logger {
-public:
-   template <typename E>
-   void from_right(const SparseMatrix2x2<E>&) const {}
-   template <typename Container>
-   void permute_cols(const Container&) const {}
-};
+template <typename Matrix>
+perl::ListReturn hermite_normal_form(const Matrix& M){
+   typedef typename Matrix::element_type E;
+   SparseMatrix2x2<E> U;
+   SparseMatrix<E> R;
+   pm::Matrix<E> N(M);
+   
+   const int rows = M.rows();
+   const int cols = M.cols();
+   
+   R = unit_matrix<E>(cols);
 
-template <typename Logger>
-class TransposedLogger : public Logger {
-protected:
-   TransposedLogger();
-   ~TransposedLogger();
-public:
-   template <typename E>
-   void from_left(const SparseMatrix2x2<E>& U) const { Logger::from_right(T(U)); }
-};
+   int current_row = 0, current_col = 0;
 
-template <typename Logger> inline
-const TransposedLogger<Logger>& transpose_logger(const Logger& l)
-{
-   return static_cast<const TransposedLogger<Logger>&>(l);
+   for(int i = 0; i<rows; i++){
+      bool nonzero = true;
+      cout << N(i,current_col) << endl;
+      if(N(i,current_col) == 0){
+         nonzero = false;
+         for(int j = current_col; j<cols; j++){
+            if(N(i,j) != 0){
+               nonzero = true;
+               U.i = current_col;
+               U.j = j;
+               U.a_ii = 0;
+               U.a_ij = 1;
+               U.a_ji = 1;
+               U.a_jj = 0;
+               R.multiply_from_right(U);
+               N.multiply_from_right(U);
+            }
+         }
+      }
+      if(!nonzero){
+         cout << "Continueing" << endl;
+         current_row++;
+         continue;
+      }
+      for(int j = current_col+1; j<cols; j++){
+         if(N(i,j) != 0){
+            U.i = i;
+            U.j = j;
+            ExtGCD<E> egcd = ext_gcd(N(i,current_col), N(i,j)); // FIXME: What is this?
+            U.a_ii = egcd.p;
+            U.a_ji = egcd.q;
+            U.a_ij = egcd.k2;
+            U.a_jj = -egcd.k1;
+            R.multiply_from_right(U);
+            N.multiply_from_right(U);
+            cout << pm::Matrix<E>(N) << endl;
+            cout << U.i<<": "<<U.a_ii <<" " << U.a_ij<<endl<<U.j <<": " <<U.a_ji<<" " << U.a_jj << endl;
+         }
+      }
+      cout << "BLA" << endl;
+   }
+
+   cout << "BLA" << endl;
+   perl::ListReturn result;
+   result << R << N;
+   return result;
+
 }
 
-template <typename E, bool inverse_companions>
-class HNF_companion_logger {
-protected:
-   SparseMatrix<E> *L, *R;
-public:
-   // U is always unimodular, only the sign of det(U) can vary
-   static
-   bool det_pos(const SparseMatrix2x2<E>& U)
-   {
-      return U.a_ii*U.a_jj > U.a_ij*U.a_ji;
-   }
+}
+}
+/*
+namespace pm {
 
-   static
-   SparseMatrix2x2<E> inv(const SparseMatrix2x2<E>& U)
-   {
-      return det_pos(U) ? SparseMatrix2x2<E>(U.i, U.j, U.a_jj, -U.a_ij, -U.a_ji, U.a_ii)
-                        : SparseMatrix2x2<E>(U.i, U.j, -U.a_jj, U.a_ij, U.a_ji, -U.a_ii);
-   }
-
-   static
-   SparseMatrix2x2<E> inv(const Transposed< SparseMatrix2x2<E> >& U)
-   {
-      return det_pos(U) ? SparseMatrix2x2<E>(U.i, U.j, U.a_jj, -U.a_ji, -U.a_ij, U.a_ii)
-                        : SparseMatrix2x2<E>(U.i, U.j, -U.a_jj, U.a_ji, U.a_ij, -U.a_ii);
-   }
-public:
-   HNF_companion_logger(SparseMatrix<E> *Rarg) : R(Rarg) {}
-
-   template <typename Matrix>
-   void from_right(const Matrix& U) const
-   {
-      if (inverse_companions) R->multiply_from_left(inv(U));
-      else R->multiply_from_right(U);
-   }
-
-   template <typename Container>
-   void permute_cols(const Container& perm) const
-   {
-      if (inverse_companions) R->permute_rows(entire(perm));
-      else R->permute_cols(entire(perm));
-   }
-};
 
 template <typename Matrix, typename CompanionLogger>
 int hermite_normal_form_steps(Matrix& M, CompanionLogger& Logger
@@ -180,11 +182,11 @@ int hermite_normal_form(SparseMatrix<E>& M,
    hermite_normal_form_steps(M, Logger);
 #endif
    int rank=0;
-/*   Array<int> r_perm(strict_diagonal ? M.rows() : 0),
+   Array<int> r_perm(strict_diagonal ? M.rows() : 0),
               c_perm(strict_diagonal ? M.cols() : 0);
    Array<int>::iterator rp=r_perm.begin(), rpe=r_perm.end(),
                         cp=c_perm.begin(), cpe=c_perm.end();
-*/
+
 
    return rank;
 }
@@ -241,7 +243,7 @@ using pm::hermite_normal_form_only;
 
 }
 }
-
+*/
 #endif // POLYMAKE_SMITH_NORMAL_FORM_H
 
 // Local Variables:
