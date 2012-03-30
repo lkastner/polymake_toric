@@ -94,10 +94,11 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
    
 
    perl::ListReturn result;
-   result << R << N;
+   result << N << R;
    return result;
 
 }
 
 }
 }
+#endif
