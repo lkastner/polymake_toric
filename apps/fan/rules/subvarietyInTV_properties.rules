@@ -19,16 +19,44 @@
 
 object ToricVariety {
    
-   declare object Subvariety;
+   object SubvarietyInTV {
 
-   object Subvariety {
-      
+      # Properties:
+
+      # @category Basic properties
+      # Evaluates true if the hypersurface is Calabi Yau.
+      property CALABI_YAU : Bool;
+
+      # @category Basic properties
+      # The Newton polytope of the defining Laurent polynomial.
+      property NEWTON_POLYTOPE : Polytope;
+
+      # @category Basic properties
+      # The cones of the fan of the ambient toric variety that are necessary to 
+      # describe the closure of the hypersurface.
+      property RELEVANT_CONES : PolyhedralFan;
+
+      #todo: From the Batyrev article.
+      property REGULAR : Bool;
+
+      property LOCAL_EQUATIONS : Map<Set<Int>, Polynomial>;
+
+      # @category Basic properties
+      # The tropical variety associated to the Laurent polynomial. We compute this
+      # using gfan_tropicalhypersurface. Q: Is this correct?
+      property TROPICAL_FAN : PolyhedralFan;
+
       property CODIMENSION : Int;
       
       property DIMENSION : Int;
-
+      
+      # @category Basic properties
+      # Laurent polynomials yielding the subvariety in the torus. The subvariety is then the closure in the toric variety.
+      # Of course not all subvarieties in toric varieties arise in this fashion.
       property EQUATIONS : Ideal;
 
+      # @category Basic properties
+      # Is the variety a hypersurface?
       property HYPERSURFACE : Bool;
 
    }
