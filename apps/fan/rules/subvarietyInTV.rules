@@ -308,6 +308,7 @@ user_function cocoref_topcom(Matrix<Integer>){
    my @remaining = @collected_cones;
    my @chosen_ones = ();
    while($n > 0){
+      # FIXME: Don't compute the following twice. Maybe make it a map?
       my @num = map{
          my $tr = $_;
          my $rems = grep{
