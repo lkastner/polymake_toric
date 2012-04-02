@@ -17,6 +17,8 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
+IMPORT
+   ideal
 
 #######################################
 #######################################
@@ -37,20 +39,21 @@ declare object ToricVariety : PolyhedralFan<Rational>;
 #######################################
 #######################################
 ###
-### Hypersurface in Toric Variety
+### Subvariety in Toric Variety
 ###
 #######################################
 #######################################
 
-declare object HypersurfaceInTV;
+declare object SubvarietyInTV;
 
 INCLUDE
 	toric_divisor_properties.rules
    toric_variety_properties.rules
 	gfan_hyp_brut.rules
-	hypersurfaceInTV_properties.rules
+	subvarietyInTV_properties.rules
 	toric_variety.rules
 	toric_divisor.rules
+   subvarietyInTV.rules
 	standard_constructions.rules
 
 user_function add_ray(PolyhedralFan, Vector){
@@ -125,18 +128,4 @@ user_function equal_fans(PolyhedralFan<Rational>, PolyhedralFan<Rational>){
 	
 	return (0==0);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

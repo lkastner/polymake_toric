@@ -39,7 +39,7 @@ object ToricVariety {
       #todo: From the Batyrev article.
       property REGULAR : Bool;
 
-      property LOCAL_EQUATIONS : Map<Set<Int>, Ideal>;
+      property LOCAL_EQUATIONS : Map<Set<Int>, Polynomial>;
 
       # @category Basic properties
       # The tropical variety associated to the Laurent polynomial. We compute this
