@@ -154,7 +154,9 @@ user_function chow_quotient(Polynomial){
    my $ambient_fan = cocoref_topcom(new Matrix<Integer>($B));
    $ambient_fan = check_fan($ambient_fan->RAYS, $ambient_fan->MAXIMAL_CONES);
    my $ambient_tv = new ToricVariety($ambient_fan);
-   return $g_tilda;
+   my $id = new Ideal(GENERATORS=>[$g_tilda]);
+   $ambient_tv->SUBVARIETY(EQUATIONS=>$id);
+   return $ambient_tv;
    #my $hs = $ambient_tv->add("HYPERSURFACE", EQUATION=>$g_tilda);
    #print "Equation: ",$hs->EQUATION,"\n";
    #return $ambient_tv;
