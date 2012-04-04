@@ -47,10 +47,11 @@ declare object ToricVariety : PolyhedralFan<Rational>;
 declare object SubvarietyInTV;
 
 INCLUDE
-	toric_divisor_properties.rules
+   toric_divisor_properties.rules
    toric_variety_properties.rules
 	gfan_hyp_brut.rules
-	subvarietyInTV_properties.rules
+	cocoref_topcom.rules
+   subvarietyInTV_properties.rules
 	toric_variety.rules
 	toric_divisor.rules
    subvarietyInTV.rules

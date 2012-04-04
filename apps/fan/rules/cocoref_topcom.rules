@@ -1,0 +1,97 @@
+#  Copyright (c) 2012
+#  by authors as mentioned on:
+#  https://github.com/lkastner/polymake_toric/wiki/Authors
+#  
+#  Project home:
+#  https://github.com/lkastner/polymake_toric
+#
+#  For licensing we cite the original Polymake code:
+#
+#  This program is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by the
+#  Free Software Foundation; either version 2, or (at your option) any
+#  later version: http://www.gnu.org/licenses/gpl.txt.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+
+CREDIT topcom
+
+user_function cocoref_topcom(Matrix<Integer>){
+   my ($B) = @_;
+   my $inp = "[[".join("],[",map(join(",",@$_),@$B))."]]";
+   # print $inp;
+   my $P=new ProgramPipe($DebugLevel ? () : ("2>/dev/null"), "points2triangs");
+   print $P $inp, "\n";
+   local $_;
+   my @triangulations=();
+   while (<$P>) {
+     s/T.*://; s/\];//; s/^\{//; s/\}$//; s/\},\{/}\n{/g; tr/,/ /;
+     my @e =( split /\n/, $_ );
+     push @triangulations, new Array<Set<Int>>(\@e);
+     #print @e,"\n\n";
+   }
+   my @collected_cones = ();
+   foreach my $tr (@triangulations){
+      #print $tr;
+      foreach my $c (@$tr){
+         my $identicals = grep($_ == $c, @collected_cones);
+         ($identicals == 0)?(push @collected_cones, $c):0;
+      }
+   }
+   my $n = @triangulations;
+   print "There are ",$n," possible triangulations.\n";
+   my $n = @collected_cones;
+   my @remaining = @collected_cones;
+   my @chosen_ones = ();
+   while($n > 0){
+      # FIXME: Don't compute the following twice. Maybe make it a map?
+      my @num = map{
+         my $tr = $_;
+         my $rems = grep{
+            my $c = $_;
+            my $id = grep($_ == $c, @remaining);
+            $id > 0;
+         }@$tr;
+         $rems;
+      } @triangulations;
+      my $sel = maximum((new Vector<Int>(@num)));
+      # print $sel,"\n";
+      my @gtrs = grep{
+         my $tr = $_;
+         my $rems = grep{
+            my $c = $_;       
+            my $id = grep($_ == $c, @remaining);
+            $id > 0;
+         }@$tr;
+         $rems == $sel;
+      } @triangulations;
+      my $gtr = $gtrs[0];
+      # print $gtr;
+      push @chosen_ones, $gtr;
+
+      @remaining = grep{
+         my $c = $_;
+         my $id = grep($c == $_, @$gtr);
+         $id == 0;
+      } @remaining;
+      $n = @remaining;
+      print $n," cones remaining.\n";
+   }
+   $n = @chosen_ones;
+   print "We need ", $n, " different triangulations.\n";
+   my @fans = map((new PolyhedralFan<Rational>(INPUT_RAYS=>$B, INPUT_CONES=>$_)),@chosen_ones);
+   # return @fans;
+   my $init = pop @fans;
+   # print $init->type->full_name;
+   $| = 1;
+   print "Refining";
+   foreach my $f (@fans){
+      print ".";
+      $init = fan::common_refinement($init, $f); #FIXME: This doesn't work. Why?
+   }
+   print "\n";
+   return $init;
+}
