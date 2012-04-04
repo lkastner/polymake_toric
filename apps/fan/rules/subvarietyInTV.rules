@@ -96,129 +96,6 @@ object ToricVariety {
 	}
 }
 
-user_function cocoref_new(Matrix) {
-   stop_here();
-   my($rays) = @_;
-   my $dim = $rays->cols();
-   my $m = $rays->rows();
-   my @init_cones = all_subsets_of_k($dim, 0..($m)-1);
-   @init_cones = map(new Set($_), @init_cones);
-   # print @init_cones;
-   @init_cones = map((new Matrix<Rational>(@$rays[@$_])), @init_cones);
-   @init_cones = grep(rank($_) == $dim, @init_cones);
-   @init_cones = grep {
-      my $facets = transpose(inv($_));
-      my $contained = grep{minimum($facets * $_)>=0} @$rays;
-      $contained == $dim
-   } @init_cones;
-   @init_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @init_cones);
-   @init_cones = unique(@init_cones);
-   my @refined = ();
-   my $added = 1;
-   my @nc = @init_cones;
-   my $n = @init_cones;
-   print "$n initial cones.\n";
-
-   my $i = 0;
-   @init_cones = map{
-      my @elem = ();
-      push @elem, new Set<Int>($i);
-      push @elem, $_;
-      $i++;
-      [@elem]
-   } @init_cones;
-
-   my @combinations = map($_->[0], @init_cones);
-   my @new_cones = @init_cones;
-   while($added == 1){
-      $added = 0;
-      my @collected_cones = ();
-      foreach my $c (@new_cones){
-         my $index = $c->[0];
-         my @intersections = grep((($index + $_ )-($index * $_))->size == 2, @combinations);
-         @intersections = map($_ - $index, @intersections);
-         my @ui = ();
-         foreach my $i (@intersections) {
-            my $identicals = grep($_ == $i, @ui);
-            if($identicals == 0){
-               push @ui, $i;
-            }
-         }
-         @intersections = @ui;
-         my @done = ();
-         my @todo = ();
-         foreach my $i (@intersections) {
-            my $indexset = $index + $i;
-            my $b = grep( $_->[0] == $indexset, @collected_cones );
-            if($b > 0){
-               push @done, $i;
-            } else {
-               push @todo, $i;
-            }
-         }
-         #print @todo,"\n";
-         @todo = map {
-            my $i = $_;
-            my @ic = grep( $_->[0] == $i, @init_cones);
-            my $primitive_cone = @ic->[0]->[1];
-            my @intersect = ();
-            push @intersect, ($index + $i);
-            push @intersect, intersection($primitive_cone, $c->[1]);
-            [@intersect]
-         } @todo;
-         @todo = grep($_->[1]->DIM == $dim, @todo);
-         @todo = grep(!included_polyhedra($c->[1], $_->[1]), @todo);
-         my $keep1 = @done;
-         my $keep2 = @todo;
-         my $keep = $keep1 + $keep2;
-         if ($keep == 0){
-            my $identicals = grep(equal_polyhedra($_->[1], $c->[1]), @refined);
-            # print "There are $identicals copies of this cone.\n";
-            if ($identicals == 0){
-               push @refined, $c;
-            }
-            my $ref = @refined;
-            # print "Pushed something: $ref\n";
-            next;
-         }
-         $added = 1;
-         @collected_cones = (@collected_cones, @todo);
-         # print "done.\n";
-      }
-      my @uniques = ();
-      foreach my $col (@collected_cones){
-         my $identicals = grep(equal_polyhedra($col->[1], $_->[1]), (@uniques, @refined));
-         if($identicals == 0){
-            push @uniques, $col;
-         }
-      }
-      @new_cones = @uniques;
-      my $collected = @new_cones;
-      @combinations = map($_->[0], @new_cones);
-      print "Collected $collected new cones.\n";
-   }
-   my @good_comb = map($_->[0], @refined);
-   @refined = map($_->[1], @refined);
-   @refined = unique(@refined);
-   my $in = @refined;
-
-   print "Number of resulting cones: $in.\n";
-   return check_fan_objects(@refined);
-}
-
-sub unique {
-   my (@cones) = @_;
-   my @result = ();
-   my $n = @cones;
-   while($n>0){
-   my $c = pop @cones;
-   @cones = grep(!equal_polyhedra($c, $_), @cones);
-   push @result, $c;
-   $n = @cones;
-   }
-   return @result;
-}
-
 
 user_function chow_quotient(Polynomial){
    my ($g) = @_;
@@ -274,7 +151,10 @@ user_function chow_quotient(Polynomial){
    my $R = new Ring(@vars);
    my $g_tilda = new Polynomial($new_degs,$coeffs,$R);
    print "g_tilda: $g_tilda\n";
-   #my $ambient_tv = cast<ToricVariety>(cocoref_new(new Matrix<Rational>($B)));
+   my $ambient_fan = cocoref_topcom(new Matrix<Integer>($B));
+   $ambient_fan = check_fan($ambient_fan->RAYS, $ambient_fan->MAXIMAL_CONES);
+   my $ambient_tv = new ToricVariety($ambient_fan);
+   return $g_tilda;
    #my $hs = $ambient_tv->add("HYPERSURFACE", EQUATION=>$g_tilda);
    #print "Equation: ",$hs->EQUATION,"\n";
    #return $ambient_tv;
