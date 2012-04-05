@@ -21,9 +21,21 @@
 #include "polymake/Vector.h"
 #include "polymake/Rational.h"
 #include "polymake/Polynomial.h"
+#include "polymake/Matrix.h"
+#include "polymake/IncidenceMatrix.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
+   template <typename T0>
+   FunctionInterface4perl( new, T0 ) {
+      WrapperReturnNew(T0, () );
+   };
+
    Class4perl("Polymake::common::Map_A_Set__Int_I_Vector__Rational_Z", Map< Set< int >, Vector< Rational > >);
    Class4perl("Polymake::common::Map_A_Set__Int_I_Polynomial_A_Rational_I_Int_Z_Z", Map< Set< int >, Polynomial< Rational, int > >);
+   Class4perl("Polymake::common::Map_A_Vector__Int_I_Int_Z", Map< Vector< int >, int >);
+   FunctionInstance4perl(new, Map< Vector< int >, int >);
+   Class4perl("Polymake::common::Map_A_Vector__Rational_I_Int_Z", Map< Vector< Rational >, int >);
+   FunctionInstance4perl(new, Map< Vector< Rational >, int >);
+   OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Rational >, int > >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

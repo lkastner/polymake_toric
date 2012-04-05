@@ -152,10 +152,9 @@ user_function chow_quotient(Polynomial){
    my $g_tilda = new Polynomial($new_degs,$coeffs,$R);
    print "g_tilda: $g_tilda\n";
    my $ambient_fan = cocoref_topcom(new Matrix<Integer>($B));
-   $ambient_fan = check_fan($ambient_fan->RAYS, $ambient_fan->MAXIMAL_CONES);
    my $ambient_tv = new ToricVariety($ambient_fan);
    my $id = new Ideal(GENERATORS=>[$g_tilda]);
-   $ambient_tv->SUBVARIETY(EQUATIONS=>$id);
+   $ambient_tv->SUBVARIETY(EQUATIONS=>$id, HYPERSURFACE=>True);
    return $ambient_tv;
    #my $hs = $ambient_tv->add("HYPERSURFACE", EQUATION=>$g_tilda);
    #print "Equation: ",$hs->EQUATION,"\n";

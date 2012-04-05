@@ -90,8 +90,24 @@ user_function cocoref_topcom(Matrix<Integer>){
    print "Refining";
    foreach my $f (@fans){
       print ".";
-      $init = fan::common_refinement($init, $f); #FIXME: This doesn't work. Why?
+      $init = fan::common_refinement($init, $f); #FIXME: This doesn't work without "fan::". Why?
    }
-   print "\n";
-   return $init;
+   print "\nReducing set of rays.\n";
+   # First we look which rays are needed.
+   # Then we renumber the shit.
+   my $rays = new Set<Int>();
+   my $mc = $init->MAXIMAL_CONES;
+   my $raymat = $init->RAYS;
+   map($rays = $rays + $_, @$mc);
+   my $new_raymat = $raymat->minor($rays, All);
+   my $c = 0;
+   my $raymap = new Map<Vector<Rational>, Int>;
+   map{$raymap->{$_} = $c; $c++;}@{$new_raymat};
+   my @new_mc = map{
+      my $s = $_;
+      my @new_s = map($raymap->{$raymat->[$_]}, @$s);
+      new Set<Int>(@new_s);
+   }@$mc;
+   my $result = new PolyhedralFan<Rational>(INPUT_RAYS=>$new_raymat, INPUT_CONES=>new Array<Set<Int>>(@new_mc));
+   return $result;
 }
