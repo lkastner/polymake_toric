@@ -81,7 +81,12 @@ object ToricVariety {
 			}
 			print "done\n";	
 		}
-		$this->SUBVARIETY->RELEVANT_CONES = check_fan($tvr, new Array< Set<Integer>>(@relevant));
+      my @uniques = ();
+      foreach my $c (@relevant){
+         my $identicals = grep($_ == $c, @uniques);
+         $identicals == 0?(push @uniques, $c):0; #(print $c,"\n");
+      }
+		$this->SUBVARIETY->RELEVANT_CONES = check_fan($tvr, new Array< Set<Integer>>(@uniques));
 	}
 
 	rule SUBVARIETY.LOCAL_EQUATIONS : CONES, RAYS, SUBVARIETY.NEWTON_POLYTOPE{
