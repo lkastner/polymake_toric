@@ -56,6 +56,7 @@ INCLUDE
 	toric_divisor.rules
    subvarietyInTV.rules
 	standard_constructions.rules
+   toric_divisor_classes.rules
 
 user_function add_ray(PolyhedralFan, Vector){
 	my($fan, $ray) = @_;
@@ -73,7 +74,8 @@ user_function add_ray(PolyhedralFan, Vector){
 
 # Checking if a fan is complete by checking if every facet appears with an even factor.
 user_function is_complete(PolyhedralFan<Rational>){
-	my ($f) = @_;
+	my $f = shift;
+	if ( $f->AMBIENT_DIM != $f->DIM ) { return 0; }
 	my $check = (1 == 1);
 	my $mc = $f->MAXIMAL_CONES;
 	my $fanrays = new Matrix<Rational>($f->RAYS);
@@ -83,24 +85,22 @@ user_function is_complete(PolyhedralFan<Rational>){
 	foreach my $c (@init_cones){
 		my $rays = $c->RAYS;
                 my $frc = $c->RAYS_IN_FACETS;
-		#print $frc;
-		#print $rays;
 		my @facet_cones = map((new Matrix<Rational>(@$rays[@$_])), @$frc);
 		@facet_cones = map((new Cone<Rational>(INPUT_RAYS=>$_)), @facet_cones);
 		@collection = (@collection, @facet_cones);
 	}
 	foreach my $facet (@collection){
 		my $ref = grep(equal_polyhedra($facet, $_), @collection);
-		print "$ref\n";
 		$check = $check && ($ref == 2);
+		$check or last;
 	}
-	print "$check\n";
 	return $check;
 }
 
 # Checking if two fans are the same
 user_function equal_fans(PolyhedralFan<Rational>, PolyhedralFan<Rational>){
 	my ($f, $g) = @_;
+	if ( $f->LINEALITY_DIM > 0 || $g->LINEALITY_DIM > 0 ) { die "this test does only work for pointed fans"; }
 	if ($f->RAYS->rows != $g->RAYS->rows)
 		{return (0 == 1);}
 	if ($f->N_MAXIMAL_CONES != $g->N_MAXIMAL_CONES)
