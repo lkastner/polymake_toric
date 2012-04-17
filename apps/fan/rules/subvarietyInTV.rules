@@ -152,8 +152,9 @@ user_function chow_quotient(Polynomial){
    my $new_degs = new Matrix<Int>(map($_->[0]->slice(1), @preim));
    # Building ring for output equation:
    my $nvars = $new_degs->cols;
-   my @vars = ( map { "x$_" } (1..$nvars) );
-   my $R = new Ring(@vars);
+   my $R = new Ring($nvars);
+   print "Ring built. Variables are:\n";
+   print $R->variables,"\n";
    my $g_tilda = new Polynomial($new_degs,$coeffs,$R);
    print "g_tilda: $g_tilda\n";
    my $ambient_fan = cocoref_topcom(new Matrix<Integer>($B));
@@ -166,3 +167,17 @@ user_function chow_quotient(Polynomial){
    #return $ambient_tv;
 }
 
+user_function move_inside(Polytope<Rational>, Polytope<Rational>){
+   my ($p, $q) = @_;
+   my $m = $p->VERTICES;
+   my $c = $m->[0];
+   my $lat = $q->LATTICE_POINTS;
+   foreach my $l (@$lat){
+      my $new_vert = new Matrix(map($_-$c+$l,@$m));
+      my $test = new Polytope(POINTS=>$new_vert);
+      if(included_polyhedra($test,$q)){
+         return $l-$c;
+      }
+   }
+   return False;
+}
