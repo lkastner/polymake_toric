@@ -1,0 +1,43 @@
+object Cone<Rational>{
+   
+   property INTERESTING_DEGREES : Matrix;
+
+}
+
+declare object Deformation;
+
+object Deformation{
+   
+   property SIGMA : Cone;
+
+   property DEGREE : Matrix;
+
+   property DECOMPOSITION : Array<Polytope>;
+
+   property QR : POLYTOPE;
+
+   property TAUTOLOGICAL_CONE : Cone;
+
+   rule TAUTOLOGICAL_CONE : DECOMPOSITION, SIGMA{
+      #todo
+   }
+
+   rule SIGMA : DECOMPOSITION{
+      #trivial todo
+   }
+
+   rule SIGMA : QR{
+      #...
+   }
+
+   rule QR : SIGMA, DEGREE{
+      #...
+   }
+
+}
+
+object Polytope<Rational>{
+   
+   property DEFORMATION_MINKOWSKI_CONE : Cone;
+
+}
