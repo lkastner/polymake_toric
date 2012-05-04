@@ -83,11 +83,11 @@ object ToricVariety {
       # lifts a divisor in the class group onto a divisor on the fan
       property LIFTING : Matrix<Integer>;
 
-  	}
+   }
 
-  	# @category Toric Varieties
-  	# the torsion free part of the class group
-  	property RATIONAL_DIVISOR_CLASS_GROUP : RationalDivisorClassGroup;
+   # @category Toric Varieties
+   # the torsion free part of the class group
+   property RATIONAL_DIVISOR_CLASS_GROUP : RationalDivisorClassGroup;
 
   # @category Toric Varieties
   # a toric variety is [[SMOOTH]] if the fan is [[PolyhedralFan::SMOOTH]]
