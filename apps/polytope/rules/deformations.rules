@@ -10,9 +10,11 @@ object Deformation{
    
    property SIGMA : Cone;
 
-   property DEGREE : Matrix;
+   property DEGREE : Vector;
 
-#   property DECOMPOSITION : Array<Polytope>;
+   property Q0 : Polytope;
+
+   property Q1 : Polytope;
 
    property QR : Polytope;
 
@@ -31,8 +33,20 @@ object Deformation{
       #...
    }
 
+   rule QR : Q0, Q1 {
+      $this->QR = minkowski_sum($this->Q0, $this->Q1);
+   }
+
    rule QR : SIGMA, DEGREE{
-      #...
+      my $rays = $this->SIGMA->RAYS;
+      my $R = $this->DEGREE;
+      # This evaluates $R on each $ray:
+      my @v = map($_*$R, @$rays);
+      # We write the height in front of each vertex:
+      my $vert = (new Vector(@v)|$rays);
+      # print $vert;
+      # The new Polytope:
+      $this->QR = new Polytope<Rational>(POINTS=>$vert);
    }
 
 }
