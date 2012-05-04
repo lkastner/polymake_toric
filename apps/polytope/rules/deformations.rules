@@ -12,19 +12,20 @@ object Deformation{
 
    property DEGREE : Matrix;
 
-   property DECOMPOSITION : Array<Polytope>;
+#   property DECOMPOSITION : Array<Polytope>;
 
-   property QR : POLYTOPE;
+   property QR : Polytope;
 
    property TAUTOLOGICAL_CONE : Cone;
 
-   rule TAUTOLOGICAL_CONE : DECOMPOSITION, SIGMA{
-      #todo
-   }
 
-   rule SIGMA : DECOMPOSITION{
+#rule TAUTOLOGICAL_CONE : DECOMPOSITION, SIGMA{
+      #todo
+#   }
+
+#   rule SIGMA : DECOMPOSITION{
       #trivial todo
-   }
+#   }
 
    rule SIGMA : QR{
       #...
