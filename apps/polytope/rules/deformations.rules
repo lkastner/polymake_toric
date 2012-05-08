@@ -37,6 +37,16 @@ object Deformation{
       $this->QR = minkowski_sum($this->Q0, $this->Q1);
    }
 
+   rule TAUTOLOGICAL_CONE : Q0, Q1 {
+      my $p = $this->Q0;
+      my $q = $this->Q1;
+      my $vp = $p->VERTICES;
+      my $vq = $q->VERTICES;
+      $vp = (new Matrix($vp) | ones_vector()| zero_vector);
+      $vq = (new Matrix($vq) | zero_vector()| ones_vector);
+      $this->TAUTOLOGICAL_CONE = new Cone(INPUT_RAYS=>($vp / $vq));
+   }
+
    rule QR : SIGMA, DEGREE{
       my $rays = $this->SIGMA->RAYS;
       my $R = $this->DEGREE;
