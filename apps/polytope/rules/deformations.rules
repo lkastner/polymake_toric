@@ -40,8 +40,8 @@ object Deformation{
    rule TAUTOLOGICAL_CONE : Q0, Q1 {
       my $p = $this->Q0;
       my $q = $this->Q1;
-      my $vp = $p->VERTICES;
-      my $vq = $q->VERTICES;
+      my $vp = $p->VERTICES->minor(All, ~[0]);
+      my $vq = $q->VERTICES->minor(All, ~[0]);
       $vp = (new Matrix($vp) | ones_vector()| zero_vector);
       $vq = (new Matrix($vq) | zero_vector()| ones_vector);
       $this->TAUTOLOGICAL_CONE = new Cone(INPUT_RAYS=>($vp / $vq));
