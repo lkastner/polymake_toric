@@ -63,5 +63,6 @@ namespace polymake { namespace common {
    FunctionInstance4perl(new_X, Matrix< Rational >, perl::Canned< const pm::Transposed<pm::MatrixMinor<pm::Matrix<pm::Integer> const&, pm::all_selector const&, pm::Complement<pm::SingleElementSet<int const&>, int, pm::operations::cmp> const&> > >);
    OperatorInstance4perl(Binary_mul, int, perl::Canned< const Wary< pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::Matrix<pm::Rational> const&> > >);
    OperatorInstance4perl(Binary_mul, perl::Canned< const Wary< pm::Transposed<pm::MatrixMinor<pm::Matrix<pm::Integer> const&, pm::all_selector const&, pm::Complement<pm::SingleElementSet<int const&>, int, pm::operations::cmp> const&> > > >, perl::Canned< const pm::Transposed<pm::Matrix<pm::Integer> > >);
+   OperatorInstance4perl(Binary_mul, perl::Canned< const Wary< pm::Transposed<pm::MatrixMinor<pm::Matrix<pm::Integer> const&, pm::all_selector const&, pm::Complement<pm::SingleElementSet<int const&>, int, pm::operations::cmp> const&> > > >, perl::Canned< const pm::Transposed<pm::MatrixMinor<pm::Matrix<pm::Integer> const&, pm::all_selector const&, pm::Complement<pm::SingleElementSet<int const&>, int, pm::operations::cmp> const&> > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
