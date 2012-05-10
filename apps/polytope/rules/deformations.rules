@@ -38,13 +38,31 @@ object Deformation{
    }
 
    rule TAUTOLOGICAL_CONE : Q0, Q1 {
-      my $p = $this->Q0;
-      my $q = $this->Q1;
-      my $vp = $p->VERTICES->minor(All, ~[0]);
-      my $vq = $q->VERTICES->minor(All, ~[0]);
-      $vp = (new Matrix($vp) | ones_vector()| zero_vector);
-      $vq = (new Matrix($vq) | zero_vector()| ones_vector);
-      $this->TAUTOLOGICAL_CONE = new Cone(INPUT_RAYS=>($vp / $vq));
+      my $p = $this->Q0->VERTICES;
+      my $q = $this->Q1->VERTICES;
+      # Select the real vertices, i.e. with one as first entry:
+      my $vp = new Matrix(grep($_->[0]==1,@$p));
+      my $vq = new Matrix(grep($_->[0]==1,@$q));
+      # Select rays, i.e. with zero as first entry:
+      # Note: Maybe one should check the tailcones here.
+      #  I will just add both for now.
+      my $rp = new Matrix(grep($_->[0]==0,@$p));
+      my $rq = new Matrix(grep($_->[0]==0,@$q));
+      # Cut off leading entries:
+      $vp = $vp->minor(All, ~[0]);
+      $vq = $vq->minor(All, ~[0]);
+      $vp = ($vp | ones_vector | zero_vector);
+      $vq = ($vq | zero_vector | ones_vector);
+      my $rays = $vp / $vq;
+      if(($rp->rows > 0) && ($rq->rows > 0)){
+         $rp = $rp->minor(All, ~[0]);
+         $rq = $rq->minor(All, ~[0]);
+         $rp = ($rp | zero_vector | zero_vector);
+         $rq = ($rq | zero_vector | zero_vector);
+         $rays = $rays / $rp;
+         $rays = $rays / $rq;
+      }
+      $this->TAUTOLOGICAL_CONE = new Cone(INPUT_RAYS=>$rays);
    }
 
    rule QR : SIGMA, DEGREE{
