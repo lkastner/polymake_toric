@@ -66,3 +66,31 @@ object Polytope<Rational>{
    property DEFORMATION_MINKOWSKI_CONE : Cone;
 
 }
+
+user_function find_possible_decompositions(Polytope<Rational>){
+   my($P) = @_;
+   # TODO: Mess with non-lattice polytopes.
+   my $mink_cone = $P->MINKOWSKI_SUMMAND_CONE;
+   my $pos_orth = cube($mink_cone->AMBIENT_DIM);
+   my $vert = zero_vector() | new Matrix($mink_cone->RAYS);
+   $vert = (ones_vector(1)|zero_vector($mink_cone->AMBIENT_DIM))/$vert;
+   my $ineq = new Matrix(ones_vector($vert->cols));
+   $ineq->col(0) *= -1;
+   print $ineq;
+   my $q = new Polytope(POINTS=>$vert);
+   # We only want points with positive entries.
+   $q = intersection($q, $pos_orth);
+   # This will select those points, that aren't zero.
+   $q = intersection($q, new Polytope(INEQUALITIES=>$ineq));
+   my $good_summands = $q->LATTICE_POINTS->minor(All, ~[0]);
+   print $good_summands;
+   my $eq = -ones_vector($good_summands->cols) | (new Matrix(transpose($good_summands)));
+   $ineq = zero_vector($good_summands->rows) | dense(unit_matrix($good_summands->rows));
+   print $eq;
+   print $ineq;
+   $q = new Polytope(EQUATIONS=>$eq, INEQUALITIES=>$ineq);
+   my $sol = $q->LATTICE_POINTS->minor(All, ~[0]);
+   print $sol;
+   # Just checking whether the combinations sum up to our polytope.
+   print transpose($good_summands)*transpose($sol);
+}
