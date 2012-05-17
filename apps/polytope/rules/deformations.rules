@@ -89,10 +89,12 @@ object Deformation{
          push @res, $v;
          (@res, map($v+$_, @rays));
       }@vertices;
+      # print new Matrix(@vertices);
       # I hope, this one has full dimension.
-      my $v = new Matrix(@vertices);
-      $v = $v->minor(All, ~[0]);
-      my $dim = $this->QR->AMBIENT_DIM -1;
+      my $v = new Polytope(POINTS=>new Matrix(@vertices));
+      $v = $v->VERTICES->minor(All, ~[0]);
+      # print $v;
+      my $dim = $v->cols;
       my $m = $v->rows;
       # The following will select a full rank subset of $v:
       my @init_cones = all_subsets_of_k($dim, 0..($m)-1);
@@ -100,9 +102,9 @@ object Deformation{
       @init_cones = map((new Matrix<Rational>(@$v[@$_])), @init_cones);
       @init_cones = grep(rank($_) == $dim, @init_cones);
       my $good_vert = pop @init_cones;
-      print $good_vert;
+      # print $good_vert;
       my $taut = $good_vert|ones_vector|ones_vector;
-      $this->TAUTOLOGICAL_MAP = transpose($good_vert)*inv(transpose($good_vert));
+      $this->TAUTOLOGICAL_MAP = transpose($taut)*inv(transpose($good_vert));
    }
 
 }
