@@ -8,6 +8,8 @@ declare object Deformation;
 
 object Deformation{
    
+   property TAUTOLOGICAL_MAP : Matrix;
+
    property SIGMA : Cone;
 
    property DEGREE : Vector;
@@ -75,6 +77,32 @@ object Deformation{
       # print $vert;
       # The new Polytope:
       $this->QR = new Polytope<Rational>(POINTS=>$vert);
+   }
+
+   rule TAUTOLOGICAL_MAP : QR {
+      my $p = $this->QR->VERTICES;
+      my @vertices = grep($_->[0] == 1, @$p);
+      my @rays = grep($_->[0] == 0, @$p);
+      @vertices = map{
+         my $v = $_;
+         my @res = ();
+         push @res, $v;
+         (@res, map($v+$_, @rays));
+      }@vertices;
+      # I hope, this one has full dimension.
+      my $v = new Matrix(@vertices);
+      $v = $v->minor(All, ~[0]);
+      my $dim = $this->QR->AMBIENT_DIM -1;
+      my $m = $v->rows;
+      # The following will select a full rank subset of $v:
+      my @init_cones = all_subsets_of_k($dim, 0..($m)-1);
+      @init_cones = map(new Set($_), @init_cones);
+      @init_cones = map((new Matrix<Rational>(@$v[@$_])), @init_cones);
+      @init_cones = grep(rank($_) == $dim, @init_cones);
+      my $good_vert = pop @init_cones;
+      print $good_vert;
+      my $taut = $good_vert|ones_vector|ones_vector;
+      $this->TAUTOLOGICAL_MAP = transpose($good_vert)*inv(transpose($good_vert));
    }
 
 }
