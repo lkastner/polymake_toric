@@ -27,9 +27,9 @@ object Deformation{
       my $eq = -$v | transpose($this->TAUTOLOGICAL_MAP);
       my $hyp = new Polytope(EQUATIONS=>$eq);
       my $rays = zero_vector | $this->TAUTOLOGICAL_CONE->RAYS;
-      print $rays;
+      # print $rays;
       $rays = (ones_vector(1) | zero_vector($rays->cols -1))/$rays;
-      print $rays;
+      # print $rays;
       my $lifted_cone = new Cone(INPUT_RAYS=>$rays);
       return intersection($lifted_cone, $hyp);
    }
