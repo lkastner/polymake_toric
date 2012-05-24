@@ -57,6 +57,7 @@ INCLUDE
    subvarietyInTV.rules
 	standard_constructions.rules
    toric_divisor_classes.rules
+   cyclic_quotient.rules
 
 user_function add_ray(PolyhedralFan, Vector){
 	my($fan, $ray) = @_;
