@@ -22,6 +22,7 @@
 #include "polymake/Integer.h"
 #include "polymake/Rational.h"
 #include "polymake/linalg.h"
+#include "polymake/SparseMatrix.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0, typename T1>
@@ -57,5 +58,9 @@ namespace polymake { namespace common {
    OperatorInstance4perl(Binary_div, perl::Canned< const Wary< pm::VectorChain<pm::SameElementVector<pm::Rational const&> const&, pm::SameElementVector<pm::Rational const&> const&> > >, perl::Canned< const pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::Matrix<pm::Rational> const&> >);
    OperatorInstance4perl(Binary_mul, int, perl::Canned< const Wary< pm::SameElementVector<pm::Rational const&> > >);
    OperatorInstance4perl(BinaryAssign_mul, perl::Canned< Wary< pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, false>, void> > >, int);
+   OperatorInstance4perl(Binary__or, perl::Canned< const Vector< Rational > >, perl::Canned< const pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> >);
+   OperatorInstance4perl(Binary__or, perl::Canned< const pm::SameElementVector<pm::Rational const&> >, perl::Canned< const SparseMatrix< Rational, Symmetric > >);
+   OperatorInstance4perl(Binary__or, perl::Canned< const Vector< Rational > >, perl::Canned< const SparseMatrix< Rational, Symmetric > >);
+   OperatorInstance4perl(Binary__or, perl::Canned< const pm::SameElementVector<pm::Rational const&> >, perl::Canned< const pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
