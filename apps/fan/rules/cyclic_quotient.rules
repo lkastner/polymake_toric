@@ -25,8 +25,14 @@ object CyclicQuotient {
 
    property Q : Integer;
     
+   property CHAIN_REPRESENTATION : Vector;
+   
    rule RAYS : N, Q {
-      $this->RAYS = new Matrix([1,0],[-$this->Q, -$this->N]);
+      $this->RAYS = new Matrix([1,0],[-$this->Q, $this->N]);
+   }
+
+   rule MAXIMAL_CONES : {
+      $this->MAXIMAL_CONES = [[0, 1]];
    }
 }
 
