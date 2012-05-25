@@ -31,6 +31,9 @@ object CyclicQuotient {
 
    property VERSAL_COMPONENTS : Matrix;
 
+   # Computing the continued fractions corresponding to the components
+   # of the versal base space according to the description given in
+   # Stevens - On the Components[...].
    rule VERSAL_COMPONENTS : DUAL_CONTINUED_FRACTION {
       my $dcf = $this->DUAL_CONTINUED_FRACTION;
       $dcf = new Vector<Rational>($dcf);
