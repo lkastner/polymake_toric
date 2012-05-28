@@ -168,29 +168,30 @@ user_function cf2rational(Vector<Integer>){
 user_function christophersen_phi1(Vector<Integer>){
    my($v) = @_;
    if($v->dim == 1) {return zero_vector<Integer>(1);}
-   #if($v->dim == 2) {return zero_vector<Integer>(1);}
+   # if($v->dim == 2) {return zero_vector<Integer>(1);}
    my $alpha = christophersen_alpha($v);
-   #print $alpha."\n";
+   # print "a: ".$alpha."\n";
    my $i = $v->dim-1;
-   while(($alpha->[$i]>0) && ($alpha->[$i] != 1)) {$i--;}
-   #print $i."\n";
+   while(($alpha->[$i]>0) && ($alpha->[$i] == 1)) {$i--;}
+   # print "i: ".$i."\n";
    my $result = $v->slice(0,$v->dim-1);
-   #print $result;
+   # print "r: ".$result."\n";
    $result->[$i-1]--;
    return $result;
 }
 
 user_function christophersen_phi2(Vector<Integer>){ 
    my($v) = @_;
+   print "v: ".$v."\n";
    if($v->dim == 1) {return zero_vector<Integer>(1);}
    #if($v->dim == 2) {return zero_vector<Integer>(1);}
    my $alpha = christophersen_alpha($v);
-   #print $alpha."\n";
-   my $i = $v->dim-1;
-   while(($alpha->[$i]>0) && ($alpha->[$i] != 1)) {$i--;}
-   #print $i."\n";
-   my $result = $v->slice(0,$v->dim-1);
-   #print $result;
-   $result->[$i-1]--;
+   print "a: ".$alpha."\n";
+   my $i = 2;
+   while(($alpha->[$i]>0) && ($alpha->[$i] == 1)) {$i++;}
+   print "i: ".$i."\n";
+   my $result = $v->slice(1,$v->dim-1);
+   print "r: ".$result."\n";
+   $result->[$i-2]--;
    return $result;
 }
