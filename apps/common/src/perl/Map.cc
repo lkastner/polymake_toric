@@ -23,6 +23,7 @@
 #include "polymake/Polynomial.h"
 #include "polymake/Matrix.h"
 #include "polymake/IncidenceMatrix.h"
+#include "polymake/Integer.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0>
@@ -37,5 +38,9 @@ namespace polymake { namespace common {
    Class4perl("Polymake::common::Map_A_Vector__Rational_I_Int_Z", Map< Vector< Rational >, int >);
    FunctionInstance4perl(new, Map< Vector< Rational >, int >);
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Rational >, int > >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void> >);
+   Class4perl("Polymake::common::Map_A_Set__Int_I_Vector__Integer_Z", Map< Set< int >, Vector< Integer > >);
+   Class4perl("Polymake::common::Map_A_Vector__Integer_I_Vector__Integer_Z", Map< Vector< Integer >, Vector< Integer > >);
+   FunctionInstance4perl(new, Map< Vector< Integer >, Vector< Integer > >);
+   OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Integer >, Vector< Integer > > >, perl::Canned< const Vector< Integer > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

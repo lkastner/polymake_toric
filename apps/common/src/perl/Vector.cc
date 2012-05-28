@@ -23,6 +23,7 @@
 #include "polymake/Rational.h"
 #include "polymake/linalg.h"
 #include "polymake/SparseMatrix.h"
+#include "polymake/Set.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0, typename T1>
@@ -62,5 +63,12 @@ namespace polymake { namespace common {
    OperatorInstance4perl(Binary__or, perl::Canned< const pm::SameElementVector<pm::Rational const&> >, perl::Canned< const SparseMatrix< Rational, Symmetric > >);
    OperatorInstance4perl(Binary__or, perl::Canned< const Vector< Rational > >, perl::Canned< const SparseMatrix< Rational, Symmetric > >);
    OperatorInstance4perl(Binary__or, perl::Canned< const pm::SameElementVector<pm::Rational const&> >, perl::Canned< const pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> >);
+   FunctionInstance4perl(new_X, Vector< Integer >, perl::Canned< const pm::IndexedSlice<pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Integer> const&>, pm::Series<int, true>, void>, pm::Complement<pm::SingleElementSet<int const&>, int, pm::operations::cmp> const&, void> >);
+   FunctionInstance4perl(new_X, Vector< Integer >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void> >);
+   FunctionInstance4perl(new_X, Vector< Integer >, perl::Canned< const Vector< Integer > >);
+   OperatorInstance4perl(assign, Vector< Integer >, perl::Canned< const pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void> >);
+   OperatorInstance4perl(assign, Vector< Integer >, perl::Canned< const pm::IndexedSlice<pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void>&, pm::Series<int, true>, void> >);
+   FunctionInstance4perl(new_X, Vector< Integer >, perl::Canned< const pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void> >);
+   FunctionInstance4perl(new_X, Vector< Integer >, perl::Canned< const pm::IndexedSlice<pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void>&, pm::Series<int, true>, void> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

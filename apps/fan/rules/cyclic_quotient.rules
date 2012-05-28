@@ -29,8 +29,38 @@ object CyclicQuotient {
    
    property DUAL_CONTINUED_FRACTION : Vector<Integer>;
 
-   property VERSAL_COMPONENTS : Matrix;
+   declare object VersalComponent;
 
+   object VersalComponent {
+
+      property CONTINUED_FRACTION : Vector<Integer>;
+
+      property PYRAMID_LATTICE : Map<Vector<Integer>, Vector<Integer>>;
+
+      rule PYRAMID_LATTICE : CONTINUED_FRACTION {
+         my $cf = new Vector<Integer>($this->CONTINUED_FRACTION);
+         my $result = new Map<Vector<Integer>, Vector<Integer>>();
+         my $i = 0;
+         my $j = 0;
+         my $n = $cf->dim;
+         for($i = 0; $i < $n; $i++){
+            my $copy = new Vector<Integer>($cf);
+            print $cf."\n";
+            for($j = 0; $j < ($n-$i); $j++){
+               $result->{new Vector<Integer>($i, $j)} = $copy;
+               $copy = christophersen_phi1($copy);   
+            }
+            $cf = christophersen_phi2($cf);
+         }
+         $this->PYRAMID_LATTICE = $result;
+      }
+
+   }
+
+   property VERSAL_COMPONENT : VersalComponent : multiple;
+   
+   property VERSAL_COMPONENTS : Matrix;
+   
    # Computing the continued fractions corresponding to the components
    # of the versal base space according to the description given in
    # Stevens - On the Components[...].
@@ -83,6 +113,14 @@ object CyclicQuotient {
    }
 }
 
+user_function assign_versal_components(CyclicQuotient){
+   my($cq) = @_;
+   my $vc = $cq->VERSAL_COMPONENTS;
+   foreach my $v (@$vc){
+      $cq->add("VERSAL_COMPONENT", CONTINUED_FRACTION=>$v);
+   }
+}
+
 user_function christophersen_alpha(Vector<Integer>) {
    my($v) = @_;
    my @chain = @$v;
@@ -127,3 +165,32 @@ user_function cf2rational(Vector<Integer>){
    return $check;
 }
 
+user_function christophersen_phi1(Vector<Integer>){
+   my($v) = @_;
+   if($v->dim == 1) {return zero_vector<Integer>(1);}
+   #if($v->dim == 2) {return zero_vector<Integer>(1);}
+   my $alpha = christophersen_alpha($v);
+   #print $alpha."\n";
+   my $i = $v->dim-1;
+   while(($alpha->[$i]>0) && ($alpha->[$i] != 1)) {$i--;}
+   #print $i."\n";
+   my $result = $v->slice(0,$v->dim-1);
+   #print $result;
+   $result->[$i-1]--;
+   return $result;
+}
+
+user_function christophersen_phi2(Vector<Integer>){ 
+   my($v) = @_;
+   if($v->dim == 1) {return zero_vector<Integer>(1);}
+   #if($v->dim == 2) {return zero_vector<Integer>(1);}
+   my $alpha = christophersen_alpha($v);
+   #print $alpha."\n";
+   my $i = $v->dim-1;
+   while(($alpha->[$i]>0) && ($alpha->[$i] != 1)) {$i--;}
+   #print $i."\n";
+   my $result = $v->slice(0,$v->dim-1);
+   #print $result;
+   $result->[$i-1]--;
+   return $result;
+}
