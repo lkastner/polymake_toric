@@ -61,5 +61,6 @@ namespace polymake { namespace common {
    Class4perl("Polymake::common::Map_A_Vector__Integer_I_Polynomial_A_Rational_I_Int_Z_Z", Map< Vector< Integer >, Polynomial< Rational, int > >);
    FunctionInstance4perl(new, Map< Vector< Integer >, Polynomial< Rational, int > >);
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Integer >, Polynomial< Rational, int > > >, perl::Canned< const Vector< Integer > >);
+   OperatorInstance4perl(Binary_brk, perl::Canned< const Map< Vector< Integer >, Vector< Integer > > >, perl::Canned< const pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
