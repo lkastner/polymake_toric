@@ -17,8 +17,28 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
+###################################################
+###################################################
+###
+###  object declarations
+###
+###################################################
+###################################################
 declare object CyclicQuotient : ToricVariety;
 
+object CyclicQuotient {
+
+   declare object VersalComponent;
+
+}
+
+###################################################
+###################################################
+###
+###  CyclicQuotient properties
+###
+###################################################
+###################################################
 object CyclicQuotient {
 
    property N : Integer;
@@ -29,7 +49,19 @@ object CyclicQuotient {
    
    property DUAL_CONTINUED_FRACTION : Vector<Integer>;
 
-   declare object VersalComponent;
+   property VERSAL_COMPONENT : VersalComponent : multiple;
+   
+   property VERSAL_COMPONENTS : Matrix;
+}
+
+###################################################
+###################################################
+###
+###  VersalComponent properties
+###
+###################################################
+###################################################
+object CyclicQuotient {
 
    object VersalComponent {
 
@@ -37,30 +69,23 @@ object CyclicQuotient {
 
       property PYRAMID_LATTICE : Map<Vector<Integer>, Vector<Integer>>;
 
-      rule PYRAMID_LATTICE : CONTINUED_FRACTION {
-         my $cf = new Vector<Integer>($this->CONTINUED_FRACTION);
-         my $result = new Map<Vector<Integer>, Vector<Integer>>();
-         my $i = 0;
-         my $j = 0;
-         my $n = $cf->dim;
-         for($i = 0; $i < $n; $i++){
-            my $copy = new Vector<Integer>($cf);
-            print $cf."\n";
-            for($j = 0; $j < ($n-$i); $j++){
-               $result->{new Vector<Integer>($i, $j)} = $copy;
-               $copy = christophersen_phi1($copy);   
-            }
-            $cf = christophersen_phi2($cf);
-         }
-         $this->PYRAMID_LATTICE = $result;
-      }
+      property ALPHA_LATTICE : Map<Vector<Integer>, Vector<Integer>>;
+
+      property TOTAL_SPACE : Ideal;
 
    }
 
-   property VERSAL_COMPONENT : VersalComponent : multiple;
-   
-   property VERSAL_COMPONENTS : Matrix;
-   
+}
+
+###################################################
+###################################################
+###
+###  CyclicQuotient rules
+###
+###################################################
+###################################################
+object CyclicQuotient {
+
    # Computing the continued fractions corresponding to the components
    # of the versal base space according to the description given in
    # Stevens - On the Components[...].
@@ -113,6 +138,84 @@ object CyclicQuotient {
    }
 }
 
+###################################################
+###################################################
+###
+###  VersalComponent rules
+###
+###################################################
+###################################################
+object CyclicQuotient {
+
+   rule VERSAL_COMPONENT.TOTAL_SPACE : DUAL_CONTINUED_FRACTION, VERSAL_COMPONENT.CONTINUED_FRACTION, VERSAL_COMPONENT.PYRAMID_LATTICE, VERSAL_COMPONENT.ALPHA_LATTICE {
+      my $k = $this->VERSAL_COMPONENT->CONTINUED_FRACTION;
+      my $a = $this->DUAL_CONTINUED_FRACTION;
+      my $i = 0;
+      my $l = 0;
+      my @vars = ();
+      for($i = 0; $i<$a->dim; $i++){
+         for($l = new Integer($k->[$i]); $l<$a->[$i]; $l++){
+            push @vars, "t_{".$i.",".$l."}";
+         }
+      }
+      print @vars;
+      #my $til = new Map<Vector<Integer>, Monomial<Rational, Int>>();
+
+      #for($i = 0; $i<$a->dim; $i++){
+      #   for($l=1; $l<=$a->[$i]; $l++){
+
+      #   }
+      #}
+   }
+   
+   object VersalComponent {
+
+      rule CONTINUED_FRACTION : PYRAMID_LATTICE {
+         $this->CONTINUED_FRACTION = $this->PYRAMID_LATTICE->{zero_vector<Integer>(2)};
+      }
+
+      rule ALPHA_LATTICE : PYRAMID_LATTICE {
+         my $pyr_lat = new Map<Vector<Integer>, Vector<Integer>>($this->PYRAMID_LATTICE);
+         my $result = new Map<Vector<Integer>, Vector<Integer>>();
+         foreach my $key (keys %$pyr_lat){
+            $result->{$key} = christophersen_alpha($pyr_lat->{$key});
+         }
+         $this->ALPHA_LATTICE = $result;
+      }
+
+      rule PYRAMID_LATTICE : CONTINUED_FRACTION {
+         my $cf = new Vector<Integer>($this->CONTINUED_FRACTION);
+         my $result = new Map<Vector<Integer>, Vector<Integer>>();
+         my $i = 0;
+         my $j = 0;
+         my $n = $cf->dim;
+         for($i = 0; $i < $n; $i++){
+            my $copy = new Vector<Integer>($cf);
+            print $cf."\n";
+            for($j = 0; $j < ($n-$i); $j++){
+               $result->{new Vector<Integer>($j, $i)} = $copy;
+               if($j < $n-$i-1){
+                  $copy = christophersen_phi1($copy);
+               }
+            }
+            if($i < $n-1){
+               $cf = christophersen_phi2($cf);
+            }
+         }
+         $this->PYRAMID_LATTICE = $result;
+      }
+
+   }
+
+}
+
+###################################################
+###################################################
+###
+###  User functions
+###
+###################################################
+###################################################
 user_function assign_versal_components(CyclicQuotient){
    my($cq) = @_;
    my $vc = $cq->VERSAL_COMPONENTS;
@@ -128,13 +231,11 @@ user_function christophersen_alpha(Vector<Integer>) {
    my $a0 = 0;
    my $a1 = 1;
    my $a2 = 0;
-   my $s = @chain;
-   while($s > 0){
-      $a2 = (pop @chain)*$a1 - $a0;
+   foreach my $entry (@chain){
+      $a2 = $entry*$a1 - $a0;
       push @result, $a0;
       $a0 = $a1;
       $a1 = $a2;
-      $s = @chain;
    }
    push @result, $a0;
    push @result, $a1;
@@ -167,31 +268,34 @@ user_function cf2rational(Vector<Integer>){
 
 user_function christophersen_phi1(Vector<Integer>){
    my($v) = @_;
-   if($v->dim == 1) {return zero_vector<Integer>(1);}
+   # print "phi1\n";
+   # print "v: ".$v."\n";
+   if($v->dim == 1) {die "Error: Vector too short.";}
    # if($v->dim == 2) {return zero_vector<Integer>(1);}
    my $alpha = christophersen_alpha($v);
    # print "a: ".$alpha."\n";
    my $i = $v->dim-1;
-   while(($alpha->[$i]>0) && ($alpha->[$i] == 1)) {$i--;}
+   while(($alpha->[$i]>0) && ($alpha->[$i] != 1)) {$i--;}
    # print "i: ".$i."\n";
    my $result = $v->slice(0,$v->dim-1);
-   # print "r: ".$result."\n";
    $result->[$i-1]--;
+   # print "r: ".$result."\n\n";
    return $result;
 }
 
 user_function christophersen_phi2(Vector<Integer>){ 
    my($v) = @_;
-   print "v: ".$v."\n";
-   if($v->dim == 1) {return zero_vector<Integer>(1);}
-   #if($v->dim == 2) {return zero_vector<Integer>(1);}
+   # print "phi2\n";
+   # print "v: ".$v."\n";
+   if($v->dim == 1) {die "Error: Vector too short.";}
+   # if($v->dim == 2) {return zero_vector<Integer>(1);}
    my $alpha = christophersen_alpha($v);
-   print "a: ".$alpha."\n";
+   # print "a: ".$alpha."\n";
    my $i = 2;
-   while(($alpha->[$i]>0) && ($alpha->[$i] == 1)) {$i++;}
-   print "i: ".$i."\n";
+   while(($alpha->[$i]>0) && ($alpha->[$i] != 1)) {$i++;}
+   # print "i: ".$i."\n";
    my $result = $v->slice(1,$v->dim-1);
-   print "r: ".$result."\n";
    $result->[$i-2]--;
+   # print "r: ".$result."\n\n";
    return $result;
 }
