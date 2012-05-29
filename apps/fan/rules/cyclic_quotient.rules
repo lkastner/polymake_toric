@@ -147,25 +147,89 @@ object CyclicQuotient {
 ###################################################
 object CyclicQuotient {
 
-   rule VERSAL_COMPONENT.TOTAL_SPACE : DUAL_CONTINUED_FRACTION, VERSAL_COMPONENT.CONTINUED_FRACTION, VERSAL_COMPONENT.PYRAMID_LATTICE, VERSAL_COMPONENT.ALPHA_LATTICE {
+   rule VERSAL_COMPONENT.TOTAL_SPACE : DUAL_CONTINUED_FRACTION,\
+         VERSAL_COMPONENT.CONTINUED_FRACTION,\
+         VERSAL_COMPONENT.PYRAMID_LATTICE,\
+         VERSAL_COMPONENT.ALPHA_LATTICE {
+      # Funny stuff for generating the necessary variables.
       my $k = $this->VERSAL_COMPONENT->CONTINUED_FRACTION;
       my $a = $this->DUAL_CONTINUED_FRACTION;
+      my $alpha = christophersen_alpha($k);
+      #print "k: ".$k."\na: ".$a."\nalpha: ".$alpha."\n";
       my $i = 0;
       my $l = 0;
-      my @vars = ();
+      my @s = ();
+      for($i = 1; $i<$a->dim-1; $i++){
+         $alpha->[$i+1] == 1 ? (push @s, "s_".($i+1)) : 0;
+      }
+      my @t = ();
       for($i = 0; $i<$a->dim; $i++){
          for($l = new Integer($k->[$i]); $l<$a->[$i]; $l++){
-            push @vars, "t_{".$i.",".$l."}";
+            push @t, "t_{".($i+1).",".$l."}";
          }
       }
-      print @vars;
-      #my $til = new Map<Vector<Integer>, Monomial<Rational, Int>>();
-
-      #for($i = 0; $i<$a->dim; $i++){
-      #   for($l=1; $l<=$a->[$i]; $l++){
-
-      #   }
-      #}
+      my @z = ();
+      for($i = 0; $i<$alpha->dim; $i++){
+         push @z, "z_".$i;
+      }
+      my @vars = (@t, @s, @z);
+      my $r = new Ring(@vars);
+      my @variables = $r->variables;
+      #print @variables;
+      #print "\n";
+      my $snum = @s;
+      my $tnum = @t;
+      my $znum = @z;
+      print $snum." ".$tnum." ".$znum."\n";
+      @t = @variables[0..($tnum-1)];
+      @s = @variables[$tnum..($tnum+$snum-1)];
+      @z = @variables[($tnum+$snum)..($tnum+$snum+$znum-1)];
+      #print @s;
+      #print "\n";
+      #print @t;
+      #print "\n";
+      #print @z;
+      #print "\n";
+      my $s = new Map<Integer, Monomial<Rational, Int>>;
+      map{
+         my ($i) = $_ =~ m/s\_(.*)/;
+         $s->{new Int($i)} = $_;
+      }@s;
+      #print $s."\n";
+      my $z = new Map<Integer, Monomial<Rational, Int>>;
+      map{
+         my ($i) = $_ =~ m/z\_(.*)/;
+         $z->{new Int($i)} = $_;
+      }@z;
+      #print $z."\n";
+      my $t = new Map<Vector<Integer>, Monomial<Rational, Int>>;
+      map{
+         my ($i,$l) = $_ =~ m/t\_\{(.*),(.*)\}/;
+         $t->{new Vector<Integer>($i,$l)} = $_;
+      }@t;
+      #print $t."\n";
+      my $y = new Map<Integer, Polynomial<Rational, Int>>;
+      #$y->{0} = new Polynomial<Rational, Int>($z->{0});
+      $y->{0} = 0 + $z->{0};
+      $y->{1} = 0 + $z->{1};
+      for($i = 2; $i<$a->dim; $i++){
+         $alpha->[$i]==1 ? ($y->{$i} = $z->{$i}+$s->{$i}) : ($y->{$i} = 0 + $z->{$i});
+      }
+      $y->{$a->dim} = 0 + $z->{$a->dim};
+      $y->{$a->dim+1} = 0 + $z->{$a->dim+1};
+      print $y."\n";
+      my $k = 0;
+      my $Z = new Map<Vector<Integer>, Polynomial<Rational, Int>>;
+      for($i = 1; $i<=$a->dim; $i++){
+         for($l=1; $l<$a->[$i]; $l++){
+            my $pos = new Vector<Integer>($i, $l);
+            $Z->{$pos} = pow(0+$z->{$i}, $a->[$i]-$l);
+            for($k=$a->[$i] - $1; $k>$l; $k--){
+               my $tpos = new Vector<Integer>($i,$k);
+            }
+         }
+      }
+      print $Z."\n";
    }
    
    object VersalComponent {
@@ -191,7 +255,7 @@ object CyclicQuotient {
          my $n = $cf->dim;
          for($i = 0; $i < $n; $i++){
             my $copy = new Vector<Integer>($cf);
-            print $cf."\n";
+            # print $cf."\n";
             for($j = 0; $j < ($n-$i); $j++){
                $result->{new Vector<Integer>($j, $i)} = $copy;
                if($j < $n-$i-1){
@@ -222,6 +286,16 @@ user_function assign_versal_components(CyclicQuotient){
    foreach my $v (@$vc){
       $cq->add("VERSAL_COMPONENT", CONTINUED_FRACTION=>$v);
    }
+}
+
+user_function pow(Polynomial<Rational, Int>, Integer){
+   my($p, $k) =  @_;
+   my $i = 0;
+   my $result = new Polynomial<Rational, Int>($p);
+   for($i = 0; $i<$k-1; $i++){
+      $result*=$p;
+   }
+   return $result;
 }
 
 user_function christophersen_alpha(Vector<Integer>) {
