@@ -49,5 +49,17 @@ namespace polymake { namespace common {
    FunctionInstance4perl(new, Map< Vector< Integer >, Vector< Integer > >);
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Integer >, Vector< Integer > > >, perl::Canned< const Vector< Integer > >);
    FunctionInstance4perl(new_X, Map< Vector< Integer >, Vector< Integer > >, perl::Canned< const Map< Vector< Integer >, Vector< Integer > > >);
+   Class4perl("Polymake::common::Map_A_Integer_I_Monomial_A_Rational_I_Int_Z_Z", Map< Integer, Monomial< Rational, int > >);
+   FunctionInstance4perl(new, Map< Integer, Monomial< Rational, int > >);
+   OperatorInstance4perl(Binary_brk, perl::Canned< Map< Integer, Monomial< Rational, int > > >, int);
+   Class4perl("Polymake::common::Map_A_Vector__Integer_I_Monomial_A_Rational_I_Int_Z_Z", Map< Vector< Integer >, Monomial< Rational, int > >);
+   FunctionInstance4perl(new, Map< Vector< Integer >, Monomial< Rational, int > >);
+   OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Integer >, Monomial< Rational, int > > >, perl::Canned< const Vector< Integer > >);
+   Class4perl("Polymake::common::Map_A_Integer_I_Polynomial_A_Rational_I_Int_Z_Z", Map< Integer, Polynomial< Rational, int > >);
+   FunctionInstance4perl(new, Map< Integer, Polynomial< Rational, int > >);
+   OperatorInstance4perl(Binary_brk, perl::Canned< Map< Integer, Polynomial< Rational, int > > >, int);
+   Class4perl("Polymake::common::Map_A_Vector__Integer_I_Polynomial_A_Rational_I_Int_Z_Z", Map< Vector< Integer >, Polynomial< Rational, int > >);
+   FunctionInstance4perl(new, Map< Vector< Integer >, Polynomial< Rational, int > >);
+   OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Integer >, Polynomial< Rational, int > > >, perl::Canned< const Vector< Integer > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
