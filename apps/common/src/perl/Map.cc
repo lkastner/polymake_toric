@@ -26,6 +26,12 @@
 #include "polymake/Integer.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
+   template <typename T0, typename T1>
+   FunctionInterface4perl( new_X, T0,T1 ) {
+      perl::Value arg0(stack[1]);
+      WrapperReturnNew(T0, (arg0.get<T1>()) );
+   };
+
    template <typename T0>
    FunctionInterface4perl( new, T0 ) {
       WrapperReturnNew(T0, () );
@@ -42,5 +48,6 @@ namespace polymake { namespace common {
    Class4perl("Polymake::common::Map_A_Vector__Integer_I_Vector__Integer_Z", Map< Vector< Integer >, Vector< Integer > >);
    FunctionInstance4perl(new, Map< Vector< Integer >, Vector< Integer > >);
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Integer >, Vector< Integer > > >, perl::Canned< const Vector< Integer > >);
+   FunctionInstance4perl(new_X, Map< Vector< Integer >, Vector< Integer > >, perl::Canned< const Map< Vector< Integer >, Vector< Integer > > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
