@@ -52,6 +52,8 @@ object CyclicQuotient {
    property VERSAL_COMPONENT : VersalComponent : multiple;
    
    property VERSAL_COMPONENTS : Matrix;
+
+   property VERSAL_DEFORMATION : Ideal;
 }
 
 ###################################################
@@ -85,6 +87,31 @@ object CyclicQuotient {
 ###################################################
 ###################################################
 object CyclicQuotient {
+
+   rule VERSAL_DEFORMATION : DUAL_CONTINUED_FRACTION {
+      my $a = $this->DUAL_CONTINUED_FRACTION;
+      my $i, $j, $k;
+      my $e = $a->dim+2;
+      my @x = ();
+      my @s = ();
+      my @t = ();
+      for($i=0; $i<$e; $i++){
+         push @x, "x_".$i;
+      }
+      for($i=1; $i<$e-1; $i++){
+         for($j=1; $j<$a->[$i-1]; $j++){
+            push @s, "s_{".$i.",".$j."}";
+         }
+      }
+      for($i=2; $i<$e-2; $i++){
+         push @t, "t_".$i;
+      }
+      my $xnum = @x;
+      my $snum = @s;
+      my $tnum = @t;
+      my $r = new Ring(@x, @s, @t);
+      print $r->variables."\n";
+   }
 
    # Computing the continued fractions corresponding to the components
    # of the versal base space according to the description given in
