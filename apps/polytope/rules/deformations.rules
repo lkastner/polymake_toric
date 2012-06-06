@@ -125,6 +125,11 @@ object Polytope<Rational>{
 
 }
 
+user_function find_transformation_matrix(Matrix, Matrix){
+   my($A, $B) = @_;
+   my $eq = $A;
+}
+
 user_function find_possible_decompositions(Polytope<Rational>){
    my($P) = @_;
    # TODO: Mess with non-lattice polytopes.
