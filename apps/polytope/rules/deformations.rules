@@ -127,7 +127,13 @@ object Polytope<Rational>{
 
 user_function find_transformation_matrix(Matrix, Matrix){
    my($A, $B) = @_;
-   my $eq = $A;
+   $B = transpose($B);
+   my $eq = -$B->[0] | $A | new Matrix($A->rows, ($A->rows - 1) * $A->cols);
+   for(my $i = 1; $i<$A->rows; $i++){
+      $eq = $eq / (-$B->[$i] | new Matrix($A->rows, $i*$A->cols) | $A | new Matrix($A->rows, ($A->rows-$i-1)*$A->cols));
+   }
+   print "rank: ".rank($eq)."\n";
+   return new Polytope(EQUATIONS=>$eq);
 }
 
 user_function find_possible_decompositions(Polytope<Rational>){
