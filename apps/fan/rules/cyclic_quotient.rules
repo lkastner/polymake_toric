@@ -90,7 +90,9 @@ object CyclicQuotient {
 
    rule VERSAL_DEFORMATION : DUAL_CONTINUED_FRACTION {
       my $a = $this->DUAL_CONTINUED_FRACTION;
-      my $i, $j, $k;
+      my $i = 0;
+      my $j = 0;
+      my $k = 0;
       my $e = $a->dim+2;
       my @x = ();
       my @s = ();
