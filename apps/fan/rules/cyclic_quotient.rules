@@ -90,7 +90,9 @@ object CyclicQuotient {
 
    rule VERSAL_DEFORMATION : DUAL_CONTINUED_FRACTION {
       my $a = $this->DUAL_CONTINUED_FRACTION;
-      my $i, $j, $k;
+      my $i;
+      my $j;
+      my $k;
       my $e = $a->dim+2;
       my @x = ();
       my @s = ();
@@ -110,7 +112,33 @@ object CyclicQuotient {
       my $snum = @s;
       my $tnum = @t;
       my $r = new Ring(@x, @s, @t);
-      print $r->variables."\n";
+      my @vars =  $r->variables;
+      print @vars;
+      @x = @vars[0..($xnum-1)];
+      @s = @vars[$xnum..($xnum+$snum-1)];
+      @t = @vars[($xnum+$snum)..($xnum+$snum+$tnum-1)];
+      my $x = new Map<Integer, Monomial<Rational, Int>>;
+      my $s = new Map<Vector<Integer>, Monomial<Rational, Int>>;
+      my $t = new Map<Integer, Monomial<Rational, Int>>;
+      map{
+         my($i) = $_ =~ m/x\_(.*)/;
+         $x->{new Integer($i)} = $_;
+      }@x;
+      map{
+         my($i) = $_ =~ m/t\_(.*)/;
+         $t->{new Integer($i)} = $_;
+      }@t;
+      map{
+         my($i,$j) = $_ =~ m/s\_\{(.*),(.*)\}/;
+         $s->{new Vector<Integer>($i,$j)} = $_;
+      }@s;
+      my $y = new Map<Integer, Polynomial<Rational, Int>>;
+      for($i=2; $i<$e-1; $i++){
+         $y->{$i} = $x->{$i}+$t->{$i};
+      }
+      $y->{1} = 0+$x->{1};
+      $y->{$e-1} = 0+$x->{$e-1};
+      print $y;
    }
 
    # Computing the continued fractions corresponding to the components
