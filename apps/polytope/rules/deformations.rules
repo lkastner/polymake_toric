@@ -132,13 +132,18 @@ object Polytope<Rational>{
 
 user_function find_transformation_matrix(Matrix, Matrix){
    my($A, $B) = @_;
-   $B = transpose($B);
-   my $eq = -$B->[0] | $A | new Matrix($A->rows, ($A->rows - 1) * $A->cols);
-   for(my $i = 1; $i<$A->rows; $i++){
-      $eq = $eq / (-$B->[$i] | new Matrix($A->rows, $i*$A->cols) | $A | new Matrix($A->rows, ($A->rows-$i-1)*$A->cols));
+   # $B = transpose($B);
+   my $i = 0;
+   my $eq = new Matrix();
+   foreach my $a (@$A){
+      print $a."\n";
+      my $eqloc =  $B->[$i] | new Matrix(map(zero_vector($_*$a->dim)|$a|zero_vector(($a->dim-$_-1)*$a->dim),0..($a->dim-1)));
+      $eq = $eq / new Matrix(grep($_->[0] == 0, @$eqloc));
+      $i++;
    }
+   print $eq;
    print "rank: ".rank($eq)."\n";
-   return new Polytope(EQUATIONS=>$eq);
+   return new Cone(EQUATIONS=>$eq->minor(All,~[0]),INEQUALITIES=>new Matrix());
 }
 
 user_function find_possible_decompositions(Polytope<Rational>){
