@@ -174,28 +174,28 @@ object CyclicQuotient {
          my $next = $i*$W->[$W->rows-1] - $W->[$W->rows-2];
          $W = $W/$next;
       }
-      print $W;
+      # print "W:\n".$W."\n";
       my $q = new Vector(0,1);
       for my $i (@$k) {
          my $next = $i*$q->[$q->dim-1] - $q->[$q->dim-2];
-         print "next: ".$next."\n";
+         # print "next: ".$next."\n";
          $q = $q | $next*ones_vector(1);
       }
-      print "q: ".$q."\n";
+      # print "q: ".$q."\n";
       my $rays = new Matrix([[1,0]]);
       for(my $i = 2; $i<$q->dim-2; $i++){
-         print "i: ".$i."\n";
-         my $orth = (1/$q->[$i])*$W->[$i] + (1/$q->[$i-1])*$W->[$i-1];
-         print "orth: ".$orth."\n";
+         # print "i: ".$i."\n";
+         my $orth = (1/$q->[$i])*$W->[$i] - (1/$q->[$i-1])*$W->[$i-1];
+         # print "orth: ".$orth."\n";
          my $ray = primitive(new Vector(-$orth->[1], $orth->[0]));
-         print "New ray: ".$ray."\n";
+         # print "New ray: ".$ray."\n";
          $rays = $rays/(new Vector<Rational>($ray));
       }
       $rays = $rays/(new Vector<Rational>(-$this->Q, $this->N));
-      print $rays;
+      # print $rays;
       my @cones = map((new Set<Int>($_,$_+1)),0..($rays->rows - 2));
-      print @cones;
-      print "\n";
+      # print @cones;
+      # print "\n";
       $this->VERSAL_COMPONENT->P_RESOLUTION = new PolyhedralFan<Rational>(INPUT_RAYS=>$rays, INPUT_CONES=>[@cones]);
    }
 
@@ -234,12 +234,18 @@ object CyclicQuotient {
          VERSAL_COMPONENT.ALPHA_LATTICE {
       #FIXME
    }
-   
-   object VersalComponent {
+  
+   rule VERSAL_COMPONENT.MILNOR_NI : DUAL_CONTINUED_FRACTION,\
+         VERSAL_COMPONENT.CONTINUED_FRACTION {
+      my $k = $this->VERSAL_COMPONENT->CONTINUED_FRACTION;
+      my $a = $this->DUAL_CONTINUED_FRACTION;
+      my $result = -1;
+      my $diff = $a-$k;
+      map($result += $_, @$diff);
+      $this->VERSAL_COMPONENT->MILNOR_NI = $result;
+   }
 
-      rule MILNOR_NI : P_RESOLUTION {
-         #TODO
-      }
+   object VersalComponent {
 
       rule MILNOR_SJ : CQS_MATRIX {
          my $cqs = $this->CQS_MATRIX;
