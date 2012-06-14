@@ -17,10 +17,16 @@
 
 #include "polymake/client.h"
 #include "polymake/Integer.h"
+#include "polymake/Matrix.h"
+#include "polymake/Rational.h"
+#include "polymake/IncidenceMatrix.h"
+#include "polymake/Vector.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    OperatorInstance4perl(Binary__le, perl::Canned< const Integer >, perl::Canned< const Integer >);
    OperatorInstance4perl(Binary__le, int, perl::Canned< const Integer >);
    OperatorInstance4perl(Binary__ge, perl::Canned< const Integer >, int);
+   OperatorInstance4perl(Binary_mul, perl::Canned< const Integer >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void> >);
+   OperatorInstance4perl(Binary_mul, perl::Canned< const Integer >, perl::Canned< const pm::ContainerUnion<pm::cons<pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void>, pm::Vector<pm::Rational> const&>, void> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

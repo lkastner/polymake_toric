@@ -49,5 +49,12 @@ namespace polymake { namespace common {
    OperatorInstance4perl(Binary__or, perl::Canned< const pm::SameElementVector<pm::Rational const&> >, perl::Canned< const pm::MatrixMinor<pm::Matrix<pm::Rational>&, pm::Complement<pm::SingleElementSet<int const&>, int, pm::operations::cmp> const&, pm::all_selector const&> >);
    OperatorInstance4perl(assign, pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void>, perl::Canned< const Integer >);
    OperatorInstance4perl(assign, pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void>, perl::Canned< const pm::SameElementVector<pm::Rational const&> >);
+   OperatorInstance4perl(Binary_sub, perl::Canned< const Wary< Vector< Rational > > >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void> >);
+   OperatorInstance4perl(Binary_sub, perl::Canned< const Wary< Vector< Rational > > >, perl::Canned< const pm::ContainerUnion<pm::cons<pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void>, pm::Vector<pm::Rational> const&>, void> >);
+   OperatorInstance4perl(Binary__or, perl::Canned< const Vector< Rational > >, perl::Canned< const Rational >);
+   OperatorInstance4perl(Binary__or, perl::Canned< const pm::VectorChain<pm::Vector<pm::Rational> const&, pm::Vector<pm::Rational> const&> >, perl::Canned< const Vector< Rational > >);
+   OperatorInstance4perl(Binary__or, perl::Canned< const pm::VectorChain<pm::VectorChain<pm::Vector<pm::Rational> const&, pm::Vector<pm::Rational> const&> const&, pm::Vector<pm::Rational> const&> >, perl::Canned< const Vector< Rational > >);
+   OperatorInstance4perl(Binary__or, perl::Canned< const pm::VectorChain<pm::VectorChain<pm::VectorChain<pm::Vector<pm::Rational> const&, pm::Vector<pm::Rational> const&> const&, pm::Vector<pm::Rational> const&> const&, pm::Vector<pm::Rational> const&> >, perl::Canned< const Vector< Rational > >);
+   OperatorInstance4perl(Binary_add, perl::Canned< const Wary< Vector< Rational > > >, perl::Canned< const Vector< Rational > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
