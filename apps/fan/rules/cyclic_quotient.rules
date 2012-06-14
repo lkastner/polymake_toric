@@ -81,6 +81,12 @@ object CyclicQuotient {
 
       property TRIANGLES : Matrix<Integer>;
 
+      property MILNOR_SJ : Vector<Integer>;
+
+      property MILNOR_NI : Integer;
+
+      property P_RESOLUTION : PolyhedralFan<Rational>;
+
    }
 
 }
@@ -95,56 +101,7 @@ object CyclicQuotient {
 object CyclicQuotient {
 
    rule VERSAL_DEFORMATION : DUAL_CONTINUED_FRACTION {
-      my $a = $this->DUAL_CONTINUED_FRACTION;
-      my $i;
-      my $j;
-      my $k;
-      my $e = $a->dim+2;
-      my @x = ();
-      my @s = ();
-      my @t = ();
-      for($i=0; $i<$e; $i++){
-         push @x, "x_".$i;
-      }
-      for($i=1; $i<$e-1; $i++){
-         for($j=1; $j<$a->[$i-1]; $j++){
-            push @s, "s_{".$i.",".$j."}";
-         }
-      }
-      for($i=2; $i<$e-2; $i++){
-         push @t, "t_".$i;
-      }
-      my $xnum = @x;
-      my $snum = @s;
-      my $tnum = @t;
-      my $r = new Ring(@x, @s, @t);
-      my @vars =  $r->variables;
-      print @vars;
-      @x = @vars[0..($xnum-1)];
-      @s = @vars[$xnum..($xnum+$snum-1)];
-      @t = @vars[($xnum+$snum)..($xnum+$snum+$tnum-1)];
-      my $x = new Map<Integer, Monomial<Rational, Int>>;
-      my $s = new Map<Vector<Integer>, Monomial<Rational, Int>>;
-      my $t = new Map<Integer, Monomial<Rational, Int>>;
-      map{
-         my($i) = $_ =~ m/x\_(.*)/;
-         $x->{new Integer($i)} = $_;
-      }@x;
-      map{
-         my($i) = $_ =~ m/t\_(.*)/;
-         $t->{new Integer($i)} = $_;
-      }@t;
-      map{
-         my($i,$j) = $_ =~ m/s\_\{(.*),(.*)\}/;
-         $s->{new Vector<Integer>($i,$j)} = $_;
-      }@s;
-      my $y = new Map<Integer, Polynomial<Rational, Int>>;
-      for($i=2; $i<$e-1; $i++){
-         $y->{$i} = $x->{$i}+$t->{$i};
-      }
-      $y->{1} = 0+$x->{1};
-      $y->{$e-1} = 0+$x->{$e-1};
-      print $y;
+      #FIXME
    }
 
    # Computing the continued fractions corresponding to the components
@@ -208,6 +165,40 @@ object CyclicQuotient {
 ###################################################
 object CyclicQuotient {
 
+   rule VERSAL_COMPONENT.P_RESOLUTION : VERSAL_COMPONENT.CONTINUED_FRACTION,\
+         DUAL_CONTINUED_FRACTION, N, Q {
+      my $k = $this->VERSAL_COMPONENT->CONTINUED_FRACTION;
+      my $a = $this->DUAL_CONTINUED_FRACTION;
+      my $W = new Matrix([[0,1],[1,1]]);
+      for my $i (@$a){
+         my $next = $i*$W->[$W->rows-1] - $W->[$W->rows-2];
+         $W = $W/$next;
+      }
+      print $W;
+      my $q = new Vector(0,1);
+      for my $i (@$k) {
+         my $next = $i*$q->[$q->dim-1] - $q->[$q->dim-2];
+         print "next: ".$next."\n";
+         $q = $q | $next*ones_vector(1);
+      }
+      print "q: ".$q."\n";
+      my $rays = new Matrix([[1,0]]);
+      for(my $i = 2; $i<$q->dim-2; $i++){
+         print "i: ".$i."\n";
+         my $orth = (1/$q->[$i])*$W->[$i] + (1/$q->[$i-1])*$W->[$i-1];
+         print "orth: ".$orth."\n";
+         my $ray = primitive(new Vector(-$orth->[1], $orth->[0]));
+         print "New ray: ".$ray."\n";
+         $rays = $rays/(new Vector<Rational>($ray));
+      }
+      $rays = $rays/(new Vector<Rational>(-$this->Q, $this->N));
+      print $rays;
+      my @cones = map((new Set<Int>($_,$_+1)),0..($rays->rows - 2));
+      print @cones;
+      print "\n";
+      $this->VERSAL_COMPONENT->P_RESOLUTION = new PolyhedralFan<Rational>(INPUT_RAYS=>$rays, INPUT_CONES=>[@cones]);
+   }
+
    rule VERSAL_COMPONENT.CQS_MATRIX : DUAL_CONTINUED_FRACTION,\
          VERSAL_COMPONENT.CONTINUED_FRACTION,\
          VERSAL_COMPONENT.TRIANGLES {
@@ -245,6 +236,17 @@ object CyclicQuotient {
    }
    
    object VersalComponent {
+
+      rule MILNOR_NI : P_RESOLUTION {
+         #TODO
+      }
+
+      rule MILNOR_SJ : CQS_MATRIX {
+         my $cqs = $this->CQS_MATRIX;
+         my $h2 = rank(null_space($cqs));
+         my $h1 = $cqs->rows - rank($cqs);
+         $this->MILNOR_SJ = new Vector($h2, $h1);
+      }
 
       rule N_GON_TRIANGULATION : TRIANGLES {
          my $T = $this->TRIANGLES;
