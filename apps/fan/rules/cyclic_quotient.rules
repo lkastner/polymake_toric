@@ -109,18 +109,12 @@ object CyclicQuotient {
    # Stevens - On the Components[...].
    rule VERSAL_COMPONENTS : DUAL_CONTINUED_FRACTION {
       my $dcf = $this->DUAL_CONTINUED_FRACTION;
-      $dcf = new Vector<Rational>($dcf);
-      my $ineq = ($dcf | -unit_matrix($dcf->dim));
-      $ineq = $ineq/(-ones_vector($dcf->dim) | unit_matrix($dcf->dim));
-      # print $ineq;
-      my $p = new Polytope(INEQUALITIES=>$ineq);
-      my $candidates = $p->LATTICE_POINTS->minor(All, ~[0]);
+      my @candidates = r_zero_chains(new Integer($dcf->dim));
       my @result = grep{
-         my $v = christophersen_alpha($_);
-         my @v= @$v;
-         (pop @v) == 0
-      }@{$candidates};
-      # print @result;
+         my $diff = $dcf-$_;
+         my $id = grep($_<0, @$diff);
+         $id == 0
+      }@candidates;
       $this->VERSAL_COMPONENTS = new Matrix(@result);
    }
 
@@ -434,4 +428,47 @@ user_function christophersen_phi2(Vector<Integer>){
    $result->[$i-2]--;
    # print "r: ".$result."\n\n";
    return $result;
+}
+
+user_function r_zero_chains(Integer){ #FIXME: Why does it have to be Integers to work?
+   my($r) = @_;
+   if($r == 1){
+      return new Vector(1);
+   }
+   if($r == 2){
+      return new Vector(1,1);
+   }
+   my @result = ();
+   push @result, new Vector<Integer>(1,1);
+   my $length = 2;
+   # print $length,"\n";
+   my $one = ones_vector<Integer>(1);
+   # print $one;
+   while($length < $r){
+      my @nextchains = ();
+      foreach my $c (@result){
+         my $v = new Vector<Integer>($one | $c);
+         $v->[1]++;
+         my $id = grep($_ == $v, @nextchains);
+         if($id == 0){ push @nextchains, $v;}
+         $v = new Vector<Integer>($c | $one);
+         $v->[$c->dim-1]++;
+         my $id = grep($_ == $v, @nextchains);
+         if($id == 0){ push @nextchains, $v;}
+         for(my $i = 0; $i<$c->dim-1; $i++){
+            $v = new Vector<Integer>($c->slice(0,$i+1) | $one | $c->slice($i+1,$c->dim-$i-1));
+            $v->[$i]++;
+            $v->[$i+2]++;
+            # print $v."\n";
+            my $id = grep($_ == $v, @nextchains);
+            if($id == 0){ push @nextchains, $v;}
+         }
+      }
+      @result = @nextchains;
+      $length++;
+   }
+   # foreach my $c (@result){
+      # print cf2rational($c);
+   # }
+   return @result;
 }
