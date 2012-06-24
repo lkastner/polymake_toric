@@ -1,0 +1,39 @@
+#  Copyright (c) 2012
+#  by authors as mentioned on:
+#  https://github.com/lkastner/polymake_toric/wiki/Authors
+#  
+#  Project home:
+#  https://github.com/lkastner/polymake_toric
+#
+#  For licensing we cite the original Polymake code:
+#
+#  This program is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU General Public License as published by the
+#  Free Software Foundation; either version 2, or (at your option) any
+#  later version: http://www.gnu.org/licenses/gpl.txt.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+
+user_function complete_to_lattice(Vector<Integer>){
+   my($v) = @_;
+   print "v: ".$v."\n";
+   my $result = unit_matrix<Integer>($v->dim);
+   for(my $i=1; $i<$v->dim; $i++){
+      my $gcd = ext_gcd($v->[0], $v->[$i]);
+      #print "gcd: ";
+      #print $gcd;
+      #print "\n";
+      my $changemat = dense(unit_matrix<Integer>($v->dim));
+      $changemat->(0,0) = $gcd->[1];
+      $changemat->(0,$i) = $gcd->[2];
+      $changemat->($i,0) = $gcd->[4];
+      $changemat->($i,$i) = -$gcd->[3];
+      #print $changemat;
+      $v = $changemat*$v;
+      $result = $changemat*$result;
+   }
+   return inv($result);
+}
