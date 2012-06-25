@@ -20,6 +20,7 @@
 #include "polymake/Matrix.h"
 #include "polymake/Rational.h"
 #include "polymake/IncidenceMatrix.h"
+#include "polymake/Integer.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0>
@@ -29,5 +30,7 @@ namespace polymake { namespace common {
    };
 
    FunctionInstance4perl(inv_X, perl::Canned< const Wary< pm::Transposed<pm::Matrix<pm::Rational> > > >);
+   FunctionInstance4perl(inv_X, perl::Canned< const Wary< Matrix< Integer > > >);
+   FunctionInstance4perl(inv_X, perl::Canned< const Wary< pm::Transposed<pm::Matrix<pm::Integer> > > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
