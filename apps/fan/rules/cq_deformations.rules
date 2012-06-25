@@ -37,18 +37,20 @@ user_function complete_to_lattice(Vector<Integer>){
    # print "v: ".$v."\n";
    my $result = unit_matrix<Integer>($v->dim);
    for(my $i=1; $i<$v->dim; $i++){
-      my $gcd = ext_gcd($v->[0], $v->[$i]);
-      #print "gcd: ";
-      #print $gcd;
-      #print "\n";
-      my $changemat = dense(unit_matrix<Integer>($v->dim));
-      $changemat->(0,0) = $gcd->[1];
-      $changemat->(0,$i) = $gcd->[2];
-      $changemat->($i,0) = $gcd->[4];
-      $changemat->($i,$i) = -$gcd->[3];
-      #print $changemat;
-      $v = $changemat*$v;
-      $result = $changemat*$result;
+      if($v->[0]!=0 || $v->[$i]!=0){
+         my $gcd = ext_gcd($v->[0], $v->[$i]);
+         # print "gcd: ";
+         # print $gcd;
+         # print "\n";
+         my $changemat = dense(unit_matrix<Integer>($v->dim));
+         $changemat->(0,0) = $gcd->[1];
+         $changemat->(0,$i) = $gcd->[2];
+         $changemat->($i,0) = $gcd->[4];
+         $changemat->($i,$i) = -$gcd->[3];
+         # print $changemat;
+         $v = $changemat*$v;
+         $result = $changemat*$result;
+      }
    }
    return inv($result);
 }

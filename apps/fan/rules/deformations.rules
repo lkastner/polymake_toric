@@ -1,8 +1,3 @@
-object Cone<Rational>{
-   
-   property INTERESTING_DEGREES : Matrix;
-
-}
 
 declare object Deformation;
 
@@ -121,12 +116,6 @@ object Deformation{
       my $taut = $good_vert|ones_vector|ones_vector;
       $this->TAUTOLOGICAL_MAP = transpose($taut)*inv(transpose($good_vert));
    }
-
-}
-
-object Polytope<Rational>{
-   
-   property DEFORMATION_MINKOWSKI_CONE : Cone;
 
 }
 
