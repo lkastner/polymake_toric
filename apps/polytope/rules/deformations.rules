@@ -1,0 +1,12 @@
+object Cone<Rational>{
+   
+   property INTERESTING_DEGREES : Matrix;
+
+}
+
+object Polytope<Rational>{
+   
+   property DEFORMATION_MINKOWSKI_CONE : Cone;
+
+}
+
