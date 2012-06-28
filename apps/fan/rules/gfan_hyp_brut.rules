@@ -24,9 +24,12 @@ custom $gfan_tropicalhypersurface;
 
 custom $gfan_tropicalbruteforce;
 
+custom $gfan_homogenize;
+
 CONFIGURE {
     find_program($gfan_tropicalhypersurface, "gfan_tropicalhypersurface");
     find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
+    find_program($gfan_homogenize, "gfan_homogenize");
 }
 
 # This program preprocesses the input for gfan and then reads in the gfan output.
@@ -36,7 +39,7 @@ user_function gfan_tropicalhypersurface(Polynomial) {
    my $tempfile=new Tempfile;
    #my $tempfile="test";
 
-   # Homogenizing polynomial and preparing to write to file:       
+   # Preparing to write to file:       
    my $R = $g->get_ring;
 
    # Writing data to file:
@@ -67,8 +70,8 @@ user_function gfan_tropicalhypersurface(Polynomial) {
 # It should be checked whether gfan_groebnerbla can really be left out.
 user_function gfan_tropicalbruteforce(Ideal) {
    my ($I) = @_;
-   my $tempfile=new Tempfile;
-   #my $tempfile="test";
+   #my $tempfile=new Tempfile;
+   my $tempfile="test";
 
    my $R = $I->RING;
 
@@ -77,14 +80,16 @@ user_function gfan_tropicalbruteforce(Ideal) {
    print $input "Q[";
    print $input join(",",$R->variables);
    print $input "]{\n";
-   print $input join(",",$I->GENERATORS);
+   print $input join(",",@{$I->GENERATORS});
    print $input "\n}";
    print $tempfile;
    close $input;
-
+   
    # Accessing gfan:
-   system "$gfan_tropicalbruteforce --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
+   # FIXME: Since we homogenize, we need to dehomogenize later!
+   system "($gfan_homogenize -i -H <$tempfile.in | $gfan_tropicalbruteforce --xml) >$tempfile.poly 2>/dev/null";
 
+   print "Output written.\n";
    my $gfan_out= User::load("$tempfile.poly");
    return $gfan_out;
 }
