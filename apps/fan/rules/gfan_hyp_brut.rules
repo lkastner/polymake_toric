@@ -91,6 +91,11 @@ user_function gfan_tropicalbruteforce(Ideal) {
 
    print "Output written.\n";
    my $gfan_out= User::load("$tempfile.poly");
-   return $gfan_out;
+   my $n = $gfan_out->AMBIENT_DIM;
+   my $v = ones_vector($n);
+   my $inrays = new Matrix(map($_-$_->[$n-1]*$v,@{$gfan_out->RAYS}));
+   # This is attempting to fix the homogenization problem.
+   # However we do not consider the lineality space at all.
+   return check_fan(-$inrays->minor(All,~[$n-1]),$gfan_out->MAXIMAL_CONES);
 }
 
