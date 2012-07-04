@@ -17,7 +17,19 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
-declare object OneParameterCQD;
+declare object CQOneParameterSmoothing;
+
+object CQOneParameterSmoothing{
+
+   property SINGULARITY : CyclicQuotient;
+
+   property P0 : Polytope;
+
+   property P1 : Polytope;
+
+   property TAUTOLOGICAL_MAP : Matrix;
+
+}
 
 user_function nice_projection(Vector<Integer>, Vector<Integer>){
    my($deg, $footpoint) = @_;
