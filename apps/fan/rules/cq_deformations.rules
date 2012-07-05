@@ -17,23 +17,52 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
+declare object CQOneParameterSmoothing;
+
+object CQOneParameterSmoothing{
+
+   property SINGULARITY : CyclicQuotient;
+
+   property P0 : Polytope;
+
+   property P1 : Polytope;
+
+   property TAUTOLOGICAL_MAP : Matrix;
+
+}
+
+user_function nice_projection(Vector<Integer>, Vector<Integer>){
+   my($deg, $footpoint) = @_;
+   my $result = transpose(complete_to_lattice($footpoint));
+   print "Before: ".$result."\n";
+   for(my $i=1; $i<$deg->dim; $i++){
+      $result->[$i]-=($result->[$i]*$deg)*$footpoint;
+   }
+   print "After: ".$result."\n";
+   $result = transpose(new Matrix<Integer>($result));
+   print "Transposed: ".$result."\n";
+   return inv($result);
+}
+
 user_function complete_to_lattice(Vector<Integer>){
    my($v) = @_;
-   print "v: ".$v."\n";
+   # print "v: ".$v."\n";
    my $result = unit_matrix<Integer>($v->dim);
    for(my $i=1; $i<$v->dim; $i++){
-      my $gcd = ext_gcd($v->[0], $v->[$i]);
-      #print "gcd: ";
-      #print $gcd;
-      #print "\n";
-      my $changemat = dense(unit_matrix<Integer>($v->dim));
-      $changemat->(0,0) = $gcd->[1];
-      $changemat->(0,$i) = $gcd->[2];
-      $changemat->($i,0) = $gcd->[4];
-      $changemat->($i,$i) = -$gcd->[3];
-      #print $changemat;
-      $v = $changemat*$v;
-      $result = $changemat*$result;
+      if($v->[0]!=0 || $v->[$i]!=0){
+         my $gcd = ext_gcd($v->[0], $v->[$i]);
+         # print "gcd: ";
+         # print $gcd;
+         # print "\n";
+         my $changemat = dense(unit_matrix<Integer>($v->dim));
+         $changemat->(0,0) = $gcd->[1];
+         $changemat->(0,$i) = $gcd->[2];
+         $changemat->($i,0) = $gcd->[4];
+         $changemat->($i,$i) = -$gcd->[3];
+         # print $changemat;
+         $v = $changemat*$v;
+         $result = $changemat*$result;
+      }
    }
    return inv($result);
 }

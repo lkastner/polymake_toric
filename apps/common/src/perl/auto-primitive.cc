@@ -16,18 +16,18 @@
 ///==== this line controls the automatic file splitting: max.instances=40
 
 #include "polymake/client.h"
-#include "polymake/Rational.h"
-#include "polymake/linalg.h"
+#include "polymake/common/lattice_tools.h"
 #include "polymake/Matrix.h"
+#include "polymake/Rational.h"
 #include "polymake/IncidenceMatrix.h"
-#include "polymake/Vector.h"
-#include "polymake/Integer.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
-   OperatorInstance4perl(Binary__ge, perl::Canned< const Rational >, int);
-   OperatorInstance4perl(BinaryAssign_mul, perl::Canned< Rational >, perl::Canned< const Rational >);
-   OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const pm::SameElementVector<pm::Rational const&> >);
-   OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const pm::ContainerUnion<pm::cons<pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void>, pm::Vector<pm::Rational> const&>, void> >);
-   OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const Vector< Integer > >);
+   template <typename T0>
+   FunctionInterface4perl( primitive_X, T0 ) {
+      perl::Value arg0(stack[0]);
+      WrapperReturn( primitive(arg0.get<T0>()) );
+   };
+
+   FunctionInstance4perl(primitive_X, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
