@@ -87,6 +87,8 @@ object CyclicQuotient {
 
       property P_RESOLUTION : PolyhedralFan<Rational>;
 
+      property DIMENSION : Integer;
+
    }
 
 }
@@ -229,6 +231,25 @@ object CyclicQuotient {
       #FIXME
    }
   
+   rule VERSAL_COMPONENT.DIMENSION : DUAL_CONTINUED_FRACTION,\
+         VERSAL_COMPONENT.CONTINUED_FRACTION {
+      my $k = $this->VERSAL_COMPONENT->CONTINUED_FRACTION;
+      my $a = $this->DUAL_CONTINUED_FRACTION;
+      my $result = 0;
+      my $diff = $a-$k;
+      map($result += $_, @$diff);
+      my $q = new Vector(0,1);
+      for my $i (@$k) {
+         my $next = $i*$q->[$q->dim-1] - $q->[$q->dim-2];
+         # print "next: ".$next."\n";
+         $q = $q | $next*ones_vector(1);
+      }
+      for(my $i=1; $i<=$a->dim; $i++){
+         $q->[$i] == 1 ? ($result++) : 0;
+      }
+      $this->VERSAL_COMPONENT->DIMENSION = $result;
+   }
+   
    rule VERSAL_COMPONENT.MILNOR_NI : DUAL_CONTINUED_FRACTION,\
          VERSAL_COMPONENT.CONTINUED_FRACTION {
       my $k = $this->VERSAL_COMPONENT->CONTINUED_FRACTION;
