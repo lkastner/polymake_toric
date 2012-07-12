@@ -20,6 +20,12 @@
 CREDIT gfan
 
 # path to gfan
+custom $gfan_tropicaltraverse;
+
+custom $gfan_tropicalstartingcone;
+
+custom $gfan_buchberger;
+
 custom $gfan_tropicalhypersurface;
 
 custom $gfan_tropicalbruteforce;
@@ -27,6 +33,9 @@ custom $gfan_tropicalbruteforce;
 custom $gfan_homogenize;
 
 CONFIGURE {
+    find_program($gfan_tropicaltraverse, "gfan_tropicaltraverse");
+    find_program($gfan_buchberger, "gfan_buchberger");
+    find_program($gfan_tropicalstartingcone, "gfan_tropicalstartingcone");
     find_program($gfan_tropicalhypersurface, "gfan_tropicalhypersurface");
     find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
     find_program($gfan_homogenize, "gfan_homogenize");
@@ -64,6 +73,45 @@ user_function gfan_tropicalhypersurface(Polynomial) {
    #print $gfan_out->SYMMETRY_GROUP,"\nGens:\n";
    #print $gfan_out->SYMMETRY_GROUP_GENERATORS,"\n\n";
    return new PolyhedralFan(INPUT_RAYS=>-$gfan_out->RAYS, INPUT_CONES=>$gfan_out->MAXIMAL_CONES, LINEALITY_SPACE=>$gfan_out->LINEALITY_SPACE);
+}
+
+# This program preprocesses the input for gfan and then reads in the gfan output.
+user_function gfan_tropicalgentleforce(Ideal) {
+   my ($I) = @_;
+   my $tempfile=new Tempfile;
+   #my $tempfile="test";
+
+   my $R = $I->RING;
+
+   # Writing data to file:
+   open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
+   print $input "Q[";
+   print $input join(",",$R->variables);
+   print $input "]{\n";
+   print $input join(",",@{$I->GENERATORS});
+   print $input "\n}";
+   print $tempfile;
+   close $input;
+   
+   # Accessing gfan:
+   # FIXME: Since we homogenize, we need to dehomogenize later!
+   print "Homogenizing\n";
+   system "$gfan_homogenize -H <$tempfile.in >$tempfile.homog";
+   print "Buchberger\n";
+   system "$gfan_buchberger <$tempfile.homog >$tempfile.gr";
+   print "Starting cone\n";
+   system "$gfan_tropicalstartingcone <$tempfile.gr >$tempfile.st";
+   print "Traversing\n";
+   system "$gfan_tropicaltraverse --xml <$tempfile.st >$tempfile.poly";
+
+   # print "Output written.\n";
+   my $gfan_out= User::load("$tempfile.poly");
+   my $n = $gfan_out->AMBIENT_DIM;
+   my $v = ones_vector($n);
+   my $inrays = new Matrix(map($_-$_->[$n-1]*$v,@{$gfan_out->RAYS}));
+   # This is attempting to fix the homogenization problem.
+   # However we do not consider the lineality space at all.
+   return check_fan(-$inrays->minor(All,~[$n-1]),$gfan_out->MAXIMAL_CONES);
 }
 
 # This program preprocesses the input for gfan and then reads in the gfan output.
