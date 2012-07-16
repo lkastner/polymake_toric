@@ -17,7 +17,6 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
-CREDIT gfan
 
 # path to gfan
 custom $gfan_tropicaltraverse;
@@ -40,6 +39,10 @@ CONFIGURE {
     find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
     find_program($gfan_homogenize, "gfan_homogenize");
 }
+
+CREDIT gfan
+
+
 
 # This program preprocesses the input for gfan and then reads in the gfan output.
 # It should be checked whether gfan_groebnerbla can really be left out.
