@@ -75,7 +75,11 @@ user_function gfan_tropicalhypersurface(Polynomial) {
    #print $gfan_out->type->full_name,"\nSymmetryGroup:\n";
    #print $gfan_out->SYMMETRY_GROUP,"\nGens:\n";
    #print $gfan_out->SYMMETRY_GROUP_GENERATORS,"\n\n";
-   return new PolyhedralFan(INPUT_RAYS=>-$gfan_out->RAYS, INPUT_CONES=>$gfan_out->MAXIMAL_CONES, LINEALITY_SPACE=>$gfan_out->LINEALITY_SPACE);
+   
+   # Maybe the fan needs to be inverted depending on different possibilities to choose signs:
+   #return new PolyhedralFan(INPUT_RAYS=>-$gfan_out->RAYS, INPUT_CONES=>$gfan_out->MAXIMAL_CONES, LINEALITY_SPACE=>$gfan_out->LINEALITY_SPACE);
+
+   return $gfan_out;
 }
 
 # This program preprocesses the input for gfan and then reads in the gfan output.
