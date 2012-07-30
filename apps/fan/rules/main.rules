@@ -110,6 +110,7 @@ user_function tropical_milnor(Polynomial){
    my $intersection = check_fan_objects(@nc);
    my $nr = new Matrix(map(primitive($_),@{$intersection->RAYS}));
    print "New rays:\n".$nr."\n";
+   my 
 }
 
 # Checking if two fans are the same
