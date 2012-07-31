@@ -108,9 +108,27 @@ user_function tropical_milnor(Polynomial){
    my $c = new Cone(INPUT_RAYS=>unit_matrix($f->AMBIENT_DIM));
    my @nc = map((intersection(new Cone(INPUT_RAYS=>$f->RAYS->minor($_,All)), $c)),@{$f->MAXIMAL_CONES});
    my $intersection = check_fan_objects(@nc);
-   my $nr = new Matrix(map(primitive($_),@{$intersection->RAYS}));
+   print "Simplicial: ".$intersection->SIMPLICIAL."\n";
+   my $nr = new Matrix<Integer>(map(primitive($_),@{$intersection->RAYS}));
    print "New rays:\n".$nr."\n";
-   my $counter = 0; 
+   print "Walking through cones\n";
+   my $counter = 0;
+   foreach my $C (@{$intersection->CONES}){
+      print $C,"\n";
+      foreach my $c (@$C){
+         print "small: ",$c->type->full_name," ",$c,"\n";
+         my $input = $nr->minor($c,All);
+         my $sign = (-1)^(rank($input));
+         my $s = dense((smith_normal_form($input))->[0]);
+         $s = new Matrix<Integer>($s);
+         my $n = $s->rows - 1;
+         $s = $s->minor(All, [0..$n]);
+         
+         print abs(det($s)),"\n";
+         $counter += $sign * abs(det($s));
+      }
+   }
+   print "Counter: ",$counter,"\n";
 }
 
 # Checking if two fans are the same
