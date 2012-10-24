@@ -357,6 +357,10 @@ object CyclicQuotient {
 ###
 ###################################################
 ###################################################
+
+# This is a workaround since we can't compute the versal components via
+# a rule. It will compute all versal components of a CQS and then assign them
+# in the appropriate property.
 user_function assign_versal_components(CyclicQuotient){
    my($cq) = @_;
    my $vc = $cq->VERSAL_COMPONENTS;
@@ -365,6 +369,7 @@ user_function assign_versal_components(CyclicQuotient){
    }
 }
 
+# Take powers of polynomials.
 user_function pow(Polynomial<Rational, Int>, Integer){
    my($p, $k) =  @_;
    my $i = 0;
@@ -375,6 +380,7 @@ user_function pow(Polynomial<Rational, Int>, Integer){
    return $result;
 }
 
+# Compute the alpha vector of a continued fraction as described in article by Christophersen.
 user_function christophersen_alpha(Vector<Integer>) {
    my($v) = @_;
    my @chain = @$v;
@@ -393,6 +399,7 @@ user_function christophersen_alpha(Vector<Integer>) {
    return new Vector(@result);
 }
 
+# Compute the continued fraction corresponding to a rational number.
 user_function rational2cf(Rational){
    my($check) = @_;
    my @result = ();
@@ -405,6 +412,7 @@ user_function rational2cf(Rational){
    return new Vector(@result);
 }
 
+# Compute the rational number corresponding to a continued fraction.
 user_function cf2rational(Vector<Integer>){
    my($v) = @_;
    my @chain = @$v;
@@ -451,6 +459,7 @@ user_function christophersen_phi2(Vector<Integer>){
    return $result;
 }
 
+# Returning all continued fractions of length r that yield 0.
 user_function r_zero_chains(Integer){ #FIXME: Why does it have to be Integers to work?
    my($r) = @_;
    if($r == 1){
@@ -492,4 +501,36 @@ user_function r_zero_chains(Integer){ #FIXME: Why does it have to be Integers to
       # print cf2rational($c);
    # }
    return @result;
+}
+
+# Method for twisting a toric ideal, i.e. insted of the variables of the ring
+# we use a different set of generators.
+sub twisted_toric_ideal{
+   my($r, $ti, @gens) = @_;
+   my $g = @gens;
+   if($g != $ti->rows) {die "Error: Wrong number of generators.";}
+   my @out = ();
+   for my $s (@$ti){
+      my $pos = new Polynomial($r);
+      my $neg = new Polynomial($r);
+      $pos+=1;
+      $neg+=1;
+      #print $s;
+      for(my $i =0; $i<$s->dim(); $i++){
+         # print $s->[$i]."\n";
+         
+         if($s->[$i]<0){
+            $neg *= pow(new Polynomial($gens[$i]),-$s->[$i]);
+            #for(my $j=0; $j<-$s->[$i]; $j++){ $neg *= $C4[$i];}
+         }
+         if($s->[$i]>0){
+            $pos *= pow(new Polynomial($gens[$i]),$s->[$i]);
+            #for(my $j=0; $j<$s->[$i]; $j++){ $pos *= $C4[$i];}
+         }
+      }
+      # print $pos-$neg."\n";
+      push @out, $pos-$neg;
+   }
+   new Ideal(GENERATORS=>new Array<Polynomial<> >(@out));
+
 }
