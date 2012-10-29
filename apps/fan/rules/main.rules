@@ -49,6 +49,10 @@ object Ideal {
 
    property TROPICAL_VARIETY : PolyhedralFan<Rational>;
 
+   rule TROPICAL_VARIETY : GENERATORS {
+      $this->TROPICAL_VARIETY = gfan_tropicalgentleforce(new Ideal(GENERATORS=>$this->GENERATORS));
+   }
+
 }
 
 
