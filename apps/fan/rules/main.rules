@@ -40,6 +40,21 @@ declare object ToricVariety : PolyhedralFan<Rational>;
 #######################################
 #######################################
 ###
+### Tropical variety of ideal
+###
+#######################################
+#######################################
+
+object Ideal {
+
+   property TROPICAL_VARIETY : PolyhedralFan<Rational>;
+
+}
+
+
+#######################################
+#######################################
+###
 ### Subvariety in Toric Variety
 ###
 #######################################
