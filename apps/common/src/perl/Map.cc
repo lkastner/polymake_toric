@@ -63,5 +63,6 @@ namespace polymake { namespace common {
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Integer >, Polynomial< Rational, int > > >, perl::Canned< const Vector< Integer > >);
    OperatorInstance4perl(Binary_brk, perl::Canned< const Map< Vector< Integer >, Vector< Integer > > >, perl::Canned< const pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void> >);
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Integer, Monomial< Rational, int > > >, perl::Canned< const Integer >);
+   FunctionInstance4perl(new, Map< Set< int >, Vector< Rational > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

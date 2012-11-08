@@ -35,7 +35,7 @@ object ToricVariety {
      rule DIVISOR.PRINCIPAL : RAYS, DIVISOR.COEFFICIENTS {
 		my $c = $this->DIVISOR->COEFFICIENTS;
 		my $eq = -$c | $this->RAYS;
-		my $bla = new Polytope<Rational>(EQUATIONS => $eq);
+		my $bla = new Polytope<Rational>(INEQUALITIES=>(unit_vector<Rational>($eq->cols,0)),EQUATIONS => $eq);
 		$bla->VERTICES;
 		my $sol = grep($_->[0]==1, @{$bla->LATTICE_POINTS});
 		$this->DIVISOR->PRINCIPAL=($sol > 0);
@@ -56,7 +56,7 @@ object ToricVariety {
 		my $a = $this->DIVISOR->COEFFICIENTS;
 		foreach my $s (@$maxcones){
 			my $eq = $a->slice($s) | $rays->minor($s,All);
-			my $bla = new Polytope<Rational>(EQUATIONS => $eq);
+			my $bla = new Polytope<Rational>(INEQUALITIES=>(unit_vector<Rational>($eq->cols,0)),EQUATIONS => $eq);
 			$bla->VERTICES;
 			if ($bla->N_LATTICE_POINTS == 0){
 				$this->DIVISOR->CARTIER = 0;
