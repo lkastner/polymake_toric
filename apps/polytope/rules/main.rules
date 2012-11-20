@@ -23,12 +23,15 @@ INCLUDE
 
 object Polytope<Rational> {
 
+   # A Minkowski summand of the polytope having the same normal fan, but being a hopefully
+   # small lattice polytope.
 	property NICE_MINKOWSKI_SUMMAND : Polytope;
 
+   # The cone of unbounded directions.
 	property TAILCONE : Polytope;
 
-	rule NICE_MINKOWSKI_SUMMAND : MINKOWSKI_SUMMAND_CONE, GRAPH {
-		my $minkp = new Matrix<Rational>($this->MINKOWSKI_SUMMAND_CONE->EQUATIONS);
+	rule NICE_MINKOWSKI_SUMMAND : MINKOWSKI_CONE, GRAPH {
+		my $minkp = new Matrix<Rational>($this->MINKOWSKI_CONE->EQUATIONS);
 		my $eqs = new Matrix<Rational>($this->GRAPH->EDGE_DIRECTIONS);
 		my $count = 0;
 		my @factors = ();
@@ -68,7 +71,7 @@ object Polytope<Rational> {
 			$q->[$i] *= $f;
 			$i++;
 		}
-		$this->NICE_MINKOWSKI_SUMMAND = $this->MINKOWSKI_SUMMAND_POINT($q);
+		$this->NICE_MINKOWSKI_SUMMAND = $this->MINKOWSKI_CONE_POINT($q);
 	
 	}
 

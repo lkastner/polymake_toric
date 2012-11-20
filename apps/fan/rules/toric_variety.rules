@@ -58,6 +58,9 @@ object ToricVariety {
 	  $this->PROJECTIVE = polytopal($this);
 	}
 
+
+   # This rule is based on Shephard's criterion which can be found in
+   # Ewald: Combinatorial Convexity and Algebraic Geometry, p 160.
    rule PROJECTIVE, GENERATING_POLYTOPE : MAXIMAL_CONES, RAYS {
       my $t = time();
       my $rays = new Matrix<Rational>($this->RAYS);

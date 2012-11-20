@@ -508,7 +508,7 @@ user_function r_zero_chains(Integer){ #FIXME: Why does it have to be Integers to
 sub twisted_toric_ideal{
    my($r, $ti, @gens) = @_;
    my $g = @gens;
-   if($g != $ti->rows) {die "Error: Wrong number of generators.";}
+   if($g != $ti->cols) {die "Error: Wrong number of generators.";}
    my @out = ();
    for my $s (@$ti){
       my $pos = new Polynomial($r);
