@@ -1,0 +1,40 @@
+# This file is for testing different ideas on how to compute Milnor numbers.
+
+user_function tropical_milnor(Polynomial){
+   my($f) = @_;
+   
+   my $p = newton($f);
+   $p = minkowski_sum($p,new Polytope(POINTS=>unit_matrix($p->AMBIENT_DIM+1)));
+   
+   my $trop = normal_fan($p);
+
+   foreach my $c (@{$trop->CONES->[0]}){
+      print $c."\n";
+   #   @neigh = grep(
+   }
+
+}
+
+user_function kouchnirenko_milnor(Polynomial){
+   my ($f) = @_;
+   my $p = newton($f);
+   my $vert = $p->VERTICES;
+   my $result = 0;
+   foreach my $face (@{$p->HASSE_DIAGRAM->FACES}){
+      print $face,"\n";
+      my $f_vert = $vert->minor($face, All);
+      my $contained = True;
+      my $i = 0;
+      for($i = 1; $i<$f_vert->cols; $i++){
+         print minimum($f_vert->col($i))==0;
+         $contained = $contained && (minimum($f_vert->col($i)) == 0);
+      }
+      print "Contained?:",$contained,"\n";
+      if($contained) {
+         my $fp = new Polytope(POINTS=>$f_vert);
+         ($fp->DIM%2 == 0) ? ($result += $fp->LATTICE_VOLUME) : ($result -= $fp->LATTICE_VOLUME);
+         print $fp->LATTICE_VOLUME," ",$result,"\n";
+      }
+   }
+   return $result;
+}
