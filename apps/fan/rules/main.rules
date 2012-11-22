@@ -45,7 +45,7 @@ declare object ToricVariety : PolyhedralFan<Rational>;
 #######################################
 #######################################
 
-object Ideal {
+object ideal::Ideal {
 
    property TROPICAL_VARIETY : PolyhedralFan<Rational>;
 
@@ -80,6 +80,7 @@ INCLUDE
    cyclic_quotient.rules
    deformations.rules
    cq_deformations.rules
+   milnor.rules
 
 user_function add_ray(PolyhedralFan, Vector){
 	my($fan, $ray) = @_;
@@ -95,7 +96,8 @@ user_function add_ray(PolyhedralFan, Vector){
 }
 
 
-# Checking if a fan is complete by checking if every facet appears with an even factor.
+# Checking if a fan is complete by checking if every facet appears twice.
+# By facet we really mean the subcones of the cones and not the vector.
 user_function is_complete(PolyhedralFan<Rational>){
 	my $f = shift;
 	if ( $f->AMBIENT_DIM != $f->DIM ) { return 0; }
@@ -118,36 +120,6 @@ user_function is_complete(PolyhedralFan<Rational>){
 		$check or last;
 	}
 	return $check;
-}
-
-user_function tropical_milnor(Polynomial){
-   my($p) = @_;
-   my $f = gfan_tropicalhypersurface($p);
-   print "Rays:\n".$f->RAYS;
-   my $c = new Cone(INPUT_RAYS=>unit_matrix($f->AMBIENT_DIM));
-   my @nc = map((intersection(new Cone(INPUT_RAYS=>$f->RAYS->minor($_,All)), $c)),@{$f->MAXIMAL_CONES});
-   my $intersection = check_fan_objects(@nc);
-   print "Simplicial: ".$intersection->SIMPLICIAL."\n";
-   my $nr = new Matrix<Integer>(map(primitive($_),@{$intersection->RAYS}));
-   print "New rays:\n".$nr."\n";
-   print "Walking through cones\n";
-   my $counter = 0;
-   foreach my $C (@{$intersection->CONES}){
-      print $C,"\n";
-      foreach my $c (@$C){
-         print "small: ",$c->type->full_name," ",$c,"\n";
-         my $input = $nr->minor($c,All);
-         my $sign = (-1)^(rank($input));
-         my $s = dense((smith_normal_form($input))->[0]);
-         $s = new Matrix<Integer>($s);
-         my $n = $s->rows - 1;
-         $s = $s->minor(All, [0..$n]);
-         
-         print abs(det($s)),"\n";
-         $counter += $sign * abs(det($s));
-      }
-   }
-   print "Counter: ",$counter,"\n";
 }
 
 # Checking if two fans are the same

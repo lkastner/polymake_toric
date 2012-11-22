@@ -181,27 +181,3 @@ user_function move_inside(Polytope<Rational>, Polytope<Rational>){
    }
    return False;
 }
-
-user_function milnor(Polynomial){
-   my ($f) = @_;
-   my $p = newton($f);
-   my $vert = $p->VERTICES;
-   my $result = 0;
-   foreach my $face (@{$p->HASSE_DIAGRAM->FACES}){
-      print $face,"\n";
-      my $f_vert = $vert->minor($face, All);
-      my $contained = True;
-      my $i = 0;
-      for($i = 1; $i<$f_vert->cols; $i++){
-         print minimum($f_vert->col($i))==0;
-         $contained = $contained && (minimum($f_vert->col($i)) == 0);
-      }
-      print "Contained?:",$contained,"\n";
-      if($contained) {
-         my $fp = new Polytope(POINTS=>$f_vert);
-         ($fp->DIM%2 == 0) ? ($result += $fp->LATTICE_VOLUME) : ($result -= $fp->LATTICE_VOLUME);
-         print $fp->LATTICE_VOLUME," ",$result,"\n";
-      }
-   }
-   return $result;
-}
