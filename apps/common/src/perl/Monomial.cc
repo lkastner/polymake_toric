@@ -22,6 +22,5 @@ namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    OperatorInstance4perl(Binary_add, int, perl::Canned< const Monomial< Rational, int > >);
    OperatorInstance4perl(Binary_mul, int, perl::Canned< const Monomial< Rational, int > >);
-   OperatorInstance4perl(Binary_sub, perl::Canned< const Monomial< Rational, int > >, perl::Canned< const Monomial< Rational, int > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

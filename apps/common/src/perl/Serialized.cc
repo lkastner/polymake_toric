@@ -22,7 +22,6 @@ namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    Class4perl("Polymake::common::Serialized__Monomial_A_Rational_I_Int_Z", pm::Serialized< Monomial< Rational, int > >);
    OperatorInstance4perl(assign, pm::Serialized< Monomial< Rational, int > >, perl::Canned< const Monomial< Rational, int > >);
-   Class4perl("Polymake::common::Serialized__Polynomial_A_Rational_I_Int_Z", pm::Serialized< Polynomial< Rational, int > >);
    OperatorInstance4perl(assign, pm::Serialized< Polynomial< Rational, int > >, perl::Canned< const Polynomial< Rational, int > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

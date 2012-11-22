@@ -33,6 +33,5 @@ namespace polymake { namespace common {
    FunctionInstance4perl(inv_X, perl::Canned< const Wary< pm::Transposed<pm::Matrix<pm::Rational> > > >);
    FunctionInstance4perl(inv_X, perl::Canned< const Wary< pm::Transposed<pm::Matrix<pm::Integer> > > >);
    FunctionInstance4perl(inv_X, perl::Canned< const Wary< pm::MatrixMinor<pm::Matrix<pm::Rational>&, pm::Array<int, void> const&, pm::all_selector const&> > >);
-   FunctionInstance4perl(inv_X, perl::Canned< const Wary< Matrix< Integer > > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

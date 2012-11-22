@@ -10,7 +10,11 @@ user_function tropical_milnor(Polynomial){
 
    foreach my $c (@{$trop->CONES->[0]}){
       print $c."\n";
-   #   @neigh = grep(
+      my @neigh = grep(($c*$_)->size == 1,@{$trop->CONES->[1]});
+      print @neigh, "\n";
+      @neigh = map($_-$c,@neigh);
+      print @neigh, "\n";
+      
    }
 
 }
