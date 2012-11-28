@@ -19,6 +19,11 @@
 
 object ToricVariety {
 
+   method construct(Cone<Rational>) {
+      my $cone = $_[1];
+      return new ToricVariety(check_fan_objects($cone));
+   }
+   
    method construct(PolyhedralFan<Rational>) {
       my $fan = $_[1];
       my $result = new ToricVariety();
