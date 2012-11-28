@@ -20,17 +20,49 @@
 object ToricVariety {
 
    user_method ext(TDivisor, TDivisor){
-      my $tv = @_[0];
-      my $D1 = @_[1];
-      my $D2 = @_[2];
+      my $tv = $_[0];
+      my $D1 = $_[1];
+      my $D2 = $_[2];
       print $D1->COEFFICIENTS," - ",$D2->COEFFICIENTS,"\n";
-      my $tvc = new Polytope(POINTS=>unit_vector($tv->AMBIENT_DIM+1,0)/(zero_vector($tv->RAYS->rows)|$tv->RAYS));
+      my $c = new Cone(INPUT_RAYS=>$tv->RAYS);
+      my $tvc = new Polytope(POINTS=>unit_vector($tv->AMBIENT_DIM+1,0)/(zero_vector($c->FACETS->rows)|$c->FACETS));
       print $tvc->VERTICES;
-
+      my $D1gs = $D1->SECTION_POLYTOPE;
+      my $D2gs = $D2->SECTION_POLYTOPE;
+      print "Vertices:\n", $D1gs->VERTICES;
+      print "Inequalities:\n",$D1gs->INEQUALITIES;
+      print "Product:\n",$D1gs->INEQUALITIES * transpose($D1gs->VERTICES);
+      my $v1 = move_inside($tvc,$D1gs);
+      my $v2 = move_inside($tvc,$D2gs);
    }
 
 
 }
 
-
+# Return a vector that moves q into p.
+# Note that we assume equality of the tail cones but do not check it.
+sub move_inside{
+   my ($p, $q) = @_;
+   my $result = new Vector(zero_vector($q->AMBIENT_DIM+1));
+   my $tail = $p->TAILCONE;
+   my $qvert = $q->VERTICES;
+   foreach my $facet (@{$p->FACETS}){
+      my $val = 0;
+      foreach my $q (@{$qvert}){
+         my $test = $facet*$q;
+         $val = $test<$val ? $test : $val;
+      }
+      if($val<0){
+         foreach my $ray (@{$tail->RAYS}){
+            if($facet*$ray>0){
+               my $mult = ceil(-$val/($facet*$ray));
+               $result += $mult*$ray;
+               $qvert = new Matrix(map($_+$mult*$ray,@$qvert));
+               last;
+            }
+         }
+      }
+   }
+   return $result;
+}
 	
