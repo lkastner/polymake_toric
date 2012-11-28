@@ -18,31 +18,73 @@
 #  GNU General Public License for more details.
 
 
+REQUIRE gfan.rules
+
+
+# object SymmetricFan {
+# 
+#    # @category Symmetric fans
+#    # The multiplicities of the [[MAXIMAL_CONES]].
+#    property MULTIPLICITIES : Matrix;
+# 
+# }
+
+
 # path to gfan
-custom $gfan_tropicaltraverse;
-
-custom $gfan_tropicalstartingcone;
-
 custom $gfan_buchberger;
-
-custom $gfan_tropicalhypersurface;
-
-custom $gfan_tropicalbruteforce;
 
 custom $gfan_homogenize;
 
+custom $gfan_tropicalbruteforce;
+
+custom $gfan_tropicalhypersurface;
+
+custom $gfan_tropicalintersection;
+
+custom $gfan_tropicalstartingcone;
+
+custom $gfan_tropicaltraverse;
+
+
 CONFIGURE {
-    find_program($gfan_tropicaltraverse, "gfan_tropicaltraverse");
     find_program($gfan_buchberger, "gfan_buchberger");
-    find_program($gfan_tropicalstartingcone, "gfan_tropicalstartingcone");
-    find_program($gfan_tropicalhypersurface, "gfan_tropicalhypersurface");
-    find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
     find_program($gfan_homogenize, "gfan_homogenize");
+    find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
+    find_program($gfan_tropicalhypersurface, "gfan_tropicalhypersurface");
+    find_program($gfan_tropicalintersection, "gfan_tropicalintersection");
+    find_program($gfan_tropicalstartingcone, "gfan_tropicalstartingcone");
+    find_program($gfan_tropicaltraverse, "gfan_tropicaltraverse");
 }
 
 CREDIT gfan
 
 
+# This program preprocesses the input for gfan and then reads in the gfan output.
+user_function gfan_tropicalintersection(Ideal) {
+   my ($I) = @_;
+   my $tempfile=new Tempfile;
+   #my $tempfile="test";
+
+   my $R = $I->RING;
+
+   # Writing data to file:
+   open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
+   print $input "Q[";
+   print $input join(",",$R->variables);
+   print $input "]{\n";
+   print $input join(",",@{$I->GENERATORS});
+   print $input "\n}";
+   print $tempfile;
+   close $input;
+   
+   # Accessing gfan:
+   # FIXME: Since we homogenize, we need to dehomogenize later!
+   print "Computing tropical intersecton\n";
+   system "$gfan_tropicalintersection --xml -t <$tempfile.in >$tempfile.poly";
+
+   # print "Output written.\n";
+   return User::load("$tempfile.poly");
+}
 
 # This program preprocesses the input for gfan and then reads in the gfan output.
 # It should be checked whether gfan_groebnerbla can really be left out.
@@ -67,6 +109,9 @@ user_function gfan_tropicalhypersurface(Polynomial) {
    # print "$gfan_tropicalhypersurface\nlala\n$gfan_tropicalbruteforce\nlala\n";
    # Accessing gfan:
    system "$gfan_tropicalhypersurface --xml <$tempfile.in >$tempfile.poly 2>/dev/null";
+   
+   # Fixing gfan output:
+   system "sed -i s/SymmetricFan/TropicalVariety/ $tempfile.poly";
 
    my $gfan_out= User::load("$tempfile.poly");
    # FIXME: This should be a symmetric fan, but Polymake
@@ -80,6 +125,20 @@ user_function gfan_tropicalhypersurface(Polynomial) {
    #return new PolyhedralFan(INPUT_RAYS=>-$gfan_out->RAYS, INPUT_CONES=>$gfan_out->MAXIMAL_CONES, LINEALITY_SPACE=>$gfan_out->LINEALITY_SPACE);
 
    return $gfan_out;
+}
+
+sub tropical_xml_update{
+   my ($f) = @_;
+   User::load("$f");
+   # Fixing gfan output:
+   system "sed -i s/SymmetricFan/TropicalVariety/ $f.bak";
+   # print $Core::Extension::by_URI->{"https://github.com/lkastner/polymake_toric"}, "\n";
+   print $Core::Extension::by_URI, "\n";
+   die;
+   #system "sed -i s/\\\"DIM\\\"/\\\"FAN_DIM\\\"/ $f";
+   #system "sed -i s/\\\"AMBIENT_DIM\\\"/\\\"FAN_AMBIENT_DIM\\\"/ $f";
+     
+   return User::load("$f.bak");
 }
 
 # This program preprocesses the input for gfan and then reads in the gfan output.
@@ -112,13 +171,14 @@ user_function gfan_tropicalgentleforce(Ideal) {
    system "$gfan_tropicaltraverse --xml <$tempfile.st >$tempfile.poly";
 
    # print "Output written.\n";
-   my $gfan_out= User::load("$tempfile.poly");
-   my $n = $gfan_out->AMBIENT_DIM;
-   my $v = ones_vector($n);
-   my $inrays = new Matrix(map($_-$_->[$n-1]*$v,@{$gfan_out->RAYS}));
-   # This is attempting to fix the homogenization problem.
-   # However we do not consider the lineality space at all.
-   return check_fan(-$inrays->minor(All,~[$n-1]),$gfan_out->MAXIMAL_CONES);
+   return tropical_xml_update("$tempfile.poly");
+   # my $gfan_out= User::load("$tempfile.poly");
+   # my $n = $gfan_out->AMBIENT_DIM;
+   # my $v = ones_vector($n);
+   # my $inrays = new Matrix(map($_-$_->[$n-1]*$v,@{$gfan_out->RAYS}));
+   # # This is attempting to fix the homogenization problem.
+   # # However we do not consider the lineality space at all.
+   # return check_fan(-$inrays->minor(All,~[$n-1]),$gfan_out->MAXIMAL_CONES);
 }
 
 # This program preprocesses the input for gfan and then reads in the gfan output.

@@ -27,5 +27,7 @@ namespace polymake { namespace common {
    OperatorInstance4perl(Binary__ge, perl::Canned< const Rational >, int);
    OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const pm::ContainerUnion<pm::cons<pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void>, pm::Vector<pm::Rational> const&>, void> >);
    OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const Vector< Integer > >);
+   OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const pm::SameElementVector<pm::Rational const&> >);
+   OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

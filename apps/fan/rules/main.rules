@@ -69,7 +69,7 @@ declare object SubvarietyInTV;
 INCLUDE
    toric_divisor_properties.rules
    toric_variety_properties.rules
-	gfan_hyp_brut.rules
+	gfan.rules
 	cocoref_topcom.rules
    subvarietyInTV_properties.rules
 	toric_variety.rules
@@ -81,6 +81,7 @@ INCLUDE
    deformations.rules
    cq_deformations.rules
    milnor.rules
+   ext.rules
 
 user_function add_ray(PolyhedralFan, Vector){
 	my($fan, $ray) = @_;

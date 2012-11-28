@@ -21,6 +21,8 @@
 #include "polymake/IncidenceMatrix.h"
 #include "polymake/Vector.h"
 #include "polymake/linalg.h"
+#include "polymake/Matrix.h"
+#include "polymake/Set.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0, typename T1>
@@ -37,5 +39,7 @@ namespace polymake { namespace common {
    FunctionInstance4perl(new_X, SparseMatrix< Rational, NonSymmetric >, perl::Canned< const pm::RowChain<pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::SparseMatrix<pm::Rational, pm::Symmetric> const&> const&, pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> const&> const&> >);
    OperatorInstance4perl(Binary_div, perl::Canned< const Wary< pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::SparseMatrix<pm::Rational, pm::Symmetric> const&> > >, perl::Canned< const pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> const&> >);
    FunctionInstance4perl(new_X, SparseMatrix< Rational, NonSymmetric >, perl::Canned< const pm::RowChain<pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::SparseMatrix<pm::Rational, pm::Symmetric> const&> const&, pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> const&> const&> >);
+   FunctionInstance4perl(new_X, SparseMatrix< Rational, NonSymmetric >, perl::Canned< const pm::RowChain<pm::SingleRow<pm::SameElementSparseVector<pm::SingleElementSet<int>, pm::Rational> const&>, pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::Matrix<pm::Rational> const&> const&> >);
+   FunctionInstance4perl(new_X, SparseMatrix< Rational, NonSymmetric >, perl::Canned< const pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::MatrixMinor<pm::SparseMatrix<pm::Rational, pm::NonSymmetric> const&, pm::all_selector const&, pm::Complement<pm::SingleElementSet<int const&>, int, pm::operations::cmp> const&> const&> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

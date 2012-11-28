@@ -1,5 +1,16 @@
 # This file is for testing different ideas on how to compute Milnor numbers.
 
+user_function examine(PolyhedralFan){
+   my ($f) = @_;
+   print "Dimension: ", $f->DIM, "\n";
+   print "Simplicial: ", $f->SIMPLICIAL, "\n";
+   print "Regular: ", $f->REGULAR, "\n";
+   print "Number of rays: ", $f->N_RAYS,"\n";
+   print "Number of maximal cones: ", $f->N_MAXIMAL_CONES,"\n";
+   print "Homology: ", $f->HOMOLOGY, "\n";
+   print "Number of cones: ", join(" ",map($_->rows,@{$f->CONES})), "\n";
+}
+
 user_function tropical_milnor(Polynomial){
    my($f) = @_;
    
