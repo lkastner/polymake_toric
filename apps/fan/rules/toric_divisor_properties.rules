@@ -43,7 +43,7 @@ object ToricVariety {
 
       # @category Toric Divisors
     	# The divisor on a toric variety, 
-    	# given as a lst of coefficients for the torus invariant divisors corresponding to the [[RAYS]] of the fan.
+    	# given as a list of coefficients for the torus invariant divisors corresponding to the [[RAYS]] of the fan.
     	# Take care of labeling of the Rays.
       property COEFFICIENTS : Vector<Rational>;
       
