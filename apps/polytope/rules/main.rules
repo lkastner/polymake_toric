@@ -78,7 +78,7 @@ object Polytope<Rational> {
 	rule TAILCONE : FACETS, AFFINE_HULL {
 		my $ineq = $this->FACETS;
 		my $eq = $this->AFFINE_HULL;
-		print $ineq;
+		# print $ineq;
 		my $newineq = (new Vector<Rational>($ineq->rows)) | $ineq->minor(All,~[0]);
 		$this->TAILCONE = new Polytope<Rational>(INEQUALITIES=>$newineq);	
 	}
