@@ -34,17 +34,97 @@ object ToricVariety {
       print "Product:\n",$D1gs->INEQUALITIES * transpose($D1gs->VERTICES);
       my $v1 = move_inside($tvc,$D1gs);
       my $v2 = move_inside($tvc,$D2gs);
+
+      my $D1p = lower_lattice_points($D1gs);
+      $D1p = new Matrix(map($_+$v1,@$D1p));
+      $D1p = $D1p->minor(All,~[0]);
+      print "New vertices:\n",$D1p,"\n";
+      my $D2p = lower_lattice_points($D2gs);
+      $D2p = new Matrix(map($_+$v2,@$D2p));
+      $D2p = $D2p->minor(All,~[0]);
+      print "New vertices:\n",$D2p,"\n";
+
+      my $dual_cone = new Cone(INPUT_RAYS=>$c->FACETS);
+      my $H = $dual_cone->HILBERT_BASIS;
+
+      my $D1gen = new Matrix(map(find_positive_combination($_,$H,$c->RAYS),@$D1p));
+      my $D2gen = new Matrix(map(find_positive_combination($_,$H,$c->RAYS),@$D2p));
+      print "Check1:\n",transpose($H)*transpose($D1gen);
+      print "Check2:\n",transpose($H)*transpose($D2gen);
+
+      my $toric = $dual_cone->TORIC_IDEAL;
+      
+      # Now all combinatorial information has been collected.
+      # Generating input for Singular:
+      print "LIB \"homolog.lib\";\n";
+      print "ring R = 0,(x(0..",$H->rows-1,")),dp;\n";
+      print "ideal toric = ";
+      if($toric->rows == 0){
+         print "0;\n";
+      } else {
+         foreach my $binomial (@$toric){
+            print "1";
+            for(my $i=0; $i<$binomial->size;$i++){
+               if($binomial->[$i]>0){
+                  print "*x(",$i,"^",$binomial->[$i];
+               }
+               print "-1";
+               if($binomial->[$i]<0){
+                  print "*x(",$i,"^",$binomial->[$i];
+               }
+            }
+            print ",";
+         }
+         print "0;\n";
+      }
+      print "qring q = std(toric);\n";
+      print "ideal i = ";
+      if($D1gen->rows == 1){
+         print "1;\n";
+      } else {
+         foreach my $g (@$D1gen){
+            print "1";
+            for(my $i=0; $i<$g->size;$i++){
+               if($g->[$i]>0){
+                  print "*x(",$i,"^",$g->[$i];
+               }
+            }
+            print ",";
+         }
+         print "0;\n";
+      }
+      print "ideal j = ";
+      if($D2gen->rows == 1){
+         print "1;\n";
+      } else {
+         foreach my $g (@$D2gen){
+            print "1";
+            for(my $i=0; $i<$g->size;$i++){
+               if($g->[$i]>0){
+                  print "*x(",$i,"^",$g->[$i];
+               }
+            }
+            print ",";
+         }
+         print "0;\n";
+      }
    }
 
 
 }
 
+# Find all lattice points of a polytope P that are not reachable
+# from some other lattice point via the tail cone.
 user_function lower_lattice_points(Polytope){
    my ($P) = @_;
-   my $tail = $P->TAIL_CONE;
-   my $vert = grep($_->[0]==1,@{$P->VERTICES});
+   my $tail = $P->TAILCONE;
+   my $vert = new Matrix(grep($_->[0]==1,@{$P->VERTICES}));
    my $Q = new Polytope(POINTS=>$vert);
    my $candidates = $Q->LATTICE_POINTS;
+   my $facets = $P->FACETS;
+   my @result = grep(minimum($facets*$_)==0,@$candidates);
+   print "Computing lp succesful.\n",@result;
+   return new Matrix(@result);
 }
 
 # Return a combination of the Hilbert basis elements H that yield
