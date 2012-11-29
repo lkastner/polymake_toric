@@ -108,6 +108,7 @@ object ToricVariety {
          }
          print "0;\n";
       }
+      print "I=std(I);\nJ=std(J);\n";
       print "module M = syz(I);\nmodule N = syz(J);\n";
       for(my $i=0; $i<=10;$i++){
          print "Ext($i,M,N);\n";
