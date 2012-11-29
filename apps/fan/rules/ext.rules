@@ -64,13 +64,13 @@ object ToricVariety {
       } else {
          foreach my $binomial (@$toric){
             print "1";
-            for(my $i=0; $i<$binomial->size;$i++){
+            for(my $i=0; $i<$binomial->dim;$i++){
                if($binomial->[$i]>0){
-                  print "*x(",$i,"^",$binomial->[$i];
+                  print "*x(",$i,")^",$binomial->[$i];
                }
                print "-1";
                if($binomial->[$i]<0){
-                  print "*x(",$i,"^",$binomial->[$i];
+                  print "*x(",$i,")^",$binomial->[$i];
                }
             }
             print ",";
@@ -78,35 +78,39 @@ object ToricVariety {
          print "0;\n";
       }
       print "qring q = std(toric);\n";
-      print "ideal i = ";
+      print "ideal I = ";
       if($D1gen->rows == 1){
          print "1;\n";
       } else {
          foreach my $g (@$D1gen){
             print "1";
-            for(my $i=0; $i<$g->size;$i++){
+            for(my $i=0; $i<$g->dim;$i++){
                if($g->[$i]>0){
-                  print "*x(",$i,"^",$g->[$i];
+                  print "*x(",$i,")^",$g->[$i];
                }
             }
             print ",";
          }
          print "0;\n";
       }
-      print "ideal j = ";
+      print "ideal J = ";
       if($D2gen->rows == 1){
          print "1;\n";
       } else {
          foreach my $g (@$D2gen){
             print "1";
-            for(my $i=0; $i<$g->size;$i++){
+            for(my $i=0; $i<$g->dim;$i++){
                if($g->[$i]>0){
-                  print "*x(",$i,"^",$g->[$i];
+                  print "*x(",$i,")^",$g->[$i];
                }
             }
             print ",";
          }
          print "0;\n";
+      }
+      print "module M = syz(I);\nmodule N = syz(J);\n";
+      for(my $i=0; $i<=10;$i++){
+         print "Ext($i,M,N);\n";
       }
    }
 
