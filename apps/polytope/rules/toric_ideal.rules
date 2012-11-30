@@ -70,7 +70,7 @@ object Cone<Rational>{
       @ti = @ti[1..($size-1)];
 
       close $output;
-      $this->TORIC_IDEAL = new Matrix<Integer>(@ti);
+      $this->TORIC_IDEAL = new Matrix<Integer>(\@ti);
    }
 
 }
