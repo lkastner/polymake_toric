@@ -19,6 +19,78 @@
 
 object ToricVariety {
 
+   user_method res(TDivisor){
+      my $tv = $_[0];
+      my $D = $_[1];
+      print $D->COEFFICIENTS;
+      my $c = new Cone(INPUT_RAYS=>$tv->RAYS);
+      my $tvc = new Polytope(POINTS=>unit_vector($tv->AMBIENT_DIM+1,0)/(zero_vector($c->FACETS->rows)|$c->FACETS));
+      print $tvc->VERTICES;
+      my $Dgs = $D->SECTION_POLYTOPE;
+      print "Vertices:\n", $Dgs->VERTICES;
+      print "Inequalities:\n",$Dgs->INEQUALITIES;
+      print "Product:\n",$Dgs->INEQUALITIES * transpose($Dgs->VERTICES);
+      my $v = move_inside($tvc,$Dgs);
+      my $Dp = lower_lattice_points($Dgs);
+      $Dp = new Matrix(map($_+$v,@$Dp));
+      $Dp = $Dp->minor(All,~[0]);
+      print "New vertices:\n",$Dp,"\n";
+
+      my $dual_cone = new Cone(INPUT_RAYS=>$c->FACETS);
+      my $H = $dual_cone->HILBERT_BASIS;
+
+      my $Dgen = new Matrix(map(find_positive_combination($_,$H,$c->RAYS),@$Dp));
+      print "Check:\n",transpose($H)*transpose($Dgen);
+
+
+      my $toric = $dual_cone->TORIC_IDEAL;
+      # print "Toric ideal:\n",$toric;
+
+      # Now all combinatorial information has been collected.
+      # Generating input for Singular:
+      print "LIB \"homolog.lib\";\n";
+      print "ring R = 0,(x(0..",$H->rows-1,")),dp;\n";
+      print "ideal toric = ";
+      if($toric->rows == 0){
+         print "0;\n";
+      } else {
+         foreach my $binomial (@$toric){
+            print "1";
+            for(my $i=0; $i<$binomial->dim;$i++){
+               if($binomial->[$i]>0){
+                  print "*x(",$i,")^",$binomial->[$i];
+               }
+            }
+            print "-1";
+            for(my $i=0; $i<$binomial->dim;$i++){
+               if($binomial->[$i]<0){
+                  print "*x(",$i,")^",-$binomial->[$i];
+               }
+            }
+            print ",";
+         }
+         print "0;\n";
+      }
+      print "qring q = std(toric);\n";
+      print "ideal I = ";
+      if($Dgen->rows == 1){
+         print "1;\n";
+      } else {
+         foreach my $g (@$Dgen){
+            print "1";
+            for(my $i=0; $i<$g->dim;$i++){
+               if($g->[$i]>0){
+                  print "*x(",$i,")^",$g->[$i];
+               }
+            }
+            print ",";
+         }
+         print "0;\n";
+      }
+      print "I=std(I);\nI;\n";
+      print "def L = minres(res(I,6));\n";
+   }
+   
    user_method ext(TDivisor, TDivisor){
       my $tv = $_[0];
       my $D1 = $_[1];
@@ -52,8 +124,10 @@ object ToricVariety {
       print "Check1:\n",transpose($H)*transpose($D1gen);
       print "Check2:\n",transpose($H)*transpose($D2gen);
 
+
       my $toric = $dual_cone->TORIC_IDEAL;
-      
+      # print "Toric ideal:\n",$toric;
+
       # Now all combinatorial information has been collected.
       # Generating input for Singular:
       print "LIB \"homolog.lib\";\n";
@@ -68,9 +142,11 @@ object ToricVariety {
                if($binomial->[$i]>0){
                   print "*x(",$i,")^",$binomial->[$i];
                }
-               print "-1";
+            }
+            print "-1";
+            for(my $i=0; $i<$binomial->dim;$i++){
                if($binomial->[$i]<0){
-                  print "*x(",$i,")^",$binomial->[$i];
+                  print "*x(",$i,")^",-$binomial->[$i];
                }
             }
             print ",";
@@ -124,12 +200,23 @@ user_function lower_lattice_points(Polytope){
    my ($P) = @_;
    my $tail = $P->TAILCONE;
    my $vert = new Matrix(grep($_->[0]==1,@{$P->VERTICES}));
-   my $Q = new Polytope(POINTS=>$vert);
+   my $rays = new Matrix(grep($_->[0]==0,@{$P->VERTICES}));
+   print "Vertices:\n",$vert,"\n";
+   print "Rays:\n",$rays,"\n";
+   my @additional_vert = ();
+   foreach my $v (@$vert){
+      @additional_vert = ((map($_+$v,@$rays)),@additional_vert);
+      print @additional_vert,"\n\n";
+   }
+   my $s = @additional_vert;
+   print $s,"new Vertices.\n";
+   my $Q = new Polytope(POINTS=>$vert/(new Matrix(@additional_vert)));
    my $candidates = $Q->LATTICE_POINTS;
-   my $facets = $P->FACETS;
-   my @result = grep(minimum($facets*$_)==0,@$candidates);
-   print "Computing lp succesful.\n",@result;
-   return new Matrix(@result);
+   return $candidates;
+   # my $facets = $P->FACETS;
+   # my @result = grep(minimum($facets*$_)==0,@$candidates);
+   # print "Computing lp succesful.\n",@result;
+   # return new Matrix(@result);
 }
 
 # Return a combination of the Hilbert basis elements H that yield
