@@ -49,7 +49,11 @@ object ToricVariety {
       # Now all combinatorial information has been collected.
       # Generating input for Singular:
       print "LIB \"homolog.lib\";\n";
+      print "LIB \"multigrading.lib\";\n";
       print "ring R = 0,(x(0..",$H->rows-1,")),dp;\n";
+      print "intmat m[",$H->rows,"][",$H->cols,"] = ";
+      print join(",",map(join(",",@$_),@$H)),";\n";
+      print "m = transpose(m);\n";
       print "ideal toric = ";
       if($toric->rows == 0){
          print "0;\n";
@@ -72,6 +76,7 @@ object ToricVariety {
          print "0;\n";
       }
       print "qring q = std(toric);\n";
+      print "setBaseMultigrading(m);\n";
       print "ideal I = ";
       if($Dgen->rows == 1){
          print "1;\n";
@@ -88,7 +93,7 @@ object ToricVariety {
          print "0;\n";
       }
       print "I=std(I);\nI;\n";
-      print "def L = minres(res(I,6));\n";
+      print "def L = multiDegResolution(I,6,1);\n";
    }
    
    user_method ext(TDivisor, TDivisor){
