@@ -39,5 +39,6 @@ namespace polymake { namespace common {
    FunctionInstance4perl(slice_x_x_f5, perl::Canned< Wary< pm::IndexedSlice<pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void>&, pm::Series<int, true>, void> > >);
    FunctionInstance4perl(slice_x_x_f5, perl::Canned< Wary< pm::IndexedSlice<pm::IndexedSlice<pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void>&, pm::Series<int, true>, void>&, pm::Series<int, true>, void> > >);
    FunctionInstance4perl(slice_X_f5, perl::Canned< const Wary< Vector< Rational > > >, perl::Canned< const pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> >);
+   FunctionInstance4perl(slice_X_f5, perl::Canned< Wary< Vector< Rational > > >, int);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }
