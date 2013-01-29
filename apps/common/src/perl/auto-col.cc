@@ -20,6 +20,8 @@
 #include "polymake/Rational.h"
 #include "polymake/IncidenceMatrix.h"
 #include "polymake/Set.h"
+#include "polymake/SparseMatrix.h"
+#include "polymake/Integer.h"
 namespace polymake { namespace common {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0>
@@ -29,5 +31,6 @@ namespace polymake { namespace common {
    };
 
    FunctionInstance4perl(col_x_f5, perl::Canned< const Wary< pm::MatrixMinor<pm::Matrix<pm::Rational> const&, pm::Set<int, pm::operations::cmp> const&, pm::all_selector const&> > >);
+   FunctionInstance4perl(col_x_f5, perl::Canned< Wary< SparseMatrix< Integer, NonSymmetric > > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } }

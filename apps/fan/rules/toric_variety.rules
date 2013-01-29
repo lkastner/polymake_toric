@@ -1,4 +1,4 @@
-#  Copyright (c) 2012
+#  Copyright (c) 2013
 #  by authors as mentioned on:
 #  https://github.com/lkastner/polymake_toric/wiki/Authors
 #  
@@ -144,3 +144,10 @@ object ToricVariety {
 
 }
 
+user_function polarized_toric_variety(Polytope<Rational>) {
+  my $self=shift;
+  my $t=new ToricVariety(normal_fan($self));
+  my $tdiv = new TDivisor(COEFFICIENTS=>primitive($self->FACETS)->col(0));
+  $t->add("DIVISOR",$tdiv);
+  return $t;
+}

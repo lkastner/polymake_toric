@@ -26,13 +26,15 @@ object ToricVariety {
       }
       
       rule CARTIER :  {
+	  print "checking Cartier for ", $this->name, "\n";
          $this->CARTIER = 1;
       }
       precondition : PRINCIPAL;
 
 
    }
-     rule DIVISOR.PRINCIPAL : RAYS, DIVISOR.COEFFICIENTS {
+
+   rule DIVISOR.PRINCIPAL : RAYS, DIVISOR.COEFFICIENTS {
 		my $c = $this->DIVISOR->COEFFICIENTS;
 		my $eq = -$c | $this->RAYS;
 		my $bla = new Polytope<Rational>(INEQUALITIES=>(unit_vector<Rational>($eq->cols,0)),EQUATIONS => $eq);
@@ -49,23 +51,27 @@ object ToricVariety {
 		$this->DIVISOR->SECTION_POLYTOPE = new Polytope<Rational>(INEQUALITIES => $ineq);
 	}
 
-	rule DIVISOR.CARTIER, DIVISOR.CARTIER_DATA : RAYS, DIVISOR.COEFFICIENTS, MAXIMAL_CONES {
+	rule DIVISOR.CARTIER,DIVISOR.CARTIER_DATA : RAYS, DIVISOR.COEFFICIENTS, MAXIMAL_CONES {
+	      print "looking at: ", $this->DIVISOR->name, ", computing DATA\n";
 		my $maxcones = $this->MAXIMAL_CONES;
 		my $map = new Map<Set<Int>,Vector>;
 		my $rays = $this->RAYS;
 		my $a = $this->DIVISOR->COEFFICIENTS;
-		foreach my $s (@$maxcones){
-			my $eq = $a->slice($s) | $rays->minor($s,All);
-			my $bla = new Polytope<Rational>(INEQUALITIES=>(unit_vector<Rational>($eq->cols,0)),EQUATIONS => $eq);
-			$bla->VERTICES;
-			if ($bla->N_LATTICE_POINTS == 0){
-				$this->DIVISOR->CARTIER = 0;
-				return;			
-			}
-			$map->{$s} = $bla->LATTICE_POINTS->row(0);
-		}
+#		foreach my $s (@$maxcones){
+#			my $eq = $a->slice($s) | $rays->minor($s,All);
+#			my $bla = new Polytope<Rational>(INEQUALITIES=>(unit_vector<Rational>($eq->cols,0)),EQUATIONS => $eq);
+#			$bla->VERTICES;
+#			if ($bla->N_LATTICE_POINTS == 0){
+#			    print "looking at: ", $this->DIVISOR->name, ", not CARTIER\n";
+#				$this->DIVISOR->CARTIER = 0;
+#				return;			
+#			}
+#			$map->{$s} = $bla->LATTICE_POINTS->row(0);
+#		}
+	      print "looking at: ", $this->DIVISOR->name, ", setting DATA\n";
 		$this->DIVISOR->CARTIER = 1;
 		$this->DIVISOR->CARTIER_DATA = $map;
+	      print "looking at: ", $this->DIVISOR->name, ", set DATA\n";
 	}
 
 	rule DIVISOR.BASEPOINT_FREE : DIVISOR.CARTIER_DATA, MAXIMAL_CONES, DIVISOR.SECTION_POLYTOPE {
@@ -85,6 +91,43 @@ object ToricVariety {
 	precondition : DIVISOR.CARTIER;
 	precondition : PURE;
 	precondition : FULL_DIM;
+
+
+  # ampleness implies that  the divisor is Cartier and the fan is complete
+  # Hence, [[CARTIER_DATA]] is defined and contains integral points
+  # for any two adjacent maximal cones s,s' with intersection t we have to check the following:
+  # if m, m' are the vertices corresponding to the cones, and u is a generator of s'/t, then (m-m')*u must be positive
+  # (note that any vector u pointing in the right direction in s'/t suffices to check this)
+  rule DIVISOR.AMPLE : DIVISOR.COEFFICIENTS, DIVISOR.CARTIER_DATA, RAYS, MAXIMAL_CONES, DUAL_GRAPH.ADJACENCY {
+    print "looking at: ", $this->DIVISOR->name, ", starting\n";
+    my $mc = $this->MAXIMAL_CONES;
+    my $rays = primitive($this->RAYS);
+    print "looking at: ", $this->DIVISOR->name, ", reading COEFF\n";
+    my $d =$this->DIVISOR->COEFFICIENTS;
+    print "looking at: ", $this->DIVISOR->name, ", reading DATA\n";
+    my $cd = $this->DIVISOR->CARTIER_DATA;
+    print "looking at: ", $this->DIVISOR->name, ", read\n";
+    my $dg = $this->DUAL_GRAPH->ADJACENCY;
+ 	
+    foreach my $i (0..$mc->rows-1) {
+      foreach my $adj (@{$dg->adjacent_nodes($i)})  {
+	if ( $adj > $i ) {
+	  my $j = @{($mc->[$adj]-$mc->[$i])}[0];
+	  if ( ($cd->{$mc->[$i]}-$cd->{$mc->[$adj]})->slice(1)*($rays->[$j]) <= 0 ) {
+	      print "looking at: ", $this->DIVISOR->name, ", setting to 0\n";
+	      $this->DIVISOR->AMPLE = 0;
+	      return;
+	  }
+	}
+      }
+    }
+    print "looking at: ", $this->DIVISOR->name, ", setting to 1\n";
+    $this->DIVISOR->AMPLE = 1;
+  }
+  weight 3.10;
+#  precondition : DIVISOR.CARTIER;
+  precondition : COMPLETE;
+
 
   # computes whether a toric divisor is [[NEF]]
   # algorithm: check whether the divisor is in the nef cone of the variety
@@ -167,7 +210,7 @@ user_function polytope_of_divisor {
   my ($f,$d)=@_;
 
   my $m = primitive($f->RAYS);
-  my $q=new polytope::Polytope<Rational>(INEQUALITIES=>$d|$m);
+  my $q=new polytope::Polytope<Rational>(INEQUALITIES=>convert_to<Rational>($d)|convert_to<Rational>($m));
   return $q;
 }
 
