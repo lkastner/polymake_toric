@@ -100,34 +100,35 @@ object ToricVariety {
       my $tv = $_[0];
       my $D1 = $_[1];
       my $D2 = $_[2];
-      print $D1->COEFFICIENTS," - ",$D2->COEFFICIENTS,"\n";
+      # print $D1->COEFFICIENTS," - ",$D2->COEFFICIENTS,"\n";
       my $c = new Cone(INPUT_RAYS=>$tv->RAYS);
       my $tvc = new Polytope(POINTS=>unit_vector($tv->AMBIENT_DIM+1,0)/(zero_vector($c->FACETS->rows)|$c->FACETS));
-      print $tvc->VERTICES;
+      # print $tvc->VERTICES;
       my $D1gs = $D1->SECTION_POLYTOPE;
       my $D2gs = $D2->SECTION_POLYTOPE;
-      print "Vertices:\n", $D1gs->VERTICES;
-      print "Inequalities:\n",$D1gs->INEQUALITIES;
-      print "Product:\n",$D1gs->INEQUALITIES * transpose($D1gs->VERTICES);
+      # print "Vertices:\n", $D1gs->VERTICES;
+      # print "Inequalities:\n",$D1gs->INEQUALITIES;
+      # print "Product:\n",$D1gs->INEQUALITIES * transpose($D1gs->VERTICES);
       my $v1 = move_inside($tvc,$D1gs);
       my $v2 = move_inside($tvc,$D2gs);
 
       my $D1p = lower_lattice_points($D1gs);
       $D1p = new Matrix(map($_+$v1,@$D1p));
       $D1p = $D1p->minor(All,~[0]);
-      print "New vertices:\n",$D1p,"\n";
+      # print "New vertices:\n",$D1p,"\n";
       my $D2p = lower_lattice_points($D2gs);
+      # print "v2:\n",$v2,"\nD2p:\n",$D2p;
       $D2p = new Matrix(map($_+$v2,@$D2p));
       $D2p = $D2p->minor(All,~[0]);
-      print "New vertices:\n",$D2p,"\n";
+      # print "New vertices:\n",$D2p,"\n";
 
       my $dual_cone = new Cone(INPUT_RAYS=>$c->FACETS);
       my $H = $dual_cone->HILBERT_BASIS;
 
       my $D1gen = new Matrix(map(find_positive_combination($_,$H,$c->RAYS),@$D1p));
       my $D2gen = new Matrix(map(find_positive_combination($_,$H,$c->RAYS),@$D2p));
-      print "Check1:\n",transpose($H)*transpose($D1gen);
-      print "Check2:\n",transpose($H)*transpose($D2gen);
+      # print "Check1:\n",transpose($H)*transpose($D1gen);
+      # print "Check2:\n",transpose($H)*transpose($D2gen);
 
 
       my $toric = $dual_cone->TORIC_IDEAL;
@@ -201,27 +202,23 @@ object ToricVariety {
 
 # Find all lattice points of a polytope P that are not reachable
 # from some other lattice point via the tail cone.
+# Todo: Reduce these using the tail cone.
 user_function lower_lattice_points(Polytope){
    my ($P) = @_;
-   my $tail = $P->TAILCONE;
    my $vert = new Matrix(grep($_->[0]==1,@{$P->VERTICES}));
    my $rays = new Matrix(grep($_->[0]==0,@{$P->VERTICES}));
-   print "Vertices:\n",$vert,"\n";
-   print "Rays:\n",$rays,"\n";
-   my @additional_vert = ();
+   # print "Vertices:\n",$vert,"\n";
+   # print "Rays:\n",$rays,"\n";
    foreach my $v (@$vert){
-      @additional_vert = ((map($_+$v,@$rays)),@additional_vert);
-      print @additional_vert,"\n\n";
+      $vert = $vert/(new Matrix(map($_+$v,@$rays)));
    }
-   my $s = @additional_vert;
-   print $s,"new Vertices.\n";
-   my $Q = new Polytope(POINTS=>$vert/(new Matrix(@additional_vert)));
+   my $s = $vert->rows();
+   # print $s," new Vertices.\n";
+   # print "Convex hull of:\n",$vert;
+   my $Q = new Polytope(POINTS=>$vert);
    my $candidates = $Q->LATTICE_POINTS;
-   return $candidates;
-   # my $facets = $P->FACETS;
-   # my @result = grep(minimum($facets*$_)==0,@$candidates);
-   # print "Computing lp succesful.\n",@result;
-   # return new Matrix(@result);
+   print "The candidates are:\n",$candidates;
+   return new Matrix($candidates);
 }
 
 # Return a combination of the Hilbert basis elements H that yield
@@ -277,35 +274,5 @@ sub move_inside{
          }
       }
    }
-   return $result;
-}
-
-user_function experiment1(Matrix){
-   my($m) = @_;
-   print "M:\n",$m,"\n";
-   my $m00=($m|new Matrix($m->rows,2))/new Matrix(2,$m->cols+2);
-   my $m10=(new Matrix($m->rows,1)|$m|new Matrix($m->rows,1))/new Matrix(2,$m->cols+2);
-   my $m01=new Matrix(1,$m->cols+2)/($m|new Matrix($m->rows,2))/new Matrix(1,$m->cols+2);
-   my $m11=new Matrix(1,$m->cols+2)/(new Matrix($m->rows,1)|$m|new Matrix($m->rows,1))/new Matrix(1,$m->cols+2);
-   my $m12=new Matrix(2,$m->cols+2)/(new Matrix($m->rows,1)|$m|new Matrix($m->rows,1));
-   my $m21=new Matrix(1,$m->cols+2)/(new Matrix($m->rows,2)|$m)/new Matrix(1,$m->cols+2);
-   my $m22=new Matrix(2,$m->cols+2)/(new Matrix($m->rows,2)|$m);
-   my $r = $m00+$m10+$m01+$m11+$m21+$m12+$m22;
-   print "The sum:\n",$r,"\n";
-   my $r1 = new Matrix($m00);
-   for(my $i=0; $i<$m00->rows; $i++){
-      for(my $j=0; $j<$m00->cols; $j++){
-         $r1->($i,$j) = maximum(new Vector($r1->($i,$j),$m00->($i,$j)));
-         $r1->($i,$j) = maximum(new Vector($r1->($i,$j),$m10->($i,$j)));
-         $r1->($i,$j) = maximum(new Vector($r1->($i,$j),$m01->($i,$j)));
-         $r1->($i,$j) = maximum(new Vector($r1->($i,$j),$m11->($i,$j)));
-         $r1->($i,$j) = maximum(new Vector($r1->($i,$j),$m12->($i,$j)));
-         $r1->($i,$j) = maximum(new Vector($r1->($i,$j),$m21->($i,$j)));
-         $r1->($i,$j) = maximum(new Vector($r1->($i,$j),$m22->($i,$j)));
-      }
-   }
-   print "The maximums:\n",$r1,"\n";
-   my $result = $r-$r1;
-   print "The result:\n",$result,"\n";
    return $result;
 }
