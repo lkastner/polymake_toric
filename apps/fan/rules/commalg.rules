@@ -235,7 +235,7 @@ user_function find_positive_combination(Vector, Matrix,Matrix){
          my $veval = $F*$v;
          my $heval = $F*$H->[$i];
          my $max = maximum($veval);
-         print $veval,"\n",$heval,"\n\n";
+         # print $veval,"\n",$heval,"\n\n";
          my @quotient = map{
             $heval->[$_]>0 ? floor($veval->[$_]/$heval->[$_]) : $max;
          }@0..($veval->dim-1);
