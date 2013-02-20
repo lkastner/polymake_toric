@@ -80,8 +80,6 @@ INCLUDE
    cyclic_quotient.rules
    deformations.rules
    cq_deformations.rules
-   milnor.rules
-   commalg.rules
 
 user_function add_ray(PolyhedralFan, Vector){
 	my($fan, $ray) = @_;
