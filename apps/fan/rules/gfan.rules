@@ -18,7 +18,7 @@
 #  GNU General Public License for more details.
 
 
-REQUIRE gfan.rules
+# REQUIRE gfan.rules
 
 
 # object SymmetricFan {
@@ -57,7 +57,7 @@ CONFIGURE {
 }
 
 CREDIT gfan
-
+  gfan
 
 # This program preprocesses the input for gfan and then reads in the gfan output.
 user_function gfan_tropicalintersection(Ideal) {
