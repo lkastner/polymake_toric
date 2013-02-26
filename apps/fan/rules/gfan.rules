@@ -175,6 +175,7 @@ user_function gfan_tropicalgentleforce(Ideal) {
    # return tropical_xml_update("$tempfile.poly");
    
    my $gfan_out= User::load("$tempfile.poly");
+   print "Lineality: ",$gfan_out->LINEALITY_DIM,"\n";
    my $n = $gfan_out->AMBIENT_DIM;
    my $v = ones_vector($n);
    my $inrays = new Matrix(map($_-$_->[$n-1]*$v,@{$gfan_out->RAYS}));
