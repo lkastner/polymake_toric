@@ -125,7 +125,7 @@ user_function chow_quotient(Polynomial){
    # Test for homogenoucity:
    # print "degree of g:\n$deg_g\n\n";
    # print $D*transpose(-$degs);
-   my $dm1 = new Polytope<Rational>(EQUATIONS=>($deg_g | $D));
+   my $dm1 = new Polytope<Rational>(EQUATIONS=>($deg_g | $D),INEQUALITIES=>(ones_vector(1)|zero_vector($D->cols)));
    my $a = $dm1->DIM;
    # Checking whether dimension is correct:
    # print "Dim:\n$a\n";
@@ -147,7 +147,7 @@ user_function chow_quotient(Polynomial){
    my $test = new Matrix<Rational>(map($_-$p,@$degs));
    # print $test;
    # print $D*transpose($test);
-   my @preim = map((new Polytope<Rational>(EQUATIONS=>(($p-$_) | new Matrix<Rational>($B))))->VERTICES, @$degs);
+   my @preim = map((new Polytope<Rational>(EQUATIONS=>(($p-$_) | new Matrix<Rational>($B)),INEQUALITIES=>(ones_vector(1)|zero_vector($B->cols))))->VERTICES, @$degs);
    # print @preim;
    my $new_degs = new Matrix<Int>(map($_->[0]->slice(1), @preim));
    # Building ring for output equation:
