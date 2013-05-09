@@ -54,6 +54,7 @@ object CyclicQuotient {
    property VERSAL_COMPONENTS : Matrix;
 
    property VERSAL_DEFORMATION : Ideal;
+
 }
 
 ###################################################
