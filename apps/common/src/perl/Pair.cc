@@ -1,6 +1,6 @@
 /* Copyright (c) 1997-2010
    Ewgenij Gawrilow, Michael Joswig (Technische Universitaet Darmstadt, Germany)
-   http://www.polymake.de
+   http://www.polymake.org
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -19,8 +19,8 @@
 #include "polymake/Matrix.h"
 #include "polymake/Integer.h"
 #include "polymake/IncidenceMatrix.h"
-namespace polymake { namespace common {
+namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    Class4perl("Polymake::common::Pair_A_Matrix_A_Integer_I_NonSymmetric_Z_I_Matrix_A_Integer_I_NonSymmetric_Z_Z", std::pair< Matrix< Integer >, Matrix< Integer > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
-} }
+} } }
