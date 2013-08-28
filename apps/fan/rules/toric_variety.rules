@@ -60,7 +60,7 @@ object ToricVariety {
 	weight 0.10;
 
 	rule PROJECTIVE : RAYS, MAXIMAL_CONES {
-	  $this->PROJECTIVE = polytopal($this);
+	  $this->PROJECTIVE = regular($this);
 	}
 
 
