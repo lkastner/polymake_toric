@@ -1,6 +1,6 @@
 /* Copyright (c) 1997-2010
    Ewgenij Gawrilow, Michael Joswig (Technische Universitaet Darmstadt, Germany)
-   http://www.polymake.de
+   http://www.polymake.org
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -22,7 +22,7 @@
 #include "polymake/IncidenceMatrix.h"
 #include "polymake/Integer.h"
 #include "polymake/Array.h"
-namespace polymake { namespace common {
+namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0>
    FunctionInterface4perl( inv_X, T0 ) {
@@ -34,4 +34,4 @@ namespace polymake { namespace common {
    FunctionInstance4perl(inv_X, perl::Canned< const Wary< pm::Transposed<pm::Matrix<pm::Integer> > > >);
    FunctionInstance4perl(inv_X, perl::Canned< const Wary< pm::MatrixMinor<pm::Matrix<pm::Rational>&, pm::Array<int, void> const&, pm::all_selector const&> > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
-} }
+} } }

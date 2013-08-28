@@ -1,6 +1,6 @@
 /* Copyright (c) 1997-2010
    Ewgenij Gawrilow, Michael Joswig (Technische Universitaet Darmstadt, Germany)
-   http://www.polymake.org
+   http://www.polymake.de
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -13,14 +13,13 @@
    GNU General Public License for more details.
 */
 
-///==== this line controls the automatic file splitting: max.instances=40
-
-#include "polymake/client.h"
-#include "polymake/Matrix.h"
-#include "polymake/Integer.h"
-#include "polymake/IncidenceMatrix.h"
-namespace polymake { namespace common { namespace {
+namespace polymake { namespace fan {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
-   Class4perl("Polymake::common::Pair_A_Matrix_A_Integer_I_NonSymmetric_Z_I_Matrix_A_Integer_I_NonSymmetric_Z_Z", std::pair< Matrix< Integer >, Matrix< Integer > >);
+   FunctionWrapper4perl( std::pair<pm::Matrix<pm::Integer>, pm::Matrix<pm::Integer> > (perl::Object) ) {
+      perl::Value arg0(stack[0]);
+      IndirectWrapperReturn( arg0 );
+   }
+   FunctionWrapperInstance4perl( std::pair<pm::Matrix<pm::Integer>, pm::Matrix<pm::Integer> > (perl::Object) );
+
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
-} } }
+} }

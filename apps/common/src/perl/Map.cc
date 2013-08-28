@@ -1,6 +1,6 @@
 /* Copyright (c) 1997-2010
    Ewgenij Gawrilow, Michael Joswig (Technische Universitaet Darmstadt, Germany)
-   http://www.polymake.de
+   http://www.polymake.org
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -24,7 +24,7 @@
 #include "polymake/Matrix.h"
 #include "polymake/IncidenceMatrix.h"
 #include "polymake/Integer.h"
-namespace polymake { namespace common {
+namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0, typename T1>
    FunctionInterface4perl( new_X, T0,T1 ) {
@@ -65,5 +65,6 @@ namespace polymake { namespace common {
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Integer, Monomial< Rational, int > > >, perl::Canned< const Integer >);
    FunctionInstance4perl(new, Map< Set< int >, Vector< Rational > >);
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Set< int >, Vector< Rational > > >, perl::Canned< const pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> >);
+   OperatorInstance4perl(Binary_brk, perl::Canned< const Map< Set< int >, Vector< Rational > > >, perl::Canned< const pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
-} }
+} } }

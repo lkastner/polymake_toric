@@ -1,6 +1,6 @@
 /* Copyright (c) 1997-2010
    Ewgenij Gawrilow, Michael Joswig (Technische Universitaet Darmstadt, Germany)
-   http://www.polymake.de
+   http://www.polymake.org
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -23,7 +23,7 @@
 #include "polymake/Array.h"
 #include "polymake/Set.h"
 #include "polymake/Integer.h"
-namespace polymake { namespace common {
+namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0, typename T1, typename T2>
    FunctionInterface4perl( minor_X_X_f5, T0,T1,T2 ) {
@@ -37,4 +37,4 @@ namespace polymake { namespace common {
    FunctionInstance4perl(minor_X_X_f5, perl::Canned< const Wary< pm::RowChain<pm::RowChain<pm::RowChain<pm::RowChain<pm::RowChain<pm::Matrix<pm::Rational> const&, pm::Matrix<pm::Rational> const&> const&, pm::Matrix<pm::Rational> const&> const&, pm::Matrix<pm::Rational> const&> const&, pm::Matrix<pm::Rational> const&> const&, pm::Matrix<pm::Rational> const&> > >, perl::Enum<pm::all_selector>, perl::Canned< const pm::Complement<pm::SingleElementSet<int const&>, int, pm::operations::cmp> >);
    FunctionInstance4perl(minor_X_X_f5, perl::Canned< Wary< pm::Transposed<pm::Matrix<pm::Rational> > > >, perl::Canned< const pm::Complement<pm::SingleElementSet<int const&>, int, pm::operations::cmp> >, perl::Enum<pm::all_selector>);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
-} }
+} } }

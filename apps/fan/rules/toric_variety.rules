@@ -144,10 +144,19 @@ object ToricVariety {
 
 }
 
-user_function polarized_toric_variety(Polytope<Rational>) {
+
+
+# @category Producing a toric variety
+# Creates a toric variety from the normal fan of a polytope and adds the defining divisor of the polytope
+# @param Polytope P : the input polytope
+# @param string name : a name for the divisor
+# @return ToricVariety
+
+user_function polarized_toric_variety(Polytope<Rational>,$) {
   my $self=shift;
+  my $name=shift;
   my $t=new ToricVariety(normal_fan($self));
-  my $tdiv = new TDivisor(COEFFICIENTS=>primitive($self->FACETS)->col(0));
+  my $tdiv = new TDivisor("$name",COEFFICIENTS=>primitive($self->FACETS)->col(0));
   $t->add("DIVISOR",$tdiv);
   return $t;
 }

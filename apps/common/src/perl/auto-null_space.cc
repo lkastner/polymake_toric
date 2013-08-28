@@ -1,6 +1,6 @@
 /* Copyright (c) 1997-2010
    Ewgenij Gawrilow, Michael Joswig (Technische Universitaet Darmstadt, Germany)
-   http://www.polymake.de
+   http://www.polymake.org
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -20,7 +20,9 @@
 #include "polymake/Matrix.h"
 #include "polymake/Integer.h"
 #include "polymake/IncidenceMatrix.h"
-namespace polymake { namespace common {
+#include "polymake/Vector.h"
+#include "polymake/Rational.h"
+namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0>
    FunctionInterface4perl( null_space_X, T0 ) {
@@ -29,6 +31,10 @@ namespace polymake { namespace common {
    };
 
    FunctionInstance4perl(null_space_X, perl::Canned< const pm::Transposed<pm::Matrix<pm::Integer> > >);
+<<<<<<< HEAD
+=======
+   FunctionInstance4perl(null_space_X, perl::Canned< const pm::ColChain<pm::SingleCol<pm::IndexedSlice<pm::Vector<pm::Rational> const&, pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> const&, void> const&>, pm::Matrix<pm::Rational> const&> >);
+>>>>>>> d9b2c71abbb1726e15625745528c7bf324062ba2
    FunctionInstance4perl(null_space_X, perl::Canned< const Matrix< Integer > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
-} }
+} } }

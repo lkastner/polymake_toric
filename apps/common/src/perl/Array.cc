@@ -1,6 +1,6 @@
 /* Copyright (c) 1997-2010
    Ewgenij Gawrilow, Michael Joswig (Technische Universitaet Darmstadt, Germany)
-   http://www.polymake.de
+   http://www.polymake.org
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -19,7 +19,7 @@
 #include "polymake/Array.h"
 #include "polymake/Set.h"
 #include "polymake/Integer.h"
-namespace polymake { namespace common {
+namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0>
    FunctionInterface4perl( new, T0 ) {
@@ -35,5 +35,6 @@ namespace polymake { namespace common {
    Class4perl("Polymake::common::Array__Set__Integer", Array< Set< Integer > >);
    FunctionInstance4perl(new, Array< Set< Integer > >);
    FunctionInstance4perl(new_X, Array< Set< int > >, perl::Canned< const Array< Set< Integer > > >);
+   OperatorInstance4perl(convert, Array< Set< int > >, perl::Canned< const Set< Set< int > > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
-} }
+} } }
