@@ -29,13 +29,8 @@ IMPORT
 #######################################
 #######################################
 
-declare object ToricVariety : PolyhedralFan<Rational>; 
+declare object NormalToricVariety : PolyhedralFan<Rational>; 
 
-#object PolyhedralFan<Rational> {
-#
-#	auto_cast : ToricVariety<Rational>;
-#
-#}
 
 #######################################
 #######################################
@@ -78,7 +73,6 @@ INCLUDE
 	standard_constructions.rules
    toric_divisor_classes.rules
    cyclic_quotient.rules
-   deformations.rules
    cq_deformations.rules
 
 user_function add_ray(PolyhedralFan, Vector){

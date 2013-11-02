@@ -14,7 +14,7 @@
 #  $Project: toric_varieties $$Id: standard_constructions.rules 202 2012-03-11 16:48:31Z paffenholz $
 
 
-# @category Toric Varieties
+# @category Normal Toric Varieties
 # takes one parameter r
 # and returns the polyhedral fan corresponding the the 
 # Hirzebruch surface H_r
@@ -24,11 +24,11 @@ user_function hirzebruch_surface {
   $r >= 0 or die "hirzebruch_surface: index must be non-negative\n";
   my $m=new Matrix<Rational>((unit_matrix<Rational>(2))/(-(unit_matrix<Rational>(2))));
   $m->(2,1)=$r;
-  my $f=new ToricVariety(RAYS=>$m, MAXIMAL_CONES=>[[0,1],[1,2],[2,3],[0,3]],COMPLETE=>1,PROJECTIVE=>1,SIMPLICIAL=>1,DEGENERATE=>0);
+  my $f=new NormalToricVariety(RAYS=>$m, MAXIMAL_CONES=>[[0,1],[1,2],[2,3],[0,3]],COMPLETE=>1,PROJECTIVE=>1,SIMPLICIAL=>1,DEGENERATE=>0);
   return $f;
 }
 
-# @category Toric Varieties
+# @category NormalToric Varieties
 # takes one parameter r
 # and returns the fan corresponding to the r-dimensional projective space
 user_function projective_space {
@@ -39,6 +39,6 @@ user_function projective_space {
   my $m=new Matrix<Rational>((unit_matrix<Rational>($r))/(-(ones_vector<Rational>($r))));
   my @a=();
   foreach (all_subsets_of_k($r,0..$r)) { push @a, $_; }
-  my $f=new ToricVariety(RAYS=>$m, MAXIMAL_CONES=>\@a,COMPLETE=>1,PROJECTIVE=>1,SIMPLICIAL=>1,DEGENERATE=>0);
+  my $f=new NormalToricVariety(RAYS=>$m, MAXIMAL_CONES=>\@a,COMPLETE=>1,PROJECTIVE=>1,SIMPLICIAL=>1,DEGENERATE=>0);
   return $f;
 }

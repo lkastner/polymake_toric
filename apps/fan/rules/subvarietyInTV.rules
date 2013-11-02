@@ -17,7 +17,7 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
-object ToricVariety {
+object NormalToricVariety {
    
    property SUBVARIETY : SubvarietyInTV : multiple;
    
@@ -158,7 +158,7 @@ user_function chow_quotient(Polynomial){
    my $g_tilda = new Polynomial($new_degs,$coeffs,$R);
    print "g_tilda: $g_tilda\n";
    my $ambient_fan = cocoref_topcom(new Matrix<Integer>($B));
-   my $ambient_tv = new ToricVariety($ambient_fan);
+   my $ambient_tv = new NormalToricVariety($ambient_fan);
    my $id = new Ideal(GENERATORS=>[$g_tilda]);
    $ambient_tv->SUBVARIETY(EQUATIONS=>$id, HYPERSURFACE=>True);
    return $ambient_tv;

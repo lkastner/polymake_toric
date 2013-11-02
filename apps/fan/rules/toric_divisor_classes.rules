@@ -30,7 +30,7 @@
 # CONFIGURE { }
 
 
-object ToricVariety {
+object NormalToricVariety {
 
 # the methods for the following three rules are implemented in the file class_group.cc
 rule RATIONAL_DIVISOR_CLASS_GROUP.PROJECTION, RATIONAL_DIVISOR_CLASS_GROUP.LIFTING : RAYS {

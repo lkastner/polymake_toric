@@ -31,10 +31,7 @@ namespace polymake { namespace common { namespace {
    };
 
    FunctionInstance4perl(null_space_X, perl::Canned< const pm::Transposed<pm::Matrix<pm::Integer> > >);
-<<<<<<< HEAD
-=======
    FunctionInstance4perl(null_space_X, perl::Canned< const pm::ColChain<pm::SingleCol<pm::IndexedSlice<pm::Vector<pm::Rational> const&, pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> const&, void> const&>, pm::Matrix<pm::Rational> const&> >);
->>>>>>> d9b2c71abbb1726e15625745528c7bf324062ba2
    FunctionInstance4perl(null_space_X, perl::Canned< const Matrix< Integer > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } } }

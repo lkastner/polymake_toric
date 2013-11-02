@@ -24,7 +24,7 @@
 ###
 ###################################################
 ###################################################
-declare object CyclicQuotient : ToricVariety;
+declare object CyclicQuotient : NormalToricVariety;
 
 object CyclicQuotient {
 

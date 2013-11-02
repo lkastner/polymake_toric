@@ -17,16 +17,16 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
-object ToricVariety {
+object NormalToricVariety {
 
    method construct(Cone<Rational>) {
       my $cone = $_[1];
-      return new ToricVariety(check_fan_objects($cone));
+      return new NormalToricVariety(check_fan_objects($cone));
    }
    
    method construct(PolyhedralFan<Rational>) {
       my $fan = $_[1];
-      my $result = new ToricVariety();
+      my $result = new NormalToricVariety();
       $fan->copy_contents($result);
       return $result;
    }
@@ -42,7 +42,7 @@ object ToricVariety {
 	
 	rule FANO : N_MAXIMAL_TORUS_ORBITS {
 		my $f = new PolyhedralFan($this);
-    	my $t = new ToricVariety($f);
+    	my $t = new NormalToricVariety($f);
     	my $AK = $t->add("DIVISOR", COEFFICIENTS=>ones_vector($this->N_MAXIMAL_TORUS_ORBITS));
     	$this->FANO = $AK->AMPLE;
 	}
@@ -146,16 +146,16 @@ object ToricVariety {
 
 
 
-# @category Producing a toric variety
+# @category Producing a normal toric variety
 # Creates a toric variety from the normal fan of a polytope and adds the defining divisor of the polytope
 # @param Polytope P : the input polytope
 # @param string name : a name for the divisor
-# @return ToricVariety
+# @return NormalToricVariety
 
 user_function polarized_toric_variety(Polytope<Rational>,$) {
   my $self=shift;
   my $name=shift;
-  my $t=new ToricVariety(normal_fan($self));
+  my $t=new NormalToricVariety(normal_fan($self));
   my $tdiv = new TDivisor("$name",COEFFICIENTS=>primitive($self->FACETS)->col(0));
   $t->add("DIVISOR",$tdiv);
   return $t;

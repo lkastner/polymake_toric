@@ -17,7 +17,7 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
-object ToricVariety {
+object NormalToricVariety {
 
    object TDivisor {
          
@@ -215,7 +215,7 @@ object ToricVariety {
 # ---------------------
 
 
-# @category Toric Varieties
+# @category Normal Toric Varieties
 # return the polytope P_D defined by the divisor D
 # first argument is the fan, second the Vector defining the divisor
 user_function polytope_of_divisor {
@@ -226,7 +226,7 @@ user_function polytope_of_divisor {
   return $q;
 }
 
-# @category Toric Varieties
+# @category Normal Toric Varieties
 # return the polytope defined by an element of the nef or effective cone
 # first argument is the fan, second the Vector defining the divisor class
 user_function polytope_of_divisor_class {
