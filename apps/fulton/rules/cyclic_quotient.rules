@@ -17,50 +17,11 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
-###################################################
-###################################################
-###
-###  object declarations
-###
-###################################################
-###################################################
-declare object CyclicQuotient : NormalToricVariety;
-
-object CyclicQuotient {
-
-   declare object VersalComponent;
-
-}
 
 ###################################################
 ###################################################
 ###
-###  CyclicQuotient properties
-###
-###################################################
-###################################################
-object CyclicQuotient {
-
-   property N : Integer;
-
-   property Q : Integer;
-    
-   property CONTINUED_FRACTION : Vector<Integer>;
-   
-   property DUAL_CONTINUED_FRACTION : Vector<Integer>;
-
-   property VERSAL_COMPONENT : VersalComponent : multiple;
-   
-   property VERSAL_COMPONENTS : Matrix;
-
-   property VERSAL_DEFORMATION : Ideal;
-
-}
-
-###################################################
-###################################################
-###
-###  VersalComponent properties
+###  CyclicQuotient experimental properties
 ###
 ###################################################
 ###################################################
@@ -68,30 +29,11 @@ object CyclicQuotient {
 
    object VersalComponent {
 
-      property CONTINUED_FRACTION : Vector<Integer>;
-
-      property PYRAMID_LATTICE : Map<Vector<Integer>, Vector<Integer>>;
-
-      property ALPHA_LATTICE : Map<Vector<Integer>, Vector<Integer>>;
-
-      property TOTAL_SPACE : Ideal;
-
-      property CQS_MATRIX : Matrix;
-
-      property N_GON_TRIANGULATION : Graph;
-
-      property TRIANGLES : Matrix<Integer>;
-
       property MILNOR_SJ : Vector<Integer>;
 
       property MILNOR_NI : Integer;
 
-      property P_RESOLUTION : PolyhedralFan<Rational>;
-
-      property DIMENSION : Integer;
-
    }
-
 }
 
 ###################################################

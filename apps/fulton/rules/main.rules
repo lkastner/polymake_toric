@@ -17,21 +17,6 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
-IMPORT
-   ideal
-   graph
-
-#######################################
-#######################################
-###
-### Toric Variety
-###
-#######################################
-#######################################
-
-declare object NormalToricVariety : PolyhedralFan<Rational>; 
-
-
 #######################################
 #######################################
 ###
@@ -62,8 +47,6 @@ object ideal::Ideal {
 declare object SubvarietyInTV;
 
 INCLUDE
-   toric_divisor_properties.rules
-   toric_variety_properties.rules
 	gfan.rules
 	cocoref_topcom.rules
    subvarietyInTV_properties.rules
