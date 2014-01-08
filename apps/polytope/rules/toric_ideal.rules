@@ -31,8 +31,8 @@ object Cone<Rational>{
 
    property TORIC_IDEAL : Matrix<Integer>;
 
-   rule _4ti2.toric_ideal : TORIC_IDEAL : HILBERT_BASIS {
-      my $H = $this->HILBERT_BASIS;
+   rule _4ti2.toric_ideal : TORIC_IDEAL : HILBERT_BASIS_GENERATORS {
+      my $H = $this->HILBERT_BASIS_GENERATORS;
       
       # Creating temporary file for input.
       my $temp = new Tempfile;
