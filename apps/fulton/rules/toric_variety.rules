@@ -19,27 +19,6 @@
 
 object NormalToricVariety {
 
-   method construct(Cone<Rational>) {
-      my $cone = $_[1];
-      return new NormalToricVariety(check_fan_objects($cone));
-   }
-   
-   method construct(PolyhedralFan<Rational>) {
-      my $fan = $_[1];
-      my $result = new NormalToricVariety();
-      $fan->copy_contents($result);
-      return $result;
-   }
-   
-   rule AFFINE : N_MAXIMAL_CONES{
-      $this->AFFINE = ($this->N_MAXIMAL_CONES == 1);
-   }
-   
-	rule DEGENERATE : LINEALITY_DIM {
-  		$this->DEGENERATE(temporary) = $this->LINEALITY_DIM > 0; 
-	}
-	weight 0.10;
-	
 	rule FANO : N_MAXIMAL_TORUS_ORBITS {
 		my $f = new PolyhedralFan($this);
     	my $t = new NormalToricVariety($f);
@@ -58,11 +37,6 @@ object NormalToricVariety {
   		$this->ORBIFOLD(temporary) = $this->SIMPLICIAL; 
 	}
 	weight 0.10;
-
-	rule PROJECTIVE : RAYS, MAXIMAL_CONES {
-	  $this->PROJECTIVE = regular($this);
-	}
-
 
    # This rule is based on Shephard's criterion which can be found in
    # Ewald: Combinatorial Convexity and Algebraic Geometry, p 160.
