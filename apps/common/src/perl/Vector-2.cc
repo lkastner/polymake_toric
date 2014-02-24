@@ -24,6 +24,7 @@
 #include "polymake/linalg.h"
 #include "polymake/Matrix.h"
 #include "polymake/Set.h"
+
 namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0, typename T1>
@@ -48,7 +49,6 @@ namespace polymake { namespace common { namespace {
    FunctionInstance4perl(new_X, Vector< Rational >, perl::Canned< const pm::VectorChain<pm::Vector<pm::Rational> const&, pm::SameElementVector<pm::Rational const&> const&> >);
    FunctionInstance4perl(new_X, Vector< Rational >, perl::Canned< const pm::VectorChain<pm::VectorChain<pm::IndexedSlice<pm::Vector<pm::Rational>&, pm::Series<int, true>, void> const&, pm::SameElementVector<pm::Rational const&> const&> const&, pm::IndexedSlice<pm::Vector<pm::Rational>&, pm::Series<int, true>, void> const&> >);
    FunctionInstance4perl(new_X, Vector< Integer >, perl::Canned< const pm::VectorChain<pm::SameElementVector<pm::Integer const&> const&, pm::Vector<pm::Integer> const&> >);
-   FunctionInstance4perl(new_X, Vector< Integer >, perl::Canned< const pm::VectorChain<pm::Vector<pm::Integer> const&, pm::SameElementVector<pm::Integer const&> const&> >);
    FunctionInstance4perl(new_X, Vector< Integer >, perl::Canned< const pm::VectorChain<pm::VectorChain<pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void> const&, pm::SameElementVector<pm::Integer const&> const&> const&, pm::IndexedSlice<pm::Vector<pm::Integer>&, pm::Series<int, true>, void> const&> >);
    FunctionInstance4perl(new_X, Vector< Integer >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void> >);
    OperatorInstance4perl(assign, pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational>&>, pm::Series<int, true>, void>, perl::Canned< const pm::SameElementVector<pm::Rational const&> >);
