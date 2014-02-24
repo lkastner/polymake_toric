@@ -18,6 +18,7 @@
 #ifndef POLYMAKE_HERMITE_NORMAL_FORM_H
 #define POLYMAKE_HERMITE_NORMAL_FORM_H
 
+#include <iostream>
 #include "polymake/client.h"
 #include "polymake/SparseMatrix.h"
 #include "polymake/Bitset.h"
@@ -62,14 +63,16 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
             }
          }
       }
+      // cout << pm::Matrix<E>(N) << endl;
       if(!nonzero){
          // cout << "Continueing" << endl;
          current_row++;
          continue;
       }
       for(int j = current_col+1; j<cols; j++){
+         // cout << "  " << i << " " << j << endl;
          if(N(i,j) != 0){
-            U.i = i;
+            U.i = current_col;
             U.j = j;
             ExtGCD<E> egcd = ext_gcd(N(i,current_col), N(i,j));
             U.a_ii = egcd.p;
@@ -78,9 +81,9 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
             U.a_jj = -egcd.k1;
             R.multiply_from_right(U);
             N.multiply_from_right(U);
-            // cout << pm::Matrix<E>(N) << endl;
             // cout << U.i<<": "<<U.a_ii <<" " << U.a_ij<<endl<<U.j <<": " <<U.a_ji<<" " << U.a_jj << endl;
          }
+         // cout << pm::Matrix<E>(N) << endl;
       }
       if(N(i,current_col)<0){
          S = unit_matrix<E>(cols);
@@ -89,6 +92,7 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
          N = N*S;
       }
       current_col++;
+      // cout << i << " " << current_row << endl;
    }
 
    
