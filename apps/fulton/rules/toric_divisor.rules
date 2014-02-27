@@ -45,7 +45,8 @@ object NormalToricVariety {
 	rule DIVISOR.SECTION_POLYTOPE : RAYS, DIVISOR.COEFFICIENTS {
 		my $a = $this->DIVISOR->COEFFICIENTS;
 		my $v = $this->RAYS;		
-		my $ineq = $a | $v;
+      my $primitive_rays = new Matrix(map(primitive($_), @$v));
+		my $ineq = $a | $primitive_rays;
 		$this->DIVISOR->SECTION_POLYTOPE = new Polytope<Rational>(INEQUALITIES => $ineq);
 	}
 
