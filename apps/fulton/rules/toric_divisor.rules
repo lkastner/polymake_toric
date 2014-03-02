@@ -42,14 +42,6 @@ object NormalToricVariety {
 		$this->DIVISOR->PRINCIPAL=($sol > 0);
 	}
 
-	rule DIVISOR.SECTION_POLYTOPE : RAYS, DIVISOR.COEFFICIENTS {
-		my $a = $this->DIVISOR->COEFFICIENTS;
-		my $v = $this->RAYS;		
-      my $primitive_rays = new Matrix(map(primitive($_), @$v));
-		my $ineq = $a | $primitive_rays;
-		$this->DIVISOR->SECTION_POLYTOPE = new Polytope<Rational>(INEQUALITIES => $ineq);
-	}
-
 	rule DIVISOR.Q_CARTIER,DIVISOR.CARTIER_DATA : RAYS, DIVISOR.COEFFICIENTS, MAXIMAL_CONES {
 		my $maxcones = $this->MAXIMAL_CONES;
 		my $map = new Map<Set<Int>,Vector>;
