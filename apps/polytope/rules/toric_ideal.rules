@@ -17,15 +17,13 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
+REQUIRE _4ti2.rules
+
 CREDIT 4ti2
 
 # path to groebner
 # custom $groebner;
 # Note: This is already declared in the _4ti2 file from Polymake.
-
-CONFIGURE {
-    find_program($groebner, "groebner", { prompt => "the program `groebner' from the 4ti2 package" }) or return;
-}
 
 object Cone<Rational>{
 
@@ -49,7 +47,7 @@ object Cone<Rational>{
          or die "couldn't run 4ti2's 'groebner': $!";
       local $_;
       while(<$P>) {
-         print $_;
+         # print $_;
       }
       close $P;
 
