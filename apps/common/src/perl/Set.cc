@@ -19,6 +19,7 @@
 #include "polymake/Set.h"
 #include "polymake/Integer.h"
 #include "polymake/IncidenceMatrix.h"
+
 namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0>
@@ -32,7 +33,6 @@ namespace polymake { namespace common { namespace {
       WrapperReturnNew(T0, (arg0.get<T1>()) );
    };
 
-   OperatorInstance4perl(Binary_add, perl::Canned< const Set< int > >, perl::Canned< const Set< int > >);
    Class4perl("Polymake::common::Set__Integer", Set< Integer >);
    FunctionInstance4perl(new_X, Set< Integer >, int);
    FunctionInstance4perl(new, Set< Integer >);

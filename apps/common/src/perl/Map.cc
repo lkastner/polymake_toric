@@ -38,7 +38,6 @@ namespace polymake { namespace common { namespace {
       WrapperReturnNew(T0, () );
    };
 
-   Class4perl("Polymake::common::Map_A_Set__Int_I_Vector__Rational_Z", Map< Set< int >, Vector< Rational > >);
    Class4perl("Polymake::common::Map_A_Set__Int_I_Polynomial_A_Rational_I_Int_Z_Z", Map< Set< int >, Polynomial< Rational, int > >);
    Class4perl("Polymake::common::Map_A_Vector__Int_I_Int_Z", Map< Vector< int >, int >);
    FunctionInstance4perl(new, Map< Vector< int >, int >);
@@ -46,7 +45,6 @@ namespace polymake { namespace common { namespace {
    FunctionInstance4perl(new, Map< Vector< Rational >, int >);
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Rational >, int > >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void> >);
    Class4perl("Polymake::common::Map_A_Set__Int_I_Vector__Integer_Z", Map< Set< int >, Vector< Integer > >);
-   Class4perl("Polymake::common::Map_A_Vector__Integer_I_Vector__Integer_Z", Map< Vector< Integer >, Vector< Integer > >);
    FunctionInstance4perl(new, Map< Vector< Integer >, Vector< Integer > >);
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Integer >, Vector< Integer > > >, perl::Canned< const Vector< Integer > >);
    FunctionInstance4perl(new_X, Map< Vector< Integer >, Vector< Integer > >, perl::Canned< const Map< Vector< Integer >, Vector< Integer > > >);
