@@ -24,6 +24,7 @@
 #include "polymake/Matrix.h"
 #include "polymake/Set.h"
 #include "polymake/Integer.h"
+
 namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    template <typename T0, typename T1>
@@ -33,7 +34,6 @@ namespace polymake { namespace common { namespace {
    };
 
    FunctionInstance4perl(new_X, SparseMatrix< Rational, NonSymmetric >, perl::Canned< const pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> const&> >);
-   OperatorInstance4perl(Unary_neg, perl::Canned< const Wary< pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> > >);
    OperatorInstance4perl(Binary_div, perl::Canned< const Wary< pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> const&> > >, perl::Canned< const pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::SparseMatrix<pm::Rational, pm::Symmetric> const&> >);
    FunctionInstance4perl(new_X, SparseMatrix< Rational, NonSymmetric >, perl::Canned< const pm::RowChain<pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> const&> const&, pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::SparseMatrix<pm::Rational, pm::Symmetric> const&> const&> >);
    OperatorInstance4perl(Binary_div, perl::Canned< const Wary< pm::ColChain<pm::SingleCol<pm::Vector<pm::Rational> const&>, pm::SparseMatrix<pm::Rational, pm::Symmetric> const&> > >, perl::Canned< const pm::ColChain<pm::SingleCol<pm::SameElementVector<pm::Rational const&> const&>, pm::DiagMatrix<pm::SameElementVector<pm::Rational const&>, true> const&> >);

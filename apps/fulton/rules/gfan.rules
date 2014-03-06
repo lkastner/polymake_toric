@@ -48,12 +48,18 @@ custom $gfan_tropicaltraverse;
 
 CONFIGURE {
     find_program($gfan_buchberger, "gfan_buchberger");
-    find_program($gfan_homogenize, "gfan_homogenize");
-    find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
-    find_program($gfan_tropicalhypersurface, "gfan_tropicalhypersurface");
-    find_program($gfan_tropicalintersection, "gfan_tropicalintersection");
-    find_program($gfan_tropicalstartingcone, "gfan_tropicalstartingcone");
-    find_program($gfan_tropicaltraverse, "gfan_tropicaltraverse");
+    ($gfan_homogenize=$gfan_buchberger) =~ s/gfan_buchberger$/gfan_homogenize/;
+	find_program($gfan_homogenize, "gfan_homogenize");
+	($gfan_tropicalbruteforce=$gfan_buchberger) =~ s/gfan_buchberger$/gfan_tropicalbruteforce/;
+	find_program($gfan_tropicalbruteforce, "gfan_tropicalbruteforce");
+    ($gfan_tropicalhypersurface=$gfan_buchberger) =~ s/gfan_buchberger$/gfan_tropicalhypersurface/;
+	find_program($gfan_tropicalhypersurface, "gfan_tropicalhypersurface");
+    ($gfan_tropicalintersection=$gfan_buchberger) =~ s/gfan_buchberger$/gfan_tropicalintersection/;
+	find_program($gfan_tropicalintersection, "gfan_tropicalintersection");
+    ($gfan_tropicalstartingcone=$gfan_buchberger) =~ s/gfan_buchberger$/gfan_tropicalstartingcone/;
+	find_program($gfan_tropicalstartingcone, "gfan_tropicalstartingcone");
+    ($gfan_tropicaltraverse=$gfan_buchberger) =~ s/gfan_buchberger$/gfan_tropicaltraverse/;
+	find_program($gfan_tropicaltraverse, "gfan_tropicaltraverse");    
 }
 
 CREDIT gfan
