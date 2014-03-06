@@ -18,25 +18,21 @@
 #  GNU General Public License for more details.
 
 object NormalToricVariety {
-
-	rule FANO : N_MAXIMAL_TORUS_ORBITS {
+	
+   rule FANO : N_MAXIMAL_TORUS_ORBITS {
 		my $f = new PolyhedralFan($this);
     	my $t = new NormalToricVariety($f);
     	my $AK = $t->add("DIVISOR", COEFFICIENTS=>ones_vector($this->N_MAXIMAL_TORUS_ORBITS));
     	$this->FANO = $AK->AMPLE;
 	}
 	
-	# the number of maximal torus orbits 
-	# the correspond to the rays of the fan
-	rule N_MAXIMAL_TORUS_ORBITS : N_RAYS {
-  		$this->N_MAXIMAL_TORUS_ORBITS = $this->N_RAYS;
-	}
-	weight 0.10;
-	
-	rule ORBIFOLD : SIMPLICIAL {
-  		$this->ORBIFOLD(temporary) = $this->SIMPLICIAL; 
-	}
-	weight 0.10;
+
+   # dualize a cone
+   rule MORI_CONE.RAYS, MORI_CONE.LINEALITY_SPACE : NEF_CONE.FACETS, NEF_CONE.LINEAR_SPAN {
+      $this->MORI_CONE->RAYS = $this->NEF_CONE->FACETS;
+      $this->MORI_CONE->LINEALITY_SPACE =  $this->NEF_CONE->LINEAR_SPAN;
+   }
+   precondition : COMPLETE; 
 
    # This rule is based on Shephard's criterion which can be found in
    # Ewald: Combinatorial Convexity and Algebraic Geometry, p 160.
@@ -108,13 +104,6 @@ object NormalToricVariety {
       $this->GENERATING_POLYTOPE = new Polytope<Rational>(POINTS=>(ones_vector() | transpose($new_vert)));
       $this->PROJECTIVE = 1;
    }
-
-  # dualize a cone
-  rule MORI_CONE.RAYS, MORI_CONE.LINEALITY_SPACE : NEF_CONE.FACETS, NEF_CONE.LINEAR_SPAN {
-    $this->MORI_CONE->RAYS = $this->NEF_CONE->FACETS;
-    $this->MORI_CONE->LINEALITY_SPACE =  $this->NEF_CONE->LINEAR_SPAN;
-  }
-  precondition : COMPLETE; 
 
 }
 
