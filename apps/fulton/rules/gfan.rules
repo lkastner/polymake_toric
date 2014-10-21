@@ -99,18 +99,10 @@ user_function gfan_tropicalhypersurface(Polynomial) {
    my $tempfile=new Tempfile;
    #my $tempfile="test";
 
-   # Preparing to write to file:       
    my $R = $g->get_ring;
 
    # Writing data to file:
-   open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
-   print $input "Q[";
-   print $input join(",",$R->variables);
-   print $input "]{\n";
-   print $input $g;
-   print $input "\n}";
-   print $tempfile;
-   close $input;
+   write_ideal_to_file($tempfile, new Ideal(GENERATORS=>[$g]), $R);
 
    # print "$gfan_tropicalhypersurface\nlala\n$gfan_tropicalbruteforce\nlala\n";
    # Accessing gfan:
@@ -131,6 +123,18 @@ user_function gfan_tropicalhypersurface(Polynomial) {
    return new PolyhedralFan(INPUT_RAYS=>-$gfan_out->RAYS, INPUT_CONES=>$gfan_out->MAXIMAL_CONES, LINEALITY_SPACE=>$gfan_out->LINEALITY_SPACE);
 
    return $gfan_out;
+}
+
+sub write_ideal_to_file{
+   my($file, $ideal, $ring) = @_;
+   open(my $input, ">$file.in") or die "Can't create temporary file $file.in: $!";
+   print $input "Q[";
+   print $input join(",",$ring->variables);
+   print $input "]{\n";
+   print $input join(",",@{$ideal->GENERATORS});
+   print $input "\n}";
+   print $tempfile;
+   close $input;
 }
 
 sub tropical_xml_update{
@@ -156,14 +160,7 @@ user_function gfan_tropicalgentleforce(Ideal) {
    my $R = $I->RING;
 
    # Writing data to file:
-   open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
-   print $input "Q[";
-   print $input join(",",$R->variables);
-   print $input "]{\n";
-   print $input join(",",@{$I->GENERATORS});
-   print $input "\n}";
-   print $tempfile;
-   close $input;
+   write_ideal_to_file($tempfile, $I, $R);
    
    # Accessing gfan:
    # FIXME: Since we homogenize, we need to dehomogenize later!
@@ -200,14 +197,7 @@ user_function gfan_tropicalbruteforce(Ideal) {
    my $R = $I->RING;
 
    # Writing data to file:
-   open(my $input, ">$tempfile.in") or die "Can't create temporary file $tempfile.in: $!";
-   print $input "Q[";
-   print $input join(",",$R->variables);
-   print $input "]{\n";
-   print $input join(",",@{$I->GENERATORS});
-   print $input "\n}";
-   print $tempfile;
-   close $input;
+   write_ideal_to_file($tempfile, $I, $R);
    
    # Accessing gfan:
    # FIXME: Since we homogenize, we need to dehomogenize later!
