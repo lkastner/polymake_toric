@@ -22,6 +22,7 @@
 #include "polymake/IncidenceMatrix.h"
 #include "polymake/Vector.h"
 #include "polymake/Integer.h"
+
 namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
    OperatorInstance4perl(Binary__ge, perl::Canned< const Rational >, int);
@@ -29,6 +30,5 @@ namespace polymake { namespace common { namespace {
    OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const Vector< Integer > >);
    OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void> >);
    OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Integer> const&>, pm::Series<int, true>, void> >);
-   OperatorInstance4perl(Binary_mul, perl::Canned< const Rational >, perl::Canned< const pm::SameElementVector<pm::Rational const&> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } } }

@@ -213,13 +213,17 @@ user_function gfan_tropicalbruteforce(Ideal) {
    # FIXME: Since we homogenize, we need to dehomogenize later!
    system "($gfan_homogenize -i -H <$tempfile.in | $gfan_tropicalbruteforce --xml) >$tempfile.poly 2>/dev/null";
 
-   # print "Output written.\n";
+   print "Output written.\n";
    my $gfan_out= User::load("$tempfile.poly");
    my $n = $gfan_out->AMBIENT_DIM;
-   my $v = ones_vector($n);
-   my $inrays = new Matrix(map($_-$_->[$n-1]*$v,@{$gfan_out->RAYS}));
+   my $v = ones_vector<Rational>($n-1);
+   my $projection_matrix = dense(unit_matrix<Rational>($n-1))|(-$v);
+   print "Loaded output.\n";
+   my $rays = $gfan_out->RAYS;
+   my $inrays = new Matrix(map($projection_matrix * $_,@$rays));
+   print "Loaded output.\n";
    # This is attempting to fix the homogenization problem.
    # However we do not consider the lineality space at all.
-   return check_fan(-$inrays->minor(All,~[$n-1]),$gfan_out->MAXIMAL_CONES);
+   return check_fan(-$inrays,$gfan_out->MAXIMAL_CONES);
 }
 

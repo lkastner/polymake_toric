@@ -18,14 +18,8 @@
 #include "polymake/client.h"
 #include "polymake/Polynomial.h"
 #include "polymake/Rational.h"
+
 namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
-   template <typename T0>
-   FunctionInterface4perl( coefficients_as_vector_f1, T0 ) {
-      perl::Value arg0(stack[0]);
-      WrapperReturn( arg0.get<T0>().coefficients_as_vector() );
-   };
-
-   FunctionInstance4perl(coefficients_as_vector_f1, perl::Canned< const Polynomial< Rational, int > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====
 } } }

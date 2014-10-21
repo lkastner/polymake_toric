@@ -17,25 +17,26 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
 
+object SubvarietyInTV {
+
+   rule NEWTON_POLYTOPE : EQUATIONS {
+      my $eq = $this->EQUATIONS->GENERATORS->[0];
+      $this->NEWTON_POLYTOPE = newton($eq);
+   }
+   precondition : HYPERSURFACE;
+
+   rule TROPICAL_FAN : EQUATIONS {
+      my $eq = $this->EQUATIONS->GENERATORS->[0];
+      $this->TROPICAL_FAN = gfan_tropicalhypersurface($eq);
+   }
+   precondition : HYPERSURFACE;
+
+}
+
 object NormalToricVariety {
    
    property SUBVARIETY : SubvarietyInTV : multiple;
    
-   object SubvarietyInTV {
-
-      rule NEWTON_POLYTOPE : EQUATIONS {
-         my $eq = $this->EQUATIONS->GENERATORS->[0];
-         $this->NEWTON_POLYTOPE = newton($eq);
-      }
-      precondition : HYPERSURFACE;
-
-      rule TROPICAL_FAN : EQUATIONS {
-         my $eq = $this->EQUATIONS->GENERATORS->[0];
-         $this->TROPICAL_FAN = gfan_tropicalhypersurface($eq);
-      }
-      precondition : HYPERSURFACE;
-
-   }
 
 	rule SUBVARIETY.RELEVANT_CONES : SUBVARIETY.TROPICAL_FAN, RAYS, MAXIMAL_CONES{
 		# The idea of this method comes from the Sturmfels Maclagan book about tropical varieties.

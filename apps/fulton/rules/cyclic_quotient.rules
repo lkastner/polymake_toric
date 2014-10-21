@@ -25,15 +25,12 @@
 ###
 ###################################################
 ###################################################
-object CyclicQuotient {
+object VersalComponent {
 
-   object VersalComponent {
+   property MILNOR_SJ : Vector<Integer>;
 
-      property MILNOR_SJ : Vector<Integer>;
+   property MILNOR_NI : Integer;
 
-      property MILNOR_NI : Integer;
-
-   }
 }
 
 ###################################################
@@ -173,95 +170,96 @@ object CyclicQuotient {
       $this->VERSAL_COMPONENT->MILNOR_NI = $result;
    }
 
-   object VersalComponent {
+}
 
-      rule MILNOR_SJ : CQS_MATRIX {
-         my $cqs = $this->CQS_MATRIX;
-         my $h2 = rank(null_space($cqs));
-         my $h1 = $cqs->rows - rank($cqs);
-         $this->MILNOR_SJ = new Vector($h2, $h1);
+object VersalComponent {
+
+   rule MILNOR_SJ : CQS_MATRIX {
+      my $cqs = $this->CQS_MATRIX;
+      my $h2 = rank(null_space($cqs));
+      my $h1 = $cqs->rows - rank($cqs);
+      $this->MILNOR_SJ = new Vector($h2, $h1);
+   }
+
+   rule N_GON_TRIANGULATION : TRIANGLES {
+      my $T = $this->TRIANGLES;
+      my @edges;
+      foreach my $t (@$T){
+         push @edges, new Set<Int>($t->[0], $t->[1]);
+         push @edges, new Set<Int>($t->[0], $t->[2]);
+         push @edges, new Set<Int>($t->[2], $t->[1]);
       }
+      $this->N_GON_TRIANGULATION = graph_from_edges([@edges]);
+   }
 
-      rule N_GON_TRIANGULATION : TRIANGLES {
-         my $T = $this->TRIANGLES;
-         my @edges;
-         foreach my $t (@$T){
-            push @edges, new Set<Int>($t->[0], $t->[1]);
-            push @edges, new Set<Int>($t->[0], $t->[2]);
-            push @edges, new Set<Int>($t->[2], $t->[1]);
-         }
-         $this->N_GON_TRIANGULATION = graph_from_edges([@edges]);
-      }
-
-      rule TRIANGLES : CONTINUED_FRACTION {
-         my $k = new Vector($this->CONTINUED_FRACTION);
-         my $labels = new Vector(0..($k->dim));
-         my @edges = ();
-         my @triangles = ();
-         while($k->dim > 2){
-            my $i = 0;
-            while($k->[$i] != 1){ $i++; }
-            my @newk = ();
-            my @newlabels = ();
-            if($i>0){
-               $k->[$i-1]--;
-               push @newk, @{$k}[0..($i-1)];
-               push @newlabels, @{$labels}[0..($i-1)];
-               push @triangles, new Vector($labels->[$i-1], $labels->[$i], $labels->[$i+1]);
-            } else { 
-               push @triangles, new Vector($labels->[$i], $labels->[$i+1], $labels->[$k->dim]);
-            }
-            if($i<$k->dim-1){
-               $k->[$i+1]--;
-               push @newk, @{$k}[($i+1)..($k->dim - 1)];
-            }
-            push @newlabels, @{$labels}[($i+1)..($k->dim)];
-            $k = new Vector(@newk);
-            $labels = new Vector(@newlabels);
-            #print "labels: ".$labels."\nk: ".$k."\n";
-         }
-         push @triangles, $labels;
-         $this->TRIANGLES = new Matrix<Integer>(@triangles);
-      }
-
-      rule CONTINUED_FRACTION : PYRAMID_LATTICE {
-         $this->CONTINUED_FRACTION = $this->PYRAMID_LATTICE->{zero_vector<Integer>(2)};
-      }
-
-      rule ALPHA_LATTICE : PYRAMID_LATTICE {
-         my $pyr_lat = new Map<Vector<Integer>, Vector<Integer>>($this->PYRAMID_LATTICE);
-         my $result = new Map<Vector<Integer>, Vector<Integer>>();
-         foreach my $key (keys %$pyr_lat){
-            $result->{$key} = christophersen_alpha($pyr_lat->{$key});
-         }
-         $this->ALPHA_LATTICE = $result;
-      }
-
-      rule PYRAMID_LATTICE : CONTINUED_FRACTION {
-         my $cf = new Vector<Integer>($this->CONTINUED_FRACTION);
-         my $result = new Map<Vector<Integer>, Vector<Integer>>();
+   rule TRIANGLES : CONTINUED_FRACTION {
+      my $k = new Vector($this->CONTINUED_FRACTION);
+      my $labels = new Vector(0..($k->dim));
+      my @edges = ();
+      my @triangles = ();
+      while($k->dim > 2){
          my $i = 0;
-         my $j = 0;
-         my $n = $cf->dim;
-         for($i = 0; $i < $n; $i++){
-            my $copy = new Vector<Integer>($cf);
-            # print $cf."\n";
-            for($j = 0; $j < ($n-$i); $j++){
-               $result->{new Vector<Integer>($j, $i)} = $copy;
-               if($j < $n-$i-1){
-                  $copy = christophersen_phi1($copy);
-               }
-            }
-            if($i < $n-1){
-               $cf = christophersen_phi2($cf);
+         while($k->[$i] != 1){ $i++; }
+         my @newk = ();
+         my @newlabels = ();
+         if($i>0){
+            $k->[$i-1]--;
+            push @newk, @{$k}[0..($i-1)];
+            push @newlabels, @{$labels}[0..($i-1)];
+            push @triangles, new Vector($labels->[$i-1], $labels->[$i], $labels->[$i+1]);
+         } else { 
+            push @triangles, new Vector($labels->[$i], $labels->[$i+1], $labels->[$k->dim]);
+         }
+         if($i<$k->dim-1){
+            $k->[$i+1]--;
+            push @newk, @{$k}[($i+1)..($k->dim - 1)];
+         }
+         push @newlabels, @{$labels}[($i+1)..($k->dim)];
+         $k = new Vector(@newk);
+         $labels = new Vector(@newlabels);
+         #print "labels: ".$labels."\nk: ".$k."\n";
+      }
+      push @triangles, $labels;
+      $this->TRIANGLES = new Matrix<Integer>(@triangles);
+   }
+
+   rule CONTINUED_FRACTION : PYRAMID_LATTICE {
+      $this->CONTINUED_FRACTION = $this->PYRAMID_LATTICE->{zero_vector<Integer>(2)};
+   }
+
+   rule ALPHA_LATTICE : PYRAMID_LATTICE {
+      my $pyr_lat = new Map<Vector<Integer>, Vector<Integer>>($this->PYRAMID_LATTICE);
+      my $result = new Map<Vector<Integer>, Vector<Integer>>();
+      foreach my $key (keys %$pyr_lat){
+         $result->{$key} = christophersen_alpha($pyr_lat->{$key});
+      }
+      $this->ALPHA_LATTICE = $result;
+   }
+
+   rule PYRAMID_LATTICE : CONTINUED_FRACTION {
+      my $cf = new Vector<Integer>($this->CONTINUED_FRACTION);
+      my $result = new Map<Vector<Integer>, Vector<Integer>>();
+      my $i = 0;
+      my $j = 0;
+      my $n = $cf->dim;
+      for($i = 0; $i < $n; $i++){
+         my $copy = new Vector<Integer>($cf);
+         # print $cf."\n";
+         for($j = 0; $j < ($n-$i); $j++){
+            $result->{new Vector<Integer>($j, $i)} = $copy;
+            if($j < $n-$i-1){
+               $copy = christophersen_phi1($copy);
             }
          }
-         $this->PYRAMID_LATTICE = $result;
+         if($i < $n-1){
+            $cf = christophersen_phi2($cf);
+         }
       }
-
+      $this->PYRAMID_LATTICE = $result;
    }
 
 }
+
 
 ###################################################
 ###################################################
