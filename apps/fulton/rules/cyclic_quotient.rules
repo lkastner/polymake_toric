@@ -42,9 +42,9 @@ object VersalComponent {
 ###################################################
 object CyclicQuotient {
 
-   rule VERSAL_DEFORMATION : DUAL_CONTINUED_FRACTION {
-      #FIXME
-   }
+   # rule VERSAL_DEFORMATION : DUAL_CONTINUED_FRACTION {
+   #    #FIXME
+   # }
 
    # Computing the continued fractions corresponding to the components
    # of the versal base space according to the description given in
@@ -134,12 +134,12 @@ object CyclicQuotient {
       $this->VERSAL_COMPONENT->CQS_MATRIX = $lower_triang * $D;
    }
 
-   rule VERSAL_COMPONENT.TOTAL_SPACE : DUAL_CONTINUED_FRACTION,\
-         VERSAL_COMPONENT.CONTINUED_FRACTION,\
-         VERSAL_COMPONENT.PYRAMID_LATTICE,\
-         VERSAL_COMPONENT.ALPHA_LATTICE {
-      #FIXME
-   }
+   # rule VERSAL_COMPONENT.TOTAL_SPACE : DUAL_CONTINUED_FRACTION,\
+   #       VERSAL_COMPONENT.CONTINUED_FRACTION,\
+   #       VERSAL_COMPONENT.PYRAMID_LATTICE,\
+   #       VERSAL_COMPONENT.ALPHA_LATTICE {
+   #    #FIXME
+   # }
   
    rule VERSAL_COMPONENT.DIMENSION : DUAL_CONTINUED_FRACTION,\
          VERSAL_COMPONENT.CONTINUED_FRACTION {

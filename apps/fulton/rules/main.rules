@@ -47,7 +47,6 @@ object ideal::Ideal {
 declare object SubvarietyInTV;
 
 INCLUDE
-	gfan.rules
 	cocoref_topcom.rules
    subvarietyInTV_properties.rules
 	toric_variety.rules
