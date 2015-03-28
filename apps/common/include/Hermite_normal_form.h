@@ -96,7 +96,7 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
       for(int j=0; j<current_col; j++){
          U.i = j;
          U.j = current_col;
-         int factor = (N(i,j) - (N(i,j) % N(i,current_col)))/N(i,current_col);
+         E factor = (N(i,j) - (N(i,j) % N(i,current_col)))/N(i,current_col);
          U.a_ii = 1;
          U.a_ji = -factor;
          U.a_ij = 0;
