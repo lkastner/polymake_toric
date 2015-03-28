@@ -47,6 +47,7 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
    for(int i = 0; i<rows; i++){
       bool nonzero = true;
       // cout << N(i,current_col) << endl;
+      // Find a non-zero entry and move it to here.
       if(N(i,current_col) == 0){
          nonzero = false;
          for(int j = current_col; j<cols; j++){
@@ -69,6 +70,7 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
          current_row++;
          continue;
       }
+      // GCD part of algorithm.
       for(int j = current_col+1; j<cols; j++){
          // cout << "  " << i << " " << j << endl;
          if(N(i,j) != 0){
@@ -90,6 +92,17 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
          S(current_col,current_col) = -1;
          R = R*S;
          N = N*S;
+      }
+      for(int j=0; j<current_col; j++){
+         U.i = j;
+         U.j = current_col;
+         int factor = (N(i,j) - (N(i,j) % N(i,current_col)))/N(i,current_col);
+         U.a_ii = 1;
+         U.a_ji = -factor;
+         U.a_ij = 0;
+         U.a_jj = 1;
+         R.multiply_from_right(U);
+         N.multiply_from_right(U);
       }
       current_col++;
       // cout << i << " " << current_row << endl;
