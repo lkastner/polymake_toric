@@ -105,6 +105,9 @@ perl::ListReturn hermite_normal_form(const Matrix& M){
          N.multiply_from_right(U);
       }
       current_col++;
+      if(current_col == cols){
+         break;
+      }
       // cout << i << " " << current_row << endl;
    }
 
