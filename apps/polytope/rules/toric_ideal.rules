@@ -27,6 +27,11 @@ CREDIT 4ti2
 
 object Cone<Rational>{
 
+   # @category Algebraic Geometry
+   # The matrix containing the exponent vectors of the binomials whose
+   # vanishing set is the affine toric variety given by the cone.
+   # In other words the rows of this matrix give the relations between the
+   # Hilbert basis elements.
    property TORIC_IDEAL : Matrix<Integer>;
 
    rule _4ti2.toric_ideal : TORIC_IDEAL : HILBERT_BASIS_GENERATORS {
