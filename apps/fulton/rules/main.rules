@@ -48,10 +48,10 @@ declare object SubvarietyInTV;
 
 INCLUDE
 	cocoref_topcom.rules
-   subvarietyInTV_properties.rules
+   # subvarietyInTV_properties.rules
 	toric_variety.rules
 	toric_divisor.rules
-   subvarietyInTV.rules
+   # subvarietyInTV.rules
    toric_divisor_classes.rules
    cyclic_quotient.rules
    cq_deformations.rules

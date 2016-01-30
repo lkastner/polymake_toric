@@ -15,10 +15,10 @@
 
 ///==== this line controls the automatic file splitting: max.instances=40
 
-#include "polymake/client.h"
-#include "polymake/Set.h"
-#include "polymake/Integer.h"
 #include "polymake/IncidenceMatrix.h"
+#include "polymake/Integer.h"
+#include "polymake/Set.h"
+#include "polymake/client.h"
 
 namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
@@ -37,7 +37,6 @@ namespace polymake { namespace common { namespace {
    FunctionInstance4perl(new_X, Set< Integer >, int);
    FunctionInstance4perl(new, Set< Integer >);
    OperatorInstance4perl(Binary__eq, perl::Canned< const Set< int > >, perl::Canned< const pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> >);
-   OperatorInstance4perl(Binary_add, perl::Canned< const Set< int > >, perl::Canned< const pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> >);
    OperatorInstance4perl(Binary__eq, perl::Canned< const Set< Integer > >, perl::Canned< const Set< Integer > >);
    OperatorInstance4perl(Binary_sub, perl::Canned< const pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> >, perl::Canned< const pm::incidence_line<pm::AVL::tree<pm::sparse2d::traits<pm::sparse2d::traits_base<pm::nothing, true, false, (pm::sparse2d::restriction_kind)0>, false, (pm::sparse2d::restriction_kind)0> > const&> >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====

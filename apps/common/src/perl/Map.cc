@@ -15,15 +15,15 @@
 
 ///==== this line controls the automatic file splitting: max.instances=40
 
-#include "polymake/client.h"
-#include "polymake/Map.h"
-#include "polymake/Set.h"
-#include "polymake/Vector.h"
-#include "polymake/Rational.h"
-#include "polymake/Polynomial.h"
-#include "polymake/Matrix.h"
 #include "polymake/IncidenceMatrix.h"
 #include "polymake/Integer.h"
+#include "polymake/Map.h"
+#include "polymake/Matrix.h"
+#include "polymake/Polynomial.h"
+#include "polymake/Rational.h"
+#include "polymake/Set.h"
+#include "polymake/Vector.h"
+#include "polymake/client.h"
 
 namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
@@ -40,9 +40,6 @@ namespace polymake { namespace common { namespace {
 
    Class4perl("Polymake::common::Map_A_Vector__Int_I_Int_Z", Map< Vector< int >, int >);
    FunctionInstance4perl(new, Map< Vector< int >, int >);
-   Class4perl("Polymake::common::Map_A_Vector__Rational_I_Int_Z", Map< Vector< Rational >, int >);
-   FunctionInstance4perl(new, Map< Vector< Rational >, int >);
-   OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Rational >, int > >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void> >);
    Class4perl("Polymake::common::Map_A_Set__Int_I_Vector__Integer_Z", Map< Set< int >, Vector< Integer > >);
    FunctionInstance4perl(new, Map< Vector< Integer >, Vector< Integer > >);
    OperatorInstance4perl(Binary_brk, perl::Canned< Map< Vector< Integer >, Vector< Integer > > >, perl::Canned< const Vector< Integer > >);

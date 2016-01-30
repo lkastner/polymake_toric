@@ -15,12 +15,12 @@
 
 ///==== this line controls the automatic file splitting: max.instances=40
 
-#include "polymake/client.h"
 #include "polymake/Polynomial.h"
 #include "polymake/Rational.h"
+#include "polymake/client.h"
+
 namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
-   Class4perl("Polymake::common::Serialized__Monomial_A_Rational_I_Int_Z", pm::Serialized< Monomial< Rational, int > >);
    OperatorInstance4perl(assign, pm::Serialized< Monomial< Rational, int > >, perl::Canned< const Monomial< Rational, int > >);
    OperatorInstance4perl(assign, pm::Serialized< Polynomial< Rational, int > >, perl::Canned< const Polynomial< Rational, int > >);
 ///==== Automatically generated contents end here.  Please do not delete this line. ====

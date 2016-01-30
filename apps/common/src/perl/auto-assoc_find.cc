@@ -15,16 +15,16 @@
 
 ///==== this line controls the automatic file splitting: max.instances=40
 
-#include "polymake/client.h"
-#include "polymake/perl/assoc.h"
-#include "polymake/Map.h"
-#include "polymake/Vector.h"
-#include "polymake/Rational.h"
-#include "polymake/Matrix.h"
 #include "polymake/IncidenceMatrix.h"
 #include "polymake/Integer.h"
+#include "polymake/Map.h"
+#include "polymake/Matrix.h"
 #include "polymake/Polynomial.h"
+#include "polymake/Rational.h"
 #include "polymake/Set.h"
+#include "polymake/Vector.h"
+#include "polymake/client.h"
+#include "polymake/perl/assoc.h"
 
 namespace polymake { namespace common { namespace {
 ///==== Automatically generated contents follow.    Please do not delete this line. ====
@@ -34,7 +34,6 @@ namespace polymake { namespace common { namespace {
       WrapperReturn( pm::perl::find_element(arg0.get<T0>(), arg1.get<T1>()) );
    };
 
-   FunctionInstance4perl(assoc_find_X_X, perl::Canned< const Map< Vector< Rational >, int > >, perl::Canned< const pm::IndexedSlice<pm::masquerade<pm::ConcatRows, pm::Matrix_base<pm::Rational> const&>, pm::Series<int, true>, void> >);
    FunctionInstance4perl(assoc_find_X_X, perl::Canned< const Map< Integer, Monomial< Rational, int > > >, int);
    FunctionInstance4perl(assoc_find_X_X, perl::Canned< const Map< Vector< Integer >, Polynomial< Rational, int > > >, perl::Canned< const Vector< Integer > >);
    FunctionInstance4perl(assoc_find_X_X, perl::Canned< const Map< Vector< Integer >, Monomial< Rational, int > > >, perl::Canned< const Vector< Integer > >);
