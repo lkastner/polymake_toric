@@ -18,7 +18,6 @@
 #  GNU General Public License for more details.
 
 INCLUDE
-   toric_ideal.rules
    deformations.rules
 
 object Polytope<Rational> {
