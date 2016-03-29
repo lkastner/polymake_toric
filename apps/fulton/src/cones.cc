@@ -51,7 +51,10 @@ namespace polymake { namespace fulton {
       // lll-extension (http://polymake.org/polytopes/paffenholz/data/polymake/extensions/lll). 
       // this should be replaced by a c++-call 
       // once we can detec the ntl extension (see ticket #504), or ntl is a core extension
-      CallPolymakeFunction("integer_kernel",t_int_rays,false) >> ker;
+      // 
+      // Rem: pm now has integer_linalg.
+      // CallPolymakeFunction("integer_kernel",t_int_rays,false) >> ker;
+      ker = null_space_integer(t_int_rays);
 
       perl::Object nef_t1("Cone<Rational>");      
       nef_t1.take("INPUT_RAYS") << T(ker.minor(All,~max_cones[0]));

@@ -52,7 +52,10 @@ namespace polymake { namespace fulton {
       // lll-extension (http://polymake.org/polytopes/paffenholz/data/polymake/extensions/lll). 
       // this should be replaced by a c++-call 
       // once we can detec the ntl extension (see ticket #504), or ntl is a core extension
-      CallPolymakeFunction("integer_kernel",t_int_rays,false) >> projection;
+      //
+      // Rem: pm now has integer_linalg.
+      // CallPolymakeFunction("integer_kernel",t_int_rays,false) >> projection;
+      projection = null_space_integer(t_int_rays);
 
       SmithNormalForm<Integer> SNF = smith_normal_form(T(projection));
 
